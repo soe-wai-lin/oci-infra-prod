@@ -19,7 +19,7 @@ output "vcn_id" {
 }
 
 output "compartment_id" {
-  value = var.compartment_id.id
+  value = var.compartment_id
 }
 
 output "vcn_name" {
