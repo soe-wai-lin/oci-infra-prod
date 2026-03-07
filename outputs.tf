@@ -18,6 +18,10 @@ output "vcn_id" {
   value = oci_core_vcn.terra_vcn.id
 }
 
+output "compartment_id" {
+  value = var.compartment_id.id
+}
+
 output "vcn_name" {
   value = oci_core_vcn.terra_vcn.display_name
 }
