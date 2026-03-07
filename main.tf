@@ -383,6 +383,15 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress" {
   destination               = oci_core_network_security_group.nsg_prod_airs.id
   destination_type          = "NETWORK_SECURITY_GROUP"
   description               = "Allow all egress"
+}
+
+resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_1" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "10.10.80.0/24"
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow 3306 to DB"
   tcp_options {
     destination_port_range {
       max = 3306

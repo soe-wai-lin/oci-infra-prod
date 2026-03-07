@@ -48,7 +48,7 @@ private_lb_subnet = **10.10.55.0/24**
 
 | Direction | Stateless | Source Type | Source         | Destination Type | Destination     | Protocol | Source Port Range | Destination Port Range | Allow       | Description            |
 |-----------|-----------|-------------|-----------------|------------------|------------------|----------|--------------------|--------------------------|-------------|-------------------------|
-| Ingress   | No        | NSG         | NSG-PROD-WEB    | NSG              | All              | TCP      | All                | 9090                     | TCP traffic | Allow From NSG-PROD-WEB |
+| Egress   | No        | NSG         | NSG-PROD-AIRS    | NSG              | All              | TCP      | All                | ALL                     | TCP traffic | Allow To NSG-PROD-AIRS |
 | Egress    | No        | CIDR        | 10.10.80.0/24   | CIDR             | All              | TCP      | All                | 3306                     | TCP traffic | Allow to DB subnet     |
 | Ingress   | No        | NSG         | NSG-PROD-LB     | NSG              | All              | TCP      | All                | 443                      | TCP traffic | Allow From NSG-PROD-LB |
 | Ingress   | No        | NSG         | NSG-PROD-LB     | NSG              | All              | TCP      | All                | 80                       | TCP traffic | Allow From NSG-PROD-LB |
