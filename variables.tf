@@ -177,11 +177,11 @@ variable "nodeport_max" {
   default = 32767
 }
 
-# Allow "all within cluster" traffic (common baseline).
-variable "allow_all_cluster_east_west" {
-  type    = bool
-  default = true
-}
+# # Allow "all within cluster" traffic (common baseline).
+# variable "allow_all_cluster_east_west" {
+#   type    = bool
+#   default = true
+# }
 
 ## OKE ##
 
