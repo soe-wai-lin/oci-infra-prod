@@ -6,6 +6,10 @@ output "nat_gateway_id" {
   value = oci_core_nat_gateway.nat.id
 }
 
+output "nat_gateway_reserved_ip" {
+  value = oci_core_nat_gateway.nat.nat_ip
+}
+
 output "public_route_table_id" {
   value = oci_core_route_table.public_rt.id
 }
@@ -25,3 +29,4 @@ output "compartment_id" {
 output "vcn_name" {
   value = oci_core_vcn.terra_vcn.display_name
 }
+

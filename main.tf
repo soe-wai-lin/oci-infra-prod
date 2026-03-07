@@ -572,11 +572,39 @@ resource "oci_core_internet_gateway" "igw" {
   }
 }
 
+
+# Reserved (Regional) Public IP
+# ----------------------------
+resource "oci_core_public_ip" "nat_reserved_ip" {
+  compartment_id = var.compartment_id
+  lifetime       = "RESERVED"
+
+  display_name = "${var.vcn_display_name}-nat-reserved-ip"
+  freeform_tags = {
+    "Env" = "Prod"
+  }
+}
+
+resource "oci_core_public_ip" "lb_reserved_ip" {
+  compartment_id = var.compartment_id
+  lifetime       = "RESERVED"
+
+  display_name = "${var.vcn_display_name}-lb-reserved-ip"
+  freeform_tags = {
+    "Env" = "Prod"
+  }
+}
+
+
 resource "oci_core_nat_gateway" "nat" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-nat"
+  depends_on     = [oci_core_public_ip.nat_reserved_ip]
 
-  display_name = "${var.vcn_display_name}-nat"
+  # Attach the reserved IP here
+  public_ip_id = oci_core_public_ip.nat_reserved_ip.id
+
 
   freeform_tags = {
     "Env" = "Prod"

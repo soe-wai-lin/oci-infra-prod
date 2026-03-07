@@ -119,7 +119,7 @@ variable "image_operating_system" {
 variable "common_freeform_tags" {
   type = map(string)
   default = {
-    Department = "Dev"
+    Department = "Prod"
   }
 }
 
@@ -153,17 +153,6 @@ variable "is_flex_shape" {
   description = "Set true if instance_shape ends with .Flex (recommended to auto-detect via locals; see below)."
   type        = bool
   default     = true
-}
-
-# Who can access public LB listeners (80/443). Tighten to office/VPN CIDRs in prod.
-variable "lb_ingress_cidrs" {
-  type    = list(string)
-  default = ["0.0.0.0/0"]
-}
-
-variable "lb_listener_ports" {
-  type    = list(number)
-  default = [80, 443]
 }
 
 # Default Kubernetes NodePort range (OCI LB -> worker backends)
