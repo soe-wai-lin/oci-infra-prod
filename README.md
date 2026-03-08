@@ -84,3 +84,9 @@ private_lb_subnet = **10.10.55.0/24**
 |-----------|-----------|-------------|-----------|------------------|-------------|----------|--------------------|--------------------------|-------------|-------------------------|
 | Ingress   | No        | CIDR        | 0.0.0.0/0 | CIDR             | All         | TCP      | All                | 22                       | TCP traffic | Allow https from any   |
 | Egress    | No        | CIDR        | 0.0.0.0/0 | CIDR             | All         | TCP      | All                | All                      | TCP traffic | Allow to All           |
+
+## Notifications
+
+### If there any changes on **Subnets**, **Security List**, **Network Security Group**,
+### automatically sent alerts to email.
+

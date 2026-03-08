@@ -30,3 +30,11 @@ output "vcn_name" {
   value = oci_core_vcn.terra_vcn.display_name
 }
 
+output "alert_name" {
+  value = oci_ons_notification_topic.network_alert_topic.name
+}
+
+output "alert_mail" {
+  value = oci_ons_subscription.email_subscription.endpoint
+}
+
