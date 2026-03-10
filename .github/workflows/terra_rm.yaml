@@ -1,0 +1,69 @@
+name: deploy-oci-orm
+on:
+  push:
+    branches: [ ci ]
+
+permissions:
+  id-token: write     # <-- required for OIDC
+  contents: read
+
+env:
+  OCI_REGION: ap-singapore-1           # change as needed
+  STACK_OCID: ocid1.compartment.oc1..aaaaaaaa66fxteh6dfourcq5gawtsriddatufcb5dmqyxhdyiutntzsvbpza
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (optional; ORM uses its own VCS link)
+        uses: actions/checkout@v4
+
+      # 1) Exchange GitHub OIDC token for an OCI session token (UPST)
+      - name: Configure OCI via OIDC (Workload Identity Federation)
+        run: |
+          sudo pipx install oci-cli
+          # Create OCI config profile that uses security_token_file
+          mkdir -p ~/.oci
+          cat > ~/.oci/config <<'CFG'
+          [DEFAULT]
+          region=${OCI_REGION}
+          security_token_file=~/.oci/oci_session_token
+          # tenancy/user will be inferred by the session token
+          CFG
+
+          # Exchange OIDC token for OCI session token using A-Team guide
+          # (You will have set up an OCI Identity Provider and trust policy.)
+          # Example uses instance-principal-like flow via 'oci session authenticate' once configured.
+          oci iam security-token get --file ~/.oci/oci_session_token --auth security_token || \
+          { echo "Configure token exchange step per your WIF setup"; exit 1; }
+        shell: bash
+      # See Oracle's OIDC/WIF guide for the exact exchange command for your setup. [2](https://www.ateam-oracle.com/github-actions-oci-a-guide-to-secure-oidc-token-exchange)
+
+      # 2) Start a PLAN job (optional but recommended)
+      - name: Start PLAN job
+        run: |
+          PLAN_OCID=$(oci resource-manager job create-plan-job \
+            --stack-id "$STACK_OCID" \
+            --query 'data.id' --raw-output)
+          echo "PLAN_JOB_OCID=$PLAN_OCID" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Wait for PLAN to finish
+        run: |
+          oci resource-manager job get --job-id "$PLAN_JOB_OCID" --wait-for-state SUCCEEDED --max-wait-seconds 1800
+        shell: bash
+
+      # 3) Start APPLY job (bind to the latest plan, or auto-approve)
+      - name: Start APPLY job
+        run: |
+          APPLY_OCID=$(oci resource-manager job create-apply-job \
+            --stack-id "$STACK_OCID" \
+            --apply-job-plan-resolution '{"isAutoApproved": false, "planJobId": "'$PLAN_JOB_OCID'"}' \
+            --query 'data.id' --raw-output)
+          echo "APPLY_JOB_OCID=$APPLY_OCID" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Wait for APPLY to finish
+        run: |
+          oci resource-manager job get --job-id "$APPLY_JOB_OCID" --wait-for-state SUCCEEDED --max-wait-seconds 3600
+        shell: bash
