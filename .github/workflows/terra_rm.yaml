@@ -59,10 +59,10 @@ jobs:
           key_file=~/.oci/oci_api_key.pem
           EOF
 
-          # # Optional passphrase if your key is encrypted
-          # if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
-          #   echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
-          # fi
+          # Optional passphrase if your key is encrypted
+          if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
+            echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+          fi
 
           oci --version
 
