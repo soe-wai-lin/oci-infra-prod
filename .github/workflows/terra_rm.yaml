@@ -1,69 +1,219 @@
-name: deploy-oci-orm
+name: OCI Resource Manager Manual Apply
+
 on:
-  push:
-    branches: [ ci ]
+  workflow_dispatch:
+    inputs:
+      stack_id:
+        description: "OCI Resource Manager Stack OCID"
+        required: true
+        type: string
+      upgrade_provider:
+        description: "Upgrade provider versions during plan/apply"
+        required: false
+        default: false
+        type: boolean
+      environment_name:
+        description: "GitHub Environment name used for manual approval"
+        required: false
+        default: "oci-apply"
+        type: string
 
 permissions:
-  id-token: write     # <-- required for OIDC
   contents: read
 
-env:
-  OCI_REGION: ap-singapore-1           # change as needed
-  STACK_OCID: ocid1.compartment.oc1..aaaaaaaa66fxteh6dfourcq5gawtsriddatufcb5dmqyxhdyiutntzsvbpza
-
 jobs:
-  apply:
+  plan:
+    name: Create OCI RM Plan
     runs-on: ubuntu-latest
+    outputs:
+      plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}
+
     steps:
-      - name: Checkout repo (optional; ORM uses its own VCS link)
-        uses: actions/checkout@v4
-
-      # 1) Exchange GitHub OIDC token for an OCI session token (UPST)
-      - name: Configure OCI via OIDC (Workload Identity Federation)
+      - name: Install OCI CLI
         run: |
-          sudo pipx install oci-cli
-          # Create OCI config profile that uses security_token_file
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        env:
+          OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+          OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+          OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+          OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
+        run: |
           mkdir -p ~/.oci
-          cat > ~/.oci/config <<'CFG'
+          chmod 700 ~/.oci
+
+          printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+
+          cat > ~/.oci/config <<EOF
           [DEFAULT]
+          user=${OCI_USER_OCID}
+          tenancy=${OCI_TENANCY_OCID}
           region=${OCI_REGION}
-          security_token_file=~/.oci/oci_session_token
-          # tenancy/user will be inferred by the session token
-          CFG
+          fingerprint=${OCI_FINGERPRINT}
+          key_file=~/.oci/oci_api_key.pem
+          EOF
 
-          # Exchange OIDC token for OCI session token using A-Team guide
-          # (You will have set up an OCI Identity Provider and trust policy.)
-          # Example uses instance-principal-like flow via 'oci session authenticate' once configured.
-          oci iam security-token get --file ~/.oci/oci_session_token --auth security_token || \
-          { echo "Configure token exchange step per your WIF setup"; exit 1; }
+          # # Optional passphrase if your key is encrypted
+          # if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
+          #   echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+          # fi
+
+          oci --version
+
+      - name: Create plan job
+        id: create_plan
         shell: bash
-      # See Oracle's OIDC/WIF guide for the exact exchange command for your setup. [2](https://www.ateam-oracle.com/github-actions-oci-a-guide-to-secure-oidc-token-exchange)
-
-      # 2) Start a PLAN job (optional but recommended)
-      - name: Start PLAN job
         run: |
-          PLAN_OCID=$(oci resource-manager job create-plan-job \
-            --stack-id "$STACK_OCID" \
-            --query 'data.id' --raw-output)
-          echo "PLAN_JOB_OCID=$PLAN_OCID" >> $GITHUB_ENV
-        shell: bash
+          set -euo pipefail
 
-      - name: Wait for PLAN to finish
-        run: |
-          oci resource-manager job get --job-id "$PLAN_JOB_OCID" --wait-for-state SUCCEEDED --max-wait-seconds 1800
-        shell: bash
+          STACK_ID="${{ github.event.inputs.stack_id }}"
+          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
-      # 3) Start APPLY job (bind to the latest plan, or auto-approve)
-      - name: Start APPLY job
-        run: |
-          APPLY_OCID=$(oci resource-manager job create-apply-job \
-            --stack-id "$STACK_OCID" \
-            --apply-job-plan-resolution '{"isAutoApproved": false, "planJobId": "'$PLAN_JOB_OCID'"}' \
-            --query 'data.id' --raw-output)
-          echo "APPLY_JOB_OCID=$APPLY_OCID" >> $GITHUB_ENV
-        shell: bash
+          PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
+            --stack-id "${STACK_ID}" \
+            --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --wait-for-state ACCEPTED \
+            --max-wait-seconds 1200 \
+            --query 'data.id' \
+            --raw-output)
 
-      - name: Wait for APPLY to finish
-        run: |
-          oci resource-manager job get --job-id "$APPLY_JOB_OCID" --wait-for-state SUCCEEDED --max-wait-seconds 3600
+          echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
+          echo "Created plan job: ${PLAN_JOB_ID}"
+
+      - name: Wait for plan job result
         shell: bash
+        run: |
+          set -euo pipefail
+          PLAN_JOB_ID="${{ steps.create_plan.outputs.plan_job_id }}"
+
+          echo "Waiting for plan job: ${PLAN_JOB_ID}"
+
+          for i in {1..120}; do
+            STATUS=$(oci resource-manager job get \
+              --job-id "${PLAN_JOB_ID}" \
+              --query 'data."lifecycle-state"' \
+              --raw-output)
+
+            echo "Current plan status: ${STATUS}"
+
+            if [ "${STATUS}" = "SUCCEEDED" ]; then
+              echo "Plan job succeeded."
+              exit 0
+            elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
+              echo "Plan job failed or was canceled."
+              oci resource-manager job get --job-id "${PLAN_JOB_ID}"
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+          echo "Timed out waiting for plan job."
+          exit 1
+
+  # apply:
+  #   name: Manual approval and OCI RM Apply
+  #   runs-on: ubuntu-latest
+  #   needs: plan
+
+  #   # This environment must be created in GitHub repo settings
+  #   # and configured with Required reviewers for manual approval.
+  #   environment:
+  #     name: ${{ github.event.inputs.environment_name }}
+
+  #   steps:
+  #     - name: Install OCI CLI
+  #       run: |
+  #         python3 -m pip install --upgrade pip
+  #         python3 -m pip install oci-cli
+
+  #     - name: Configure OCI CLI
+  #       shell: bash
+  #       env:
+  #         OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+  #         OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+  #         OCI_REGION: ${{ secrets.OCI_REGION }}
+  #         OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+  #         OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+  #         OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
+  #       run: |
+  #         mkdir -p ~/.oci
+  #         chmod 700 ~/.oci
+
+  #         printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
+  #         chmod 600 ~/.oci/oci_api_key.pem
+
+  #         cat > ~/.oci/config <<EOF
+  #         [DEFAULT]
+  #         user=${OCI_USER_OCID}
+  #         tenancy=${OCI_TENANCY_OCID}
+  #         region=${OCI_REGION}
+  #         fingerprint=${OCI_FINGERPRINT}
+  #         key_file=~/.oci/oci_api_key.pem
+  #         EOF
+
+  #         if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
+  #           echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+  #         fi
+
+  #     - name: Create apply job from approved plan
+  #       id: create_apply
+  #       shell: bash
+  #       run: |
+  #         set -euo pipefail
+
+  #         STACK_ID="${{ github.event.inputs.stack_id }}"
+  #         PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
+  #         UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+
+  #         APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
+  #           --stack-id "${STACK_ID}" \
+  #           --execution-plan-strategy FROM_PLAN_JOB_ID \
+  #           --execution-plan-job-id "${PLAN_JOB_ID}" \
+  #           --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
+  #           --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+  #           --wait-for-state ACCEPTED \
+  #           --max-wait-seconds 1200 \
+  #           --query 'data.id' \
+  #           --raw-output)
+
+  #         echo "apply_job_id=${APPLY_JOB_ID}" >> "$GITHUB_OUTPUT"
+  #         echo "Created apply job: ${APPLY_JOB_ID}"
+
+  #     - name: Wait for apply job result
+  #       shell: bash
+  #       run: |
+  #         set -euo pipefail
+  #         APPLY_JOB_ID="${{ steps.create_apply.outputs.apply_job_id }}"
+
+  #         echo "Waiting for apply job: ${APPLY_JOB_ID}"
+
+  #         for i in {1..180}; do
+  #           STATUS=$(oci resource-manager job get \
+  #             --job-id "${APPLY_JOB_ID}" \
+  #             --query 'data."lifecycle-state"' \
+  #             --raw-output)
+
+  #           echo "Current apply status: ${STATUS}"
+
+  #           if [ "${STATUS}" = "SUCCEEDED" ]; then
+  #             echo "Apply job succeeded."
+  #             exit 0
+  #           elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
+  #             echo "Apply job failed or was canceled."
+  #             oci resource-manager job get --job-id "${APPLY_JOB_ID}"
+  #             exit 1
+  #           fi
+
+  #           sleep 10
+  #         done
+
+  #         echo "Timed out waiting for apply job."
+  #         exit 1
