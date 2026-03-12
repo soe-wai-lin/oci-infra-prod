@@ -47,6 +47,10 @@ jobs:
           mkdir -p ~/.oci
           chmod 700 ~/.oci
 
+          cat >  ~/.oci/oci_api_public_key.pem <<EOF
+          public_key_file=${OCI_PUBLIC_KEY}
+          EOF
+
           printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
           chmod 600 ~/.oci/oci_api_key.pem
 
