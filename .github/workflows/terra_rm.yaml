@@ -25,8 +25,8 @@ jobs:
   plan:
     name: Create OCI RM Plan
     runs-on: ubuntu-latest
-    outputs:
-      plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}
+    # outputs:
+    #   plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}
 
     steps:
       - name: Install OCI CLI
@@ -67,57 +67,57 @@ jobs:
 
           oci --version
 
-      - name: Create plan job
-        id: create_plan
-        shell: bash
-        run: |
-          set -euo pipefail
+      # - name: Create plan job
+      #   id: create_plan
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
 
-          STACK_ID="${{ github.event.inputs.stack_id }}"
-          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+      #     STACK_ID="${{ github.event.inputs.stack_id }}"
+      #     UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
-          PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
-            --stack-id "${STACK_ID}" \
-            --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
-            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
-            --wait-for-state ACCEPTED \
-            --max-wait-seconds 1200 \
-            --query 'data.id' \
-            --raw-output)
+      #     PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
+      #       --stack-id "${STACK_ID}" \
+      #       --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
+      #       --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+      #       --wait-for-state ACCEPTED \
+      #       --max-wait-seconds 1200 \
+      #       --query 'data.id' \
+      #       --raw-output)
 
-          echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
-          echo "Created plan job: ${PLAN_JOB_ID}"
+      #     echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "Created plan job: ${PLAN_JOB_ID}"
 
-      - name: Wait for plan job result
-        shell: bash
-        run: |
-          set -euo pipefail
-          PLAN_JOB_ID="${{ steps.create_plan.outputs.plan_job_id }}"
+      # - name: Wait for plan job result
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     PLAN_JOB_ID="${{ steps.create_plan.outputs.plan_job_id }}"
 
-          echo "Waiting for plan job: ${PLAN_JOB_ID}"
+      #     echo "Waiting for plan job: ${PLAN_JOB_ID}"
 
-          for i in {1..120}; do
-            STATUS=$(oci resource-manager job get \
-              --job-id "${PLAN_JOB_ID}" \
-              --query 'data."lifecycle-state"' \
-              --raw-output)
+      #     for i in {1..120}; do
+      #       STATUS=$(oci resource-manager job get \
+      #         --job-id "${PLAN_JOB_ID}" \
+      #         --query 'data."lifecycle-state"' \
+      #         --raw-output)
 
-            echo "Current plan status: ${STATUS}"
+      #       echo "Current plan status: ${STATUS}"
 
-            if [ "${STATUS}" = "SUCCEEDED" ]; then
-              echo "Plan job succeeded."
-              exit 0
-            elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
-              echo "Plan job failed or was canceled."
-              oci resource-manager job get --job-id "${PLAN_JOB_ID}"
-              exit 1
-            fi
+      #       if [ "${STATUS}" = "SUCCEEDED" ]; then
+      #         echo "Plan job succeeded."
+      #         exit 0
+      #       elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
+      #         echo "Plan job failed or was canceled."
+      #         oci resource-manager job get --job-id "${PLAN_JOB_ID}"
+      #         exit 1
+      #       fi
 
-            sleep 10
-          done
+      #       sleep 10
+      #     done
 
-          echo "Timed out waiting for plan job."
-          exit 1
+      #     echo "Timed out waiting for plan job."
+      #     exit 1
 
   # apply:
   #   name: Manual approval and OCI RM Apply
