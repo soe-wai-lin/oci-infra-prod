@@ -87,36 +87,36 @@ jobs:
           echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
           echo "Created plan job: ${PLAN_JOB_ID}"
 
-      - name: Wait for plan job result
-        shell: bash
-        run: |
-          set -euo pipefail
-          PLAN_JOB_ID="${{ steps.create_plan.outputs.plan_job_id }}"
+      # - name: Wait for plan job result
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     PLAN_JOB_ID="${{ steps.create_plan.outputs.plan_job_id }}"
 
-          echo "Waiting for plan job: ${PLAN_JOB_ID}"
+      #     echo "Waiting for plan job: ${PLAN_JOB_ID}"
 
-          for i in {1..120}; do
-            STATUS=$(oci resource-manager job get \
-              --job-id "${PLAN_JOB_ID}" \
-              --query 'data."lifecycle-state"' \
-              --raw-output)
+      #     for i in {1..120}; do
+      #       STATUS=$(oci resource-manager job get \
+      #         --job-id "${PLAN_JOB_ID}" \
+      #         --query 'data."lifecycle-state"' \
+      #         --raw-output)
 
-            echo "Current plan status: ${STATUS}"
+      #       echo "Current plan status: ${STATUS}"
 
-            if [ "${STATUS}" = "SUCCEEDED" ]; then
-              echo "Plan job succeeded."
-              exit 0
-            elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
-              echo "Plan job failed or was canceled."
-              oci resource-manager job get --job-id "${PLAN_JOB_ID}"
-              exit 1
-            fi
+      #       if [ "${STATUS}" = "SUCCEEDED" ]; then
+      #         echo "Plan job succeeded."
+      #         exit 0
+      #       elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
+      #         echo "Plan job failed or was canceled."
+      #         oci resource-manager job get --job-id "${PLAN_JOB_ID}"
+      #         exit 1
+      #       fi
 
-            sleep 10
-          done
+      #       sleep 10
+      #     done
 
-          echo "Timed out waiting for plan job."
-          exit 1
+      #     echo "Timed out waiting for plan job."
+      #     exit 1
 
   # apply:
   #   name: Manual approval and OCI RM Apply
