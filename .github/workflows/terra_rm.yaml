@@ -45,7 +45,7 @@ jobs:
           OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
         run: |
           mkdir -p ~/.oci
-          chmod 600 ~/.oci
+          chmod 700 ~/.oci
 
           printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
           chmod 600 ~/.oci/oci_api_key.pem
