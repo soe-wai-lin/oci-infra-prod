@@ -73,6 +73,8 @@ jobs:
           #   echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
           # fi
 
+          export SUPPRESS_LABEL_WARNING=True
+
           oci --version
 
       - name: Create plan job
