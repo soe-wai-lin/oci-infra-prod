@@ -67,26 +67,26 @@ jobs:
 
           oci --version
 
-      # - name: Create plan job
-      #   id: create_plan
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
+      - name: Create plan job
+        id: create_plan
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      #     STACK_ID="${{ github.event.inputs.stack_id }}"
-      #     UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          STACK_ID="${{ github.event.inputs.stack_id }}"
+          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
-      #     PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
-      #       --stack-id "${STACK_ID}" \
-      #       --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
-      #       --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
-      #       --wait-for-state ACCEPTED \
-      #       --max-wait-seconds 1200 \
-      #       --query 'data.id' \
-      #       --raw-output)
+          PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
+            --stack-id "${STACK_ID}" \
+            --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --wait-for-state ACCEPTED \
+            --max-wait-seconds 1200 \
+            --query 'data.id' \
+            --raw-output)
 
-      #     echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "Created plan job: ${PLAN_JOB_ID}"
+          echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
+          echo "Created plan job: ${PLAN_JOB_ID}"
 
       # - name: Wait for plan job result
       #   shell: bash
