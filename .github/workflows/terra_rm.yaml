@@ -56,13 +56,14 @@ jobs:
           tenancy=${OCI_TENANCY_OCID}
           region=${OCI_REGION}
           fingerprint=${OCI_FINGERPRINT}
+          pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
           key_file=~/.oci/oci_api_key.pem
           EOF
 
-          # Optional passphrase if your key is encrypted
-          if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
-            echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
-          fi
+          # # Optional passphrase if your key is encrypted
+          # if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
+          #   echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+          # fi
 
           oci --version
 
@@ -118,102 +119,102 @@ jobs:
           echo "Timed out waiting for plan job."
           exit 1
 
-  apply:
-    name: Manual approval and OCI RM Apply
-    runs-on: ubuntu-latest
-    needs: plan
+  # apply:
+  #   name: Manual approval and OCI RM Apply
+  #   runs-on: ubuntu-latest
+  #   needs: plan
 
-    # This environment must be created in GitHub repo settings
-    # and configured with Required reviewers for manual approval.
-    environment:
-      name: ${{ github.event.inputs.environment_name }}
+  #   # This environment must be created in GitHub repo settings
+  #   # and configured with Required reviewers for manual approval.
+  #   environment:
+  #     name: ${{ github.event.inputs.environment_name }}
 
-    steps:
-      - name: Install OCI CLI
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install oci-cli
+  #   steps:
+  #     - name: Install OCI CLI
+  #       run: |
+  #         python3 -m pip install --upgrade pip
+  #         python3 -m pip install oci-cli
 
-      - name: Configure OCI CLI
-        shell: bash
-        env:
-          OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
-          OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
-          OCI_REGION: ${{ secrets.OCI_REGION }}
-          OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
-          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
-          OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
-        run: |
-          mkdir -p ~/.oci
-          chmod 700 ~/.oci
+  #     - name: Configure OCI CLI
+  #       shell: bash
+  #       env:
+  #         OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+  #         OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+  #         OCI_REGION: ${{ secrets.OCI_REGION }}
+  #         OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+  #         OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+  #         OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
+  #       run: |
+  #         mkdir -p ~/.oci
+  #         chmod 700 ~/.oci
 
-          printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
+  #         printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
+  #         chmod 600 ~/.oci/oci_api_key.pem
 
-          cat > ~/.oci/config <<EOF
-          [DEFAULT]
-          user=${OCI_USER_OCID}
-          tenancy=${OCI_TENANCY_OCID}
-          region=${OCI_REGION}
-          fingerprint=${OCI_FINGERPRINT}
-          key_file=~/.oci/oci_api_key.pem
-          EOF
+  #         cat > ~/.oci/config <<EOF
+  #         [DEFAULT]
+  #         user=${OCI_USER_OCID}
+  #         tenancy=${OCI_TENANCY_OCID}
+  #         region=${OCI_REGION}
+  #         fingerprint=${OCI_FINGERPRINT}
+  #         key_file=~/.oci/oci_api_key.pem
+  #         EOF
 
-          if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
-            echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
-          fi
+  #         if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
+  #           echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+  #         fi
 
-      - name: Create apply job from approved plan
-        id: create_apply
-        shell: bash
-        run: |
-          set -euo pipefail
+  #     - name: Create apply job from approved plan
+  #       id: create_apply
+  #       shell: bash
+  #       run: |
+  #         set -euo pipefail
 
-          STACK_ID="${{ github.event.inputs.stack_id }}"
-          PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
-          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+  #         STACK_ID="${{ github.event.inputs.stack_id }}"
+  #         PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
+  #         UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
-          APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
-            --stack-id "${STACK_ID}" \
-            --execution-plan-strategy FROM_PLAN_JOB_ID \
-            --execution-plan-job-id "${PLAN_JOB_ID}" \
-            --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
-            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
-            --wait-for-state ACCEPTED \
-            --max-wait-seconds 1200 \
-            --query 'data.id' \
-            --raw-output)
+  #         APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
+  #           --stack-id "${STACK_ID}" \
+  #           --execution-plan-strategy FROM_PLAN_JOB_ID \
+  #           --execution-plan-job-id "${PLAN_JOB_ID}" \
+  #           --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
+  #           --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+  #           --wait-for-state ACCEPTED \
+  #           --max-wait-seconds 1200 \
+  #           --query 'data.id' \
+  #           --raw-output)
 
-          echo "apply_job_id=${APPLY_JOB_ID}" >> "$GITHUB_OUTPUT"
-          echo "Created apply job: ${APPLY_JOB_ID}"
+  #         echo "apply_job_id=${APPLY_JOB_ID}" >> "$GITHUB_OUTPUT"
+  #         echo "Created apply job: ${APPLY_JOB_ID}"
 
-      - name: Wait for apply job result
-        shell: bash
-        run: |
-          set -euo pipefail
-          APPLY_JOB_ID="${{ steps.create_apply.outputs.apply_job_id }}"
+  #     - name: Wait for apply job result
+  #       shell: bash
+  #       run: |
+  #         set -euo pipefail
+  #         APPLY_JOB_ID="${{ steps.create_apply.outputs.apply_job_id }}"
 
-          echo "Waiting for apply job: ${APPLY_JOB_ID}"
+  #         echo "Waiting for apply job: ${APPLY_JOB_ID}"
 
-          for i in {1..180}; do
-            STATUS=$(oci resource-manager job get \
-              --job-id "${APPLY_JOB_ID}" \
-              --query 'data."lifecycle-state"' \
-              --raw-output)
+  #         for i in {1..180}; do
+  #           STATUS=$(oci resource-manager job get \
+  #             --job-id "${APPLY_JOB_ID}" \
+  #             --query 'data."lifecycle-state"' \
+  #             --raw-output)
 
-            echo "Current apply status: ${STATUS}"
+  #           echo "Current apply status: ${STATUS}"
 
-            if [ "${STATUS}" = "SUCCEEDED" ]; then
-              echo "Apply job succeeded."
-              exit 0
-            elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
-              echo "Apply job failed or was canceled."
-              oci resource-manager job get --job-id "${APPLY_JOB_ID}"
-              exit 1
-            fi
+  #           if [ "${STATUS}" = "SUCCEEDED" ]; then
+  #             echo "Apply job succeeded."
+  #             exit 0
+  #           elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
+  #             echo "Apply job failed or was canceled."
+  #             oci resource-manager job get --job-id "${APPLY_JOB_ID}"
+  #             exit 1
+  #           fi
 
-            sleep 10
-          done
+  #           sleep 10
+  #         done
 
-          echo "Timed out waiting for apply job."
-          exit 1
+  #         echo "Timed out waiting for apply job."
+  #         exit 1
