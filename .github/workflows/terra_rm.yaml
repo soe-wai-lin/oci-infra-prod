@@ -130,6 +130,7 @@ jobs:
         run: |
           printf '%s' "${{ steps.create_plan.outputs.plan_job_id }}" > plan_job_id.txt
           test -s plan_job_id.txt
+          cat plan_job_id.txt
           echo "Saved plan job id to artifact file."
 
       
