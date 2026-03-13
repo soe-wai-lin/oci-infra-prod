@@ -176,14 +176,13 @@ jobs:
           set -euo pipefail
 
           STACK_ID="${{ github.event.inputs.stack_id }}"
-          # PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
+          PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
           UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
             --stack-id "${STACK_ID}" \
             --execution-plan-strategy FROM_PLAN_JOB_ID \
-            # --execution-plan-job-id "${PLAN_JOB_ID}" \
-            --execution-plan-job-id "${{ needs.plan.outputs.plan_job_id }}" \
+            --execution-plan-job-id "${PLAN_JOB_ID}" \
             --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
             --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
