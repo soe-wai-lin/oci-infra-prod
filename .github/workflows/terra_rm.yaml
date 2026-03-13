@@ -15,7 +15,7 @@ on:
       environment_name:
         description: "GitHub Environment name used for manual approval"
         required: false
-        default: "oci-apply"
+        default: "prod-oci-infra-apply"
         type: string
 
 permissions:
@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   plan:
-    name: Create OCI RM Plan
+    name: Create PROD OCI Infra Resource Manager Plan
     runs-on: ubuntu-latest
     ## We can use Job level output to carry different job level, but if this output include sensitive datas like secrets,
     ## Cannot carry this output to different job. That's why in this case, use upload "plan_job_id" in Plan Job , and 
@@ -148,7 +148,7 @@ jobs:
 
 
   apply:
-    name: Manual approval and OCI RM Apply
+    name: Manual approval and PROD Infra OCI Resource Manager Apply
     runs-on: ubuntu-latest
     needs: plan
 
