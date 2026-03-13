@@ -57,7 +57,7 @@ jobs:
           region=${OCI_REGION}
           fingerprint=${OCI_FINGERPRINT}
           pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
-          key_file=$f{HOME}/.oci/oci_api_key.pem
+          key_file=${HOME}/.oci/oci_api_key.pem
           EOF
 
           chmod 600 ~/.oci/config
