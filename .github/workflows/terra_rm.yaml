@@ -125,6 +125,23 @@ jobs:
           echo "Timed out waiting for plan job."
           exit 1
 
+      - name: Save plan job id to file
+        shell: bash
+        run: |
+          printf '%s' "${{ steps.create_plan.outputs.plan_job_id }}" > plan_job_id.txt
+          test -s plan_job_id.txt
+          echo "Saved plan job id to artifact file."
+
+      
+      - name: Upload plan job id artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plan-job-id
+          path: plan_job_id.txt
+
+
+
+
   apply:
     name: Manual approval and OCI RM Apply
     runs-on: ubuntu-latest
@@ -169,6 +186,20 @@ jobs:
 
           chmod 600 ~/.oci/config
 
+      - name: Download plan job id artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plan-job-id
+
+      - name: Read plan job id
+        id: read_plan_id
+        shell: bash
+        run: |
+          PLAN_JOB_ID="$(cat plan_job_id.txt)"
+          echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
+          echo "Downloaded PLAN_JOB_ID=[${PLAN_JOB_ID}]"
+          test -n "${PLAN_JOB_ID}"
+
       - name: Create apply job from approved plan
         id: create_apply
         shell: bash
@@ -176,7 +207,7 @@ jobs:
           set -euo pipefail
 
           STACK_ID="${{ github.event.inputs.stack_id }}"
-          PLAN_JOB_ID="${{ needs.plan.outputs.plan_job_id }}"
+          PLAN_JOB_ID="${{ steps.read_plan_id.outputs.plan_job_id }}"
           UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
