@@ -30,13 +30,25 @@ output "vcn_name" {
   value = oci_core_vcn.terra_vcn.display_name
 }
 
-output "alert_name" {
-  value = oci_ons_notification_topic.network_alert_topic.name
-}
+# output "postgres_db_system_id" {
+#   value = oci_psql_db_system.postgresql.id
+# }
 
-output "alert_mail" {
-  value = oci_ons_subscription.email_subscription.endpoint
-}
+# output "postgres_db_system_state" {
+#   value = oci_psql_db_system.postgresql.state
+# }
+
+# output "postgres_admin_username" {
+#   value = oci_psql_db_system.postgresql.admin_username
+# }
+
+# output "alert_name" {
+#   value = oci_ons_notification_topic.network_alert_topic.name
+# }
+
+# output "alert_mail" {
+#   value = oci_ons_subscription.email_subscription.endpoint
+# }
 
 output "nat_reserved_ip" {
   value = oci_core_public_ip.nat_reserved_ip.ip_address
