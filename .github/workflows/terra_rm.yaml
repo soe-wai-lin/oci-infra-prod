@@ -57,8 +57,10 @@ jobs:
           region=${OCI_REGION}
           fingerprint=${OCI_FINGERPRINT}
           pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
-          key_file=~/.oci/oci_api_key.pem
+          key_file=$f{HOME}/.oci/oci_api_key.pem
           EOF
+
+          chmod 600 ~/.oci/config
 
 
           # # Optional passphrase if your key is encrypted
@@ -160,8 +162,10 @@ jobs:
           region=${OCI_REGION}
           fingerprint=${OCI_FINGERPRINT}
           pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
-          key_file=~/.oci/oci_api_key.pem
+          key_file=${HOME}/.oci/oci_api_key.pem
           EOF
+
+          chmod 600 ~/.oci/config
 
   #         if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
   #           echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
