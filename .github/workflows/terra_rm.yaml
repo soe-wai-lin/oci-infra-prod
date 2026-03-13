@@ -92,11 +92,6 @@ jobs:
           echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
           echo "Created plan job: ${PLAN_JOB_ID}"
 
-      
-      - name: Debug plan output
-        shell: bash
-        run: |
-          echo "steps.create_plan.outputs.plan_job_id=[${{ steps.create_plan.outputs.plan_job_id }}]
 
 
       - name: Wait for plan job result
