@@ -125,6 +125,52 @@ jobs:
           echo "Timed out waiting for plan job."
           exit 1
 
+      
+      - name: Download Terraform plan JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLAN_JOB_ID="$(cat plan_job_id.txt)"
+
+          # OCI notes job files may appear a moment after completion
+          sleep 2
+
+          oci resource-manager job get-job-tf-plan \
+            --job-id "${PLAN_JOB_ID}" \
+            --file tfplan.json \
+            --tf-plan-format JSON
+
+          test -s tfplan.json
+
+      
+      - name: Write plan summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLAN_JOB_ID="$(cat plan_job_id.txt)"
+          STACK_ID="${{ github.event.inputs.stack_id }}"
+
+          {
+            echo "## OCI Resource Manager Plan Review"
+            echo ""
+            echo "- **Stack ID:** \`${STACK_ID}\`"
+            echo "- **Plan Job ID:** \`${PLAN_JOB_ID}\`"
+            echo ""
+            echo "### Terraform Plan JSON Preview"
+            echo ""
+            echo "<details><summary>Click to expand preview</summary>"
+            echo ""
+            echo '```json'
+            head -c 12000 tfplan.json
+            echo ""
+            echo '```'
+            echo ""
+            echo "</details>"
+            echo ""
+            echo "> Review the uploaded artifact **terraform-plan-json** before approving apply."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+
       - name: Save plan job id to file
         shell: bash
         run: |
