@@ -38,3 +38,6 @@ output "alert_mail" {
   value = oci_ons_subscription.email_subscription.endpoint
 }
 
+output "nat_reserved_ip" {
+  value = oci_core_public_ip.nat_reserved_ip.ip_address
+}
