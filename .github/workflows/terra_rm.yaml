@@ -159,6 +159,7 @@ jobs:
           tenancy=${OCI_TENANCY_OCID}
           region=${OCI_REGION}
           fingerprint=${OCI_FINGERPRINT}
+          pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
           key_file=~/.oci/oci_api_key.pem
           EOF
 
