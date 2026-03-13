@@ -92,6 +92,13 @@ jobs:
           echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
           echo "Created plan job: ${PLAN_JOB_ID}"
 
+      
+      - name: Debug plan output
+        shell: bash
+        run: |
+          echo "steps.create_plan.outputs.plan_job_id=[${{ steps.create_plan.outputs.plan_job_id }}]
+
+
       - name: Wait for plan job result
         shell: bash
         run: |
@@ -167,9 +174,11 @@ jobs:
 
           chmod 600 ~/.oci/config
 
-  #         if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE}" ]; then
-  #           echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
-  #         fi
+      - name: Debug incoming plan job id
+        shell: bash
+        run: |
+          echo "needs.plan.outputs.plan_job_id=[${{ needs.plan.outputs.plan_job_id }}]"
+
 
       - name: Create apply job from approved plan
         id: create_apply
