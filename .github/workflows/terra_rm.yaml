@@ -12,11 +12,11 @@ on:
         required: false
         default: false
         type: boolean
-      environment_name:
-        description: "GitHub Environment name used for manual approval"
-        required: false
-        default: "oci-apply"
-        type: string
+      # environment_name:
+      #   description: "GitHub Environment name used for manual approval"
+      #   required: false
+      #   default: "oci-apply"
+      #   type: string
 
 permissions:
   contents: read
@@ -130,8 +130,8 @@ jobs:
 
     # This environment must be created in GitHub repo settings
     # and configured with Required reviewers for manual approval.
-    environment:
-      name: ${{ github.event.inputs.environment_name }}
+    # environment:
+    #   name: ${{ github.event.inputs.environment_name }}
 
     steps:
       - name: Install OCI CLI
