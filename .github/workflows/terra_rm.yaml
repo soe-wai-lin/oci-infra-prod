@@ -25,8 +25,12 @@ jobs:
   plan:
     name: Create OCI RM Plan
     runs-on: ubuntu-latest
-    outputs:
-      plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}
+    ## We can use Job level output to carry different job level, but if this output include sensitive datas like secrets,
+    ## Cannot carry this output to different job. That's why in this case, use upload "plan_job_id" in Plan Job , and 
+    ## download "plan_job_id" from Apply Job.cancel-timeout-minutes: 
+
+    # outputs:
+    #   plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}   
 
     steps:
       - name: Install OCI CLI
@@ -126,52 +130,7 @@ jobs:
           echo "Timed out waiting for plan job."
           exit 1
 
-      
-      # - name: Download Terraform plan JSON
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
-      #     PLAN_JOB_ID="$(cat plan_job_id.txt)"
-
-      #     # OCI notes job files may appear a moment after completion
-      #     sleep 2
-
-      #     oci resource-manager job get-job-tf-plan \
-      #       --job-id "${PLAN_JOB_ID}" \
-      #       --file tfplan.json \
-      #       --tf-plan-format JSON
-
-      #     test -s tfplan.json
-
-      
-      # - name: Write plan summary
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
-      #     PLAN_JOB_ID="$(cat plan_job_id.txt)"
-      #     STACK_ID="${{ github.event.inputs.stack_id }}"
-
-      #     {
-      #       echo "## OCI Resource Manager Plan Review"
-      #       echo ""
-      #       echo "- **Stack ID:** \`${STACK_ID}\`"
-      #       echo "- **Plan Job ID:** \`${PLAN_JOB_ID}\`"
-      #       echo ""
-      #       echo "### Terraform Plan JSON Preview"
-      #       echo ""
-      #       echo "<details><summary>Click to expand preview</summary>"
-      #       echo ""
-      #       echo '```json'
-      #       head -c 12000 tfplan.json
-      #       echo ""
-      #       echo '```'
-      #       echo ""
-      #       echo "</details>"
-      #       echo ""
-      #       echo "> Review the uploaded artifact **terraform-plan-json** before approving apply."
-      #     } >> "$GITHUB_STEP_SUMMARY"
-
-
+    
       - name: Save plan job id to file
         shell: bash
         run: |
@@ -181,13 +140,11 @@ jobs:
           echo "Saved plan job id to artifact file."
 
       
-      - name: Upload plan job id artifact
+      - name: Upload plan job id artifact      ## upload "plan-job-id" for easy to call from Apply Job ##
         uses: actions/upload-artifact@v7.0.0
         with:
           name: plan-job-id
           path: plan_job_id.txt
-
-
 
 
   apply:
