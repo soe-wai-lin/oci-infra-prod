@@ -12,11 +12,11 @@ on:
         required: false
         default: false
         type: boolean
-      # environment_name:
-      #   description: "GitHub Environment name used for manual approval"
-      #   required: false
-      #   default: "oci-apply"
-      #   type: string
+      environment_name:
+        description: "GitHub Environment name used for manual approval"
+        required: false
+        default: "oci-apply"
+        type: string
 
 permissions:
   contents: read
@@ -91,7 +91,7 @@ jobs:
 
           echo "plan_job_id=${PLAN_JOB_ID}" >> "$GITHUB_OUTPUT"
           echo "Created plan job: ${PLAN_JOB_ID}"
-          printf '%s' "${PLAN_JOB_ID}" > plan_job_id.txt
+          # printf '%s' "${PLAN_JOB_ID}" > plan_job_id.txt
 
 
 
@@ -127,49 +127,49 @@ jobs:
           exit 1
 
       
-      - name: Download Terraform plan JSON
-        shell: bash
-        run: |
-          set -euo pipefail
-          PLAN_JOB_ID="$(cat plan_job_id.txt)"
+      # - name: Download Terraform plan JSON
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     PLAN_JOB_ID="$(cat plan_job_id.txt)"
 
-          # OCI notes job files may appear a moment after completion
-          sleep 2
+      #     # OCI notes job files may appear a moment after completion
+      #     sleep 2
 
-          oci resource-manager job get-job-tf-plan \
-            --job-id "${PLAN_JOB_ID}" \
-            --file tfplan.json \
-            --tf-plan-format JSON
+      #     oci resource-manager job get-job-tf-plan \
+      #       --job-id "${PLAN_JOB_ID}" \
+      #       --file tfplan.json \
+      #       --tf-plan-format JSON
 
-          test -s tfplan.json
+      #     test -s tfplan.json
 
       
-      - name: Write plan summary
-        shell: bash
-        run: |
-          set -euo pipefail
-          PLAN_JOB_ID="$(cat plan_job_id.txt)"
-          STACK_ID="${{ github.event.inputs.stack_id }}"
+      # - name: Write plan summary
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     PLAN_JOB_ID="$(cat plan_job_id.txt)"
+      #     STACK_ID="${{ github.event.inputs.stack_id }}"
 
-          {
-            echo "## OCI Resource Manager Plan Review"
-            echo ""
-            echo "- **Stack ID:** \`${STACK_ID}\`"
-            echo "- **Plan Job ID:** \`${PLAN_JOB_ID}\`"
-            echo ""
-            echo "### Terraform Plan JSON Preview"
-            echo ""
-            echo "<details><summary>Click to expand preview</summary>"
-            echo ""
-            echo '```json'
-            head -c 12000 tfplan.json
-            echo ""
-            echo '```'
-            echo ""
-            echo "</details>"
-            echo ""
-            echo "> Review the uploaded artifact **terraform-plan-json** before approving apply."
-          } >> "$GITHUB_STEP_SUMMARY"
+      #     {
+      #       echo "## OCI Resource Manager Plan Review"
+      #       echo ""
+      #       echo "- **Stack ID:** \`${STACK_ID}\`"
+      #       echo "- **Plan Job ID:** \`${PLAN_JOB_ID}\`"
+      #       echo ""
+      #       echo "### Terraform Plan JSON Preview"
+      #       echo ""
+      #       echo "<details><summary>Click to expand preview</summary>"
+      #       echo ""
+      #       echo '```json'
+      #       head -c 12000 tfplan.json
+      #       echo ""
+      #       echo '```'
+      #       echo ""
+      #       echo "</details>"
+      #       echo ""
+      #       echo "> Review the uploaded artifact **terraform-plan-json** before approving apply."
+      #     } >> "$GITHUB_STEP_SUMMARY"
 
 
       - name: Save plan job id to file
@@ -197,8 +197,8 @@ jobs:
 
     # This environment must be created in GitHub repo settings
     # and configured with Required reviewers for manual approval.
-    # environment:
-    #   name: ${{ github.event.inputs.environment_name }}
+    environment:
+      name: ${{ github.event.inputs.environment_name }}
 
     steps:
       - name: Install OCI CLI
