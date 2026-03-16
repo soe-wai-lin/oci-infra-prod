@@ -94,6 +94,7 @@ resource "oci_core_subnet" "db_sub" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
+  security_list_ids = [oci_core_security_list.redis_security_list.id]
 
   #Optional
   cidr_block    = var.db_cidr_block
@@ -164,6 +165,31 @@ resource "oci_core_security_list" "ssh_security_list" {
     destination = "0.0.0.0/0"
     description = "Allow all egress"
   }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "redis_security_list" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = var.redis_all_db_sl
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.80.0/24"
+    description = "allow 6379 from db subnet"
+    tcp_options {
+      min = 6379
+      max = 6379
+    }
+  }
+
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
 
   freeform_tags = var.freeform_tags
 
@@ -590,6 +616,30 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress" {
   }
 }
 
+resource "oci_core_network_security_group" "nsg_prod_redis" {
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = var.nsg_redis
+}
+
+# INGRESS: 5432 from anywhere
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = "10.10.32.0/20"
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from web_worker"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+
 ## Creating IGW and NAT Gateway##
 
 resource "oci_core_internet_gateway" "igw" {
@@ -609,6 +659,11 @@ resource "oci_core_public_ip" "nat_reserved_ip" {
   compartment_id = oci_identity_compartment.net_compartment.id
   lifetime       = "RESERVED"
 
+lifecycle {
+    ignore_changes = [private_ip_id]
+  }
+
+
   display_name = "${var.vcn_display_name}-nat-reserved-ip"
   freeform_tags = var.freeform_tags
 }
@@ -616,6 +671,11 @@ resource "oci_core_public_ip" "nat_reserved_ip" {
 resource "oci_core_public_ip" "lb_reserved_ip" {
   compartment_id = oci_identity_compartment.net_compartment.id
   lifetime       = "RESERVED"
+
+lifecycle {
+    ignore_changes = [private_ip_id]
+  }
+
 
   display_name = "${var.vcn_display_name}-lb-reserved-ip"
   freeform_tags = var.freeform_tags

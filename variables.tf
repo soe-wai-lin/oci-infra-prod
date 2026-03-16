@@ -100,9 +100,18 @@ variable "nsg_bastion" {
   default = "NSG-PROD-BASTION"
 }
 
+variable "nsg_redis" {
+  default = "NSG-PROD-REDIS"
+}
+
 variable "alert_email" {
   default = "wailin.s@trinitywizards.com"
 }
+
+variable "redis_all_db_sl" {
+  default = "redis-security-list"
+}
+
 
 variable "tenancy_ocid" {
   description = "Tenancy OCID (needed to query Availability Domains)."
@@ -117,13 +126,6 @@ variable "ssh_public_key" {
 }
 
 
-
-# variable "common_freeform_tags" {
-#   type = map(string)
-#   default = {
-#     Env = "Prod"
-#   }
-# }
 
 variable "net_comp" {
   default = "prod-net-comp"
@@ -147,7 +149,7 @@ variable "service_gateway_display_name" {
 
 
 ###################################
-### Database Variable 
+### Database Variable           ###
 ###################################
 
 variable "db_display_name" {
@@ -229,46 +231,13 @@ variable "availability_domain" {
   default     = "aluk:AP-SINGAPORE-1-AD-1" ## null
 }
 
-# variable "user_ocid" {
-#   type        = string
-#   description = "OCI user OCID"
-# }
-
-# variable "fingerprint" {
-#   type        = string
-#   description = "API key fingerprint"
-# }
-
-# variable "private_key_path" {
-#   type        = string
-#   description = "Path to OCI API private key"
-# }
-
-
-# variable "subnet_ocid" {
-#   type        = string
-#   description = "Existing private subnet OCID for the PostgreSQL DB system"
-# }
-
-# variable "allowed_cidr" {
-#   type        = string
-#   description = "CIDR block allowed to connect to PostgreSQL on port 5432"
-#   default     = "10.0.0.0/16"
-# }
-
-# variable "storage_iops" {
-#   type        = number
-#   description = "Provisioned IOPS if applicable"
-#   default     = null
-# }
 
 
 
 
-
-#################################
-# For Instances
-#################################
+################################
+###      For Instances       ###
+################################
 
 variable "ad_index" {
   description = "Which AD index to use (0 = first AD)."
@@ -317,7 +286,7 @@ variable "career_vm" {
 }
 
 ##################################
-### Loadbalancer Variable
+### Loadbalancer Variable      ###
 ##################################
 
 
@@ -377,4 +346,186 @@ variable "healthcheck_port" {
   type    = number
   default = 80
 }
+
+###################
+## Redis Cluster ##
+###################
+
+variable "redis_display_name" {
+  description = "Display name for the Redis cluster."
+  type        = string
+  default = "prod-redis"
+}
+
+
+variable "software_version" {
+  description = "OCI Cache engine version, for example REDIS_7_0."
+  type        = string
+  default     = "REDIS_7_0"
+}
+
+variable "cluster_mode" {
+  description = "Cluster mode: NONSHARDED or SHARDED."
+  type        = string
+  default     = "NONSHARDED"
+
+  validation {
+    condition     = contains(["NONSHARDED", "SHARDED"], var.cluster_mode)
+    error_message = "cluster_mode must be either NONSHARDED or SHARDED."
+  }
+}
+
+variable "node_count" {
+  description = "For NONSHARDED this is total nodes; for SHARDED this is nodes per shard."
+  type        = number
+  default     = 1
+}
+
+variable "node_memory_in_gbs" {
+  description = "Memory allocated per node in GB."
+  type        = number
+  default     = 2
+}
+
+variable "shard_count" {
+  description = "Number of shards when cluster_mode is SHARDED."
+  type        = number
+  default     = 3
+}
+
+variable "oci_cache_config_set_id" {
+  description = "Optional OCI Cache Config Set OCID."
+  type        = string
+  default     = null
+}
+
+###############
+##  Buckets  ##
+###############
+
+variable "bucket_name" {
+  description = "Name of the Object Storage bucket."
+  type        = string
+  default = "prod_bucket"
+}
+
+variable "access_type" {
+  description = "Bucket public access type: NoPublicAccess, ObjectRead, or ObjectReadWithoutList."
+  type        = string
+  default     = "NoPublicAccess"
+
+  validation {
+    condition     = contains(["NoPublicAccess", "ObjectRead", "ObjectReadWithoutList"], var.access_type)
+    error_message = "access_type must be one of: NoPublicAccess, ObjectRead, ObjectReadWithoutList."
+  }
+}
+
+variable "storage_tier" {
+  description = "Bucket storage tier: Standard or Archive."
+  type        = string
+  default     = "Standard"
+
+  validation {
+    condition     = contains(["Standard", "Archive"], var.storage_tier)
+    error_message = "storage_tier must be either Standard or Archive."
+  }
+}
+
+variable "auto_tiering" {
+  description = "Auto tiering setting. Common values are Disabled or InfrequentAccess."
+  type        = string
+  default     = "Disabled"
+}
+
+variable "versioning" {
+  description = "Enable object versioning on the bucket: Enabled or Disabled."
+  type        = string
+  default     = "Enabled"
+
+  validation {
+    condition     = contains(["Enabled", "Disabled"], var.versioning)
+    error_message = "versioning must be either Enabled or Disabled."
+  }
+}
+
+variable "object_events_enabled" {
+  description = "Whether Object Storage events are enabled for the bucket."
+  type        = bool
+  default     = false
+}
+
+variable "kms_key_id" {
+  description = "Optional KMS key OCID for bucket encryption."
+  type        = string
+  default     = null
+}
+
+variable "metadata" {
+  description = "Optional bucket metadata map."
+  type        = map(string)
+  default     = {}
+}
+
+###############
+###  Vault  ###
+###############
+
+
+# variable "vault_name" {
+#   description = "Display name of the OCI KMS vault."
+#   type        = string
+#   default = "prod_vault"
+# }
+
+# variable "vault_type" {
+#   description = "Vault type to create. DEFAULT is the standard OCI vault type."
+#   type        = string
+#   default     = "VIRTUAL_PRIVATE"
+# }
+
+# variable "secret_name" {
+#   description = "Name of the secret."
+#   type        = string
+#   default = "db_cred"
+# }
+
+# variable "secret_value" {
+#   description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
+#   type        = map(string)
+#   sensitive   = false
+#   default = {
+#     "username" = "user01"
+#     "password" = "pa55w0rd"
+#   }
+# }
+
+# variable "secret_version_name" {
+#   description = "Optional name for the secret version."
+#   type        = string
+#   default     = null
+# }
+
+# variable "secret_stage" {
+#   description = "Optional stage for the secret version, such as CURRENT or PENDING."
+#   type        = string
+#   default     = null
+# }
+
+# variable "rotation_interval_in_days" {
+#   default = 7
+#   description = "Key Rotation Day"
+#   type = number
+# }
+
+# variable "time_of_schedule_start" {
+#   default = "2026-03-20T00:00:00Z"
+#   description = "Key Rotation Start Schedule"
+# }
+
+
+
+
+
+
+
 

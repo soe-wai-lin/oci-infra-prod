@@ -22,34 +22,177 @@ output "vcn_id" {
   value = oci_core_vcn.terra_vcn.id
 }
 
-output "compartment_id" {
-  value = var.compartment_id
+output "net_compartment_id" {
+  value = oci_identity_compartment.net_compartment.id
+  description = "net_compartment_id"
+}
+
+output "app_compartment_id" {
+  value = oci_identity_compartment.app_compartment.id
+  description = "app_compartment_id"
+}
+
+output "db_compartment_id" {
+  value = oci_identity_compartment.db_compartment.id
+  description = "db_compartment_id"
 }
 
 output "vcn_name" {
   value = oci_core_vcn.terra_vcn.display_name
 }
 
-# output "postgres_db_system_id" {
-#   value = oci_psql_db_system.postgresql.id
-# }
 
-# output "postgres_db_system_state" {
-#   value = oci_psql_db_system.postgresql.state
-# }
+##################
+#### Database  ###
 
-# output "postgres_admin_username" {
-#   value = oci_psql_db_system.postgresql.admin_username
-# }
-
-# output "alert_name" {
-#   value = oci_ons_notification_topic.network_alert_topic.name
-# }
-
-# output "alert_mail" {
-#   value = oci_ons_subscription.email_subscription.endpoint
-# }
-
-output "nat_reserved_ip" {
-  value = oci_core_public_ip.nat_reserved_ip.ip_address
+output "postgres_db_system_id" {
+  value = oci_psql_db_system.postgresql.id
 }
+
+output "postgres_db_system_state" {
+  value = oci_psql_db_system.postgresql.state
+}
+
+output "postgres_admin_username" {
+  value = oci_psql_db_system.postgresql.admin_username
+}
+
+output "alert_name" {
+  value = oci_ons_notification_topic.network_alert_topic.name
+}
+
+output "alert_mail" {
+  value = oci_ons_subscription.email_subscription.endpoint
+}
+
+
+####################
+### Redis        ###
+####################
+
+output "redis_cluster_id" {
+  description = "OCID of the Redis cluster."
+  value       = oci_redis_redis_cluster.redis.id
+}
+
+output "redis_cluster_display_name" {
+  description = "Display name of the Redis cluster."
+  value       = data.oci_redis_redis_cluster.redis.display_name
+}
+
+output "redis_cluster_mode" {
+  description = "Redis cluster mode."
+  value       = data.oci_redis_redis_cluster.redis.cluster_mode
+}
+
+output "redis_primary_fqdn" {
+  description = "Primary node FQDN."
+  value       = try(data.oci_redis_redis_cluster.redis.primary_fqdn, null)
+}
+
+output "redis_primary_ip" {
+  description = "Primary node private IP."
+  value       = try(data.oci_redis_redis_cluster.redis.primary_endpoint_ip_address, null)
+}
+
+output "redis_discovery_fqdn" {
+  description = "Discovery FQDN for sharded clusters."
+  value       = try(data.oci_redis_redis_cluster.redis.discovery_fqdn, null)
+}
+
+output "redis_discovery_ip" {
+  description = "Discovery IP for sharded clusters."
+  value       = try(data.oci_redis_redis_cluster.redis.discovery_endpoint_ip_address, null)
+}
+
+output "redis_node_endpoints" {
+  description = "List of per-node private endpoints."
+  value = [
+    for node in try(data.oci_redis_redis_cluster.redis.node_collection[0].items, []) : {
+      display_name                = try(node.display_name, null)
+      private_endpoint_fqdn       = try(node.private_endpoint_fqdn, null)
+      private_endpoint_ip_address = try(node.private_endpoint_ip_address, null)
+    }
+  ]
+}
+
+
+##################
+##  Bucket      ##
+##################
+
+output "namespace" {
+  description = "Object Storage namespace used for the bucket."
+  value       = data.oci_objectstorage_namespace.ns.namespace
+}
+
+output "bucket_name" {
+  description = "Bucket name."
+  value       = oci_objectstorage_bucket.bucket.name
+}
+
+output "bucket_id" {
+  description = "Bucket identifier returned by OCI."
+  value       = data.oci_objectstorage_bucket.bucket.bucket_id
+}
+
+output "bucket_access_type" {
+  description = "Configured public access type."
+  value       = data.oci_objectstorage_bucket.bucket.access_type
+}
+
+output "bucket_storage_tier" {
+  description = "Configured storage tier."
+  value       = data.oci_objectstorage_bucket.bucket.storage_tier
+}
+
+output "bucket_versioning" {
+  description = "Bucket versioning status."
+  value       = data.oci_objectstorage_bucket.bucket.versioning
+}
+
+output "bucket_approximate_size" {
+  description = "Approximate total size in bytes of all objects in the bucket."
+  value       = data.oci_objectstorage_bucket.bucket.approximate_size
+}
+
+##############
+### Vault  ###
+##############
+
+# output "vault_id" {
+#   description = "OCID of the OCI KMS vault."
+#   value       = oci_kms_vault.vault.id
+# }
+
+# output "vault_name" {
+#   description = "Display name of the vault."
+#   value       = data.oci_kms_vault.vault.display_name
+# }
+
+# output "management_endpoint" {
+#   description = "KMS management endpoint for key and vault management operations."
+#   value       = data.oci_kms_vault.vault.management_endpoint
+# }
+
+# output "crypto_endpoint" {
+#   description = "KMS crypto endpoint for encrypt/decrypt operations."
+#   value       = data.oci_kms_vault.vault.crypto_endpoint
+# }
+
+# output "is_primary" {
+#   description = "Whether this vault is the primary vault."
+#   value       = data.oci_kms_vault.vault.is_primary
+# }
+
+
+# output "auto_key_rotation" {
+#   value = try({
+#     last_rotation_message     = data.oci_kms_key.secret_key.auto_key_rotation_details[0].last_rotation_message
+#     last_rotation_status      = data.oci_kms_key.secret_key.auto_key_rotation_details[0].last_rotation_status
+#     rotation_interval_in_days = data.oci_kms_key.secret_key.auto_key_rotation_details[0].rotation_interval_in_days
+#     time_of_last_rotation     = data.oci_kms_key.secret_key.auto_key_rotation_details[0].time_of_last_rotation
+#     time_of_next_rotation     = data.oci_kms_key.secret_key.auto_key_rotation_details[0].time_of_next_rotation
+#     time_of_schedule_start    = data.oci_kms_key.secret_key.auto_key_rotation_details[0].time_of_schedule_start
+#   }, null)
+# }
