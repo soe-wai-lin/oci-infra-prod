@@ -273,42 +273,8 @@ jobs:
           --all \
           --output json > rm_outputs.json
 
-          echo "Debug: top-level keys"
-          jq 'keys' rm_outputs.json || true
-
-          echo "Debug: .data type"
-          jq -r '.data | type' rm_outputs.json || true
-
-          echo "Debug: inner types"
-          jq -r '.data[] | type' rm_outputs.json || true
-
-
-          WEB_TO_DB_TEST_ID=$(jq -r '
-            first(
-              .data
-                ..
-                objects
-                select(.name == "web_to_db_npa_test_id") 
-                .value 
-            ) // empty
-          ' rm_outputs.json)
-
-          NET_COMPARTMENT_ID=$(jq -r '
-            first(
-              .data
-                ..
-                objects
-                select(.name == "net_compartment_id") 
-                .value 
-            ) // empty
-          ' rm_outputs.json)
-          echo "Resolved WEB_TO_DB_TEST_ID=${WEB_TO_DB_TEST_ID}"
-          o "Resolved NET_COMPARTMENT_ID=${NET_COMPARTMENT_ID}"
-
- 
-
-          # WEB_TO_DB_TEST_ID=$(jq -r '.data[] | select(.name == "web_to_db_npa_test_id") | .value' rm_outputs.json)
-          # NET_COMPARTMENT_ID=$(jq -r '.data[] | select(.name == "net_compartment_id") | .value' rm_outputs.json)
+          WEB_TO_DB_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          NET_COMPARTMENT_ID=$(jq -r '.data.items[] | select(."output-name"=="net_compartment_id") | ."output-value"' rm_outputs.json)
 
           if [ -z "${WEB_TO_DB_TEST_ID}" ] || [ "${WEB_TO_DB_TEST_ID}" = "null" ]; then
             echo "ERROR: output web_to_db_npa_test_id not found"
