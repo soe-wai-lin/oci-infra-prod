@@ -273,7 +273,9 @@ jobs:
           --all \
           --output json > rm_outputs.json
 
-          
+          echo "Debug: top-level keys"
+          jq 'keys' rm_outputs.json || true
+
           echo "Debug: .data type"
           jq -r '.data | type' rm_outputs.json || true
 
@@ -283,28 +285,42 @@ jobs:
 
           WEB_TO_DB_TEST_ID=$(jq -r '
             first(
-              .data[] 
-                if type == "array" then .[] else . end | select(.name == "web_to_db_npa_test_id") |.value ) // empty' rm_outputs.json)
+              .data
+                ..
+                objects
+                select(.name == "web_to_db_npa_test_id") 
+                .value 
+            ) // empty
+          ' rm_outputs.json)
 
           NET_COMPARTMENT_ID=$(jq -r '
             first(
-              .data[] 
-                if type == "array" then .[] else . end | select(.name == "net_compartment_id") |.value ) // empty' rm_outputs.json)
+              .data
+                ..
+                objects
+                select(.name == "net_compartment_id") 
+                .value 
+            ) // empty
+          ' rm_outputs.json)
+          echo "Resolved WEB_TO_DB_TEST_ID=${WEB_TO_DB_TEST_ID}"
+          o "Resolved NET_COMPARTMENT_ID=${NET_COMPARTMENT_ID}"
 
  
 
           # WEB_TO_DB_TEST_ID=$(jq -r '.data[] | select(.name == "web_to_db_npa_test_id") | .value' rm_outputs.json)
           # NET_COMPARTMENT_ID=$(jq -r '.data[] | select(.name == "net_compartment_id") | .value' rm_outputs.json)
 
-          # if [ -z "${WEB_TO_DB_TEST_ID}" ] || [ "${WEB_TO_DB_TEST_ID}" = "null" ]; then
-          #   echo "ERROR: output web_to_db_npa_test_id not found"
-          #   exit 1
-          # fi
+          if [ -z "${WEB_TO_DB_TEST_ID}" ] || [ "${WEB_TO_DB_TEST_ID}" = "null" ]; then
+            echo "ERROR: output web_to_db_npa_test_id not found"
+            jq '.' rm_outputs.json || cat rm_outputs.json
+            exit 1
+          fi
 
-          # if [ -z "${NET_COMPARTMENT_ID}" ] || [ "${NET_COMPARTMENT_ID}" = "null" ]; then
-          #   echo "ERROR: output net_compartment_id not found"
-          #   exit 1
-          # fi
+          if [ -z "${NET_COMPARTMENT_ID}" ] || [ "${NET_COMPARTMENT_ID}" = "null" ]; then
+            echo "ERROR: output net_compartment_id not found"
+            jq '.' rm_outputs.json || cat rm_outputs.json
+            exit 1
+          fi
 
           echo "web_to_db_test_id=${WEB_TO_DB_TEST_ID}" >> "$GITHUB_OUTPUT"
 
