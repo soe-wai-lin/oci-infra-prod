@@ -311,21 +311,15 @@ jobs:
             --max-wait-seconds 900 \
             --output json > path_run.json
 
-          oci vn-monitoring work-request list --help
-
-          oci vn-monitoring work-request-result --help
-
-
-
           
-          # WR_ID=$(oci vn-monitoring work-request list \
-          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
-          #   --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
-          #   # --sort-by timeAccepted \
-          #   # --sort-order DESC \
-          #   # --all \
-          #   --query 'data.items[0].status' \
-          #   --raw-output)
+          WR_ID=$(oci vn-monitoring work-request list \
+            --compartment-id "${OCI_COMPARTMENT_OCID}" \
+            # --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
+            --sort-by timeAccepted \
+            --sort-order DESC \
+            --limit 1 \
+            --query 'data.items[0].id' \
+            --raw-output)
 
           
           # if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
@@ -335,10 +329,10 @@ jobs:
           
           # echo "Work request ID: ${WR_ID}"
 
-          # WR_STATUS=$(oci vn-monitoring work-request get \
-          #   --work-request-id "${WR_ID}" \
-          #   --query 'data.status' \
-          #   --raw-output)
+          WR_STATUS=$(oci vn-monitoring work-request get \
+            --work-request-id "${WR_ID}" \
+            --query 'data.status' \
+            --raw-output)
 
           # echo "Work request status: ${WR_STATUS}"
 
@@ -355,16 +349,15 @@ jobs:
 
 
 
-          # oci vn-monitoring work-request-result list \
-          #   --work-request-id "${WR_ID}"\
-          #   --all \
-          #   --result-type PATH_ANALYSIS \
-          #   --output json > path_result.json
+          oci vn-monitoring work-request-result list \
+            --work-request-id "${WR_ID}"\
+            --all \
+            --result-type PATH_ANALYSIS \
+            --output json > path_result.json
 
           # echo "Reachability statuses:"
           
-          # jq -r '.. | .reachabilityStatus? // empty' path_result.json | sort -u
-
+          grep reachability path_result.json
 
           # if jq -e '
           #   [.. | .reachabilityStatus? // empty] as $s
