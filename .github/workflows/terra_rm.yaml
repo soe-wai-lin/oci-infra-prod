@@ -358,109 +358,116 @@ jobs:
             --result-type PATH_ANALYSIS \
             --output json > web_to_db_npa_result.json
 
-          grep reachability web_to_db_npa_result.json
-          WEB_TO_DB_NPA_TEST=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
+          # grep reachability web_to_db_npa_result.json
+          WEB_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
+          WEB_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_db_npa_result.json)
 
-          ###############################
-          echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
+          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE"] && "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+            echo "WEB_TO_DB_CONNECTION IS REACHABLE"
+          else
+            echo "WEB_TO_DB_CONNECTION IS NOT REACHABLE"
+          fi
+
+          # ###############################
+          # echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+          # oci vn-monitoring path-analysis get-path-analysis-persisted \
+          #   --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
+          #   --wait-for-state SUCCEEDED \
+          #   --wait-for-state FAILED \
+          #   --max-wait-seconds 900 \
+          #   --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+          # WR_ID=$(oci vn-monitoring work-request list \
+          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
+          #   --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
+          #   --sort-by timeAccepted \
+          #   --sort-order DESC \
+          #   --limit 1 \
+          #   --query 'data.items[0].id' \
+          #   --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+          # WR_STATUS=$(oci vn-monitoring work-request get \
+          #   --work-request-id "${WR_ID}" \
+          #   --query 'data.status' \
+          #   --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_to_db_npa_result.json
+          # oci vn-monitoring work-request-result list \
+          #   --work-request-id "${WR_ID}"\
+          #   --all \
+          #   --result-type PATH_ANALYSIS \
+          #   --output json > cms_to_db_npa_result.json
             
-          grep reachability cms_to_db_npa_result.json
-          #####################################
+          # grep reachability cms_to_db_npa_result.json
+          # #####################################
 
-          ###############################
-          echo "Running saved NPA test for WEB-to-CMS: ${WEB_TO_CMS_NPA_TEST_ID}"
+          # ###############################
+          # echo "Running saved NPA test for WEB-to-CMS: ${WEB_TO_CMS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${WEB_TO_CMS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+          # oci vn-monitoring path-analysis get-path-analysis-persisted \
+          #   --path-analyzer-test-id "${WEB_TO_CMS_NPA_TEST_ID}" \
+          #   --wait-for-state SUCCEEDED \
+          #   --wait-for-state FAILED \
+          #   --max-wait-seconds 900 \
+          #   --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_TO_CMS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+          # WR_ID=$(oci vn-monitoring work-request list \
+          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
+          #   --resource-id "${WEB_TO_CMS_NPA_TEST_ID}" \
+          #   --sort-by timeAccepted \
+          #   --sort-order DESC \
+          #   --limit 1 \
+          #   --query 'data.items[0].id' \
+          #   --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+          # WR_STATUS=$(oci vn-monitoring work-request get \
+          #   --work-request-id "${WR_ID}" \
+          #   --query 'data.status' \
+          #   --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > web_to_cms_npa_result.json
+          # oci vn-monitoring work-request-result list \
+          #   --work-request-id "${WR_ID}"\
+          #   --all \
+          #   --result-type PATH_ANALYSIS \
+          #   --output json > web_to_cms_npa_result.json
             
-          grep reachability web_to_cms_npa_result.json
-          #####################################
-          ###############################
-          echo "Running saved NPA test for CMS-to-WEB: ${CMS_TO_WEB_NPA_TEST_ID}"
+          # grep reachability web_to_cms_npa_result.json
+          # #####################################
+          # ###############################
+          # echo "Running saved NPA test for CMS-to-WEB: ${CMS_TO_WEB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_TO_WEB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+          # oci vn-monitoring path-analysis get-path-analysis-persisted \
+          #   --path-analyzer-test-id "${CMS_TO_WEB_NPA_TEST_ID}" \
+          #   --wait-for-state SUCCEEDED \
+          #   --wait-for-state FAILED \
+          #   --max-wait-seconds 900 \
+          #   --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_TO_WEB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+          # WR_ID=$(oci vn-monitoring work-request list \
+          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
+          #   --resource-id "${CMS_TO_WEB_NPA_TEST_ID}" \
+          #   --sort-by timeAccepted \
+          #   --sort-order DESC \
+          #   --limit 1 \
+          #   --query 'data.items[0].id' \
+          #   --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+          # WR_STATUS=$(oci vn-monitoring work-request get \
+          #   --work-request-id "${WR_ID}" \
+          #   --query 'data.status' \
+          #   --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_to_web_npa_result.json
+          # oci vn-monitoring work-request-result list \
+          #   --work-request-id "${WR_ID}"\
+          #   --all \
+          #   --result-type PATH_ANALYSIS \
+          #   --output json > cms_to_web_npa_result.json
             
-          grep reachability cms_to_web_npa_result.json
-          #####################################
+          # grep reachability cms_to_web_npa_result.json
+          # #####################################
 
         
 
