@@ -359,7 +359,7 @@ jobs:
             --output json > web_to_db_npa_result.json
 
           grep reachability web_to_db_npa_result.json
-          WEB_TO_DB_NPA_TEST=$(jq -r '.data.items[*]' web_to_db_npa_result.json)
+          WEB_TO_DB_NPA_TEST=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
 
           ###############################
           echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
