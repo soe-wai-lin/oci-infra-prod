@@ -259,3 +259,67 @@ jobs:
 
           echo "Timed out waiting for apply job."
           exit 1
+
+      - name: Read apply outputs
+        id: get_rm_outputs
+        shell: bash
+        env:
+          APPLY_JOB_ID: ${{ steps.create_apply.outputs.apply_job_id }}
+        run: |
+          set -euo pipefail
+
+          oci resource-manager job-output-summary list-job-outputs \
+          --job-id "${APPLY_JOB_ID}" \
+          --all \
+          --output json > rm_outputs.json
+
+          WEB_TO_DB_TEST_ID=$(jq -r '.data[] | select(.name == "web_to_db_npa_test_id") | .value' rm_outputs.json)
+          NET_COMPARTMENT_ID=$(jq -r '.data[] | select(.name == "net_compartment_id") | .value' rm_outputs.json)
+
+          if [ -z "${WEB_TO_DB_TEST_ID}" ] || [ "${WEB_TO_DB_TEST_ID}" = "null" ]; then
+            echo "ERROR: output web_to_db_npa_test_id not found"
+            exit 1
+          fi
+
+          if [ -z "${NET_COMPARTMENT_ID}" ] || [ "${NET_COMPARTMENT_ID}" = "null" ]; then
+            echo "ERROR: output net_compartment_id not found"
+            exit 1
+          fi
+
+          echo "web_to_db_test_id=${WEB_TO_DB_TEST_ID}" >> "$GITHUB_OUTPUT"
+
+          echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
+
+          echo "OCI_COMPARTMENT_OCID=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
+
+      - name: Run web-to-db subnet connectivity check
+        shell: bash
+        env:
+          WEB_TO_DB_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_test_id }}
+          OCI_COMPARTMENT_OCID: ${{ steps.get_rm_outputs.outputs.net_compartment_id }}
+        run: |
+          set -euo pipefail
+
+          echo "Running saved NPA test: ${WEB_TO_DB_TEST_ID}"
+          
+
+          oci vn-monitoring path-analysis get-path-analysis-persisted \
+            --path-analyzer-test-id "${WEB_TO_DB_TEST_ID}" \
+            --wait-for-state SUCCEEDED \
+            --wait-for-state FAILED \
+            --max-wait-seconds 900 \
+            --output json > path_run.json
+
+          
+          WR_ID=$(oci vn-monitoring work-request list \
+            --compartment-id "${OCI_COMPARTMENT_OCID}" \
+            --resource-id "${WEB_TO_DB_TEST_ID}" \
+            --sort-by timeAccepted \
+            --sort-order DESC \
+            --limit 1 \
+            --query 'data[0].id' \
+            --raw-output)
+
+          echo "Work request ID: ${WR_ID}"
+
+          
