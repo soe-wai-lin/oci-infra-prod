@@ -203,12 +203,19 @@ output "vcn_name" {
 ##################################
 
 
-# output "web_to_db_subnet_connectivity" {
-#   description = "Saved NPA test OCID for web-to-db subnet connectivity"
-#   value       = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
-# }
-
 output "web_to_db_npa_test_id" {
   value = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
+}
+
+output "cms_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_to_db_subnet_connectivity.id
+}
+
+output "web_to_cms_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.web_to_cms_subnet_connectivity.id
+}
+
+output "cms_to_web_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_to_web_subnet_connectivity.id
 }
 
