@@ -317,7 +317,7 @@ jobs:
             --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
             # --sort-by timeAccepted \
             # --sort-order DESC \
-            --all \
+            # --all \
             --query 'data.items[0].status' \
             --raw-output)
 
