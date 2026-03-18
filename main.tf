@@ -22,7 +22,7 @@ resource "oci_core_subnet" "lb_subnet" {
   # Public subnet behavior
   prohibit_public_ip_on_vnic = false
   security_list_ids = [
-    oci_core_security_list.ssh_security_list.id
+    oci_core_security_list.pub_lb_SL.id
   ]
   route_table_id = oci_core_route_table.public_rt.id
 
@@ -36,6 +36,7 @@ resource "oci_core_subnet" "cms_worker_sub" {
   #Optional
   cidr_block    = var.cms_worker_sub_cidr
   display_name  = "${var.vcn_display_name}-cms-worker-sub"
+  security_list_ids = [oci_core_security_list.cms_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -52,6 +53,7 @@ resource "oci_core_subnet" "web_worker_sub" {
   #Optional
   cidr_block    = var.web_worker_sub_cidr
   display_name  = "${var.vcn_display_name}-web-worker-sub"
+  security_list_ids = [oci_core_security_list.web_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -68,6 +70,7 @@ resource "oci_core_subnet" "airs_micro_oke_sub" {
   #Optional
   cidr_block    = var.airs_micro_oke_cidr_block
   display_name  = "${var.vcn_display_name}-airs-micro-sub"
+  security_list_ids = [oci_core_security_list.airs_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -83,6 +86,7 @@ resource "oci_core_subnet" "career_vm_sub" {
   #Optional
   cidr_block    = var.carrer_vm_cidr_block
   display_name  = "${var.vcn_display_name}-career-vm-sub"
+  security_list_ids = [oci_core_security_list.career_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -94,7 +98,10 @@ resource "oci_core_subnet" "db_sub" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  security_list_ids = [oci_core_security_list.redis_security_list.id]
+  security_list_ids = [
+    oci_core_security_list.redis_SL.id,
+    oci_core_security_list.db_SL.id
+  ]
 
   #Optional
   cidr_block    = var.db_cidr_block
@@ -114,6 +121,7 @@ resource "oci_core_subnet" "pub_api_gw_sub" {
   #Optional
   cidr_block    = var.pub_api_gw_cidr_block
   display_name  = "${var.vcn_display_name}-pub-api-gw-sub"
+  security_list_ids = [oci_core_security_list.api_gw_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -129,6 +137,7 @@ resource "oci_core_subnet" "priv_lb_sub" {
   #Optional
   cidr_block    = var.priv_lb_cidr_block
   display_name  = "${var.vcn_display_name}-priv-lb-sub"
+  security_list_ids = [oci_core_security_list.priv_lb_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -136,13 +145,15 @@ resource "oci_core_subnet" "priv_lb_sub" {
   # route_table_id = oci_core_route_table.private_rt.id
 }
 
+############################
 ## Creating Security List ## 
+############################
 
-resource "oci_core_security_list" "ssh_security_list" {
+resource "oci_core_security_list" "ssh_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "all_allow_ssh_ingress"
+  display_name   = "${var.vcn_display_name}-ssh-SL"
   ingress_security_rules {
     protocol    = "6"
     source      = "0.0.0.0/0"
@@ -170,11 +181,11 @@ resource "oci_core_security_list" "ssh_security_list" {
 
 }
 
-resource "oci_core_security_list" "redis_security_list" {
+resource "oci_core_security_list" "redis_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = var.redis_all_db_sl
+  display_name   = "${var.vcn_display_name}-redis-SL"
   ingress_security_rules {
     protocol    = "6"
     source      = "10.10.80.0/24"
@@ -190,6 +201,246 @@ resource "oci_core_security_list" "redis_security_list" {
   #   destination = "0.0.0.0/0"
   #   description = "Allow all egress"
   # }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "web_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-web-SL"
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow all cms to web"
+  }
+
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.0.0/24"
+    description = "allow 80 lb to web"
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+
+  ingress_security_rules {
+    protocol    = "1" # ICMP
+    source      = "0.0.0.0/0"
+    description = "Allow ICMP from cms to web"
+  }
+
+
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "cms_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-cms-SL"
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow all web to cms"
+  }
+
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.0.0/24"
+    description = "allow 80 lb to cms"
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+
+  ingress_security_rules {
+    protocol    = "1" # ICMP
+    source      = "0.0.0.0/0"
+    description = "Allow ICMP web to cms"
+  }
+
+
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+# locals {
+#   cms-web-ingress-db = {
+#     cms = { cidr = oci_core_subnet.cms_worker_sub.cidr_block, port = 3306 }
+#     web = { cidr = oci_core_subnet.web_worker_sub.cidr_block, port = 3306 }
+#   }
+# }
+
+resource "oci_core_security_list" "db_SL" {
+  #Required
+  # for_each = local.cms-web-ingress-db
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-db-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = each.value.cidr
+  #   description = "allow_${each.key}_to_db"
+  #   tcp_options {
+  #     min = each.value.port
+  #     max = each.value.port
+  #   }
+  # }
+
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.16.0/20"
+    description = "allow_from_cms_to_db"
+    tcp_options {
+      min = 3306
+      max = 3306
+    }
+  }
+
+    ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.32.0/20"
+    description = "allow_web_to_db"
+    tcp_options {
+      min = 3306
+      max = 3306
+    }
+  }
+
+  ingress_security_rules {
+    protocol    = "1" # ICMP
+    source      = "0.0.0.0/0"
+    description = "Allow ICMP from web to cms"
+  }
+
+
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "airs_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-airs-SL"
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "10.10.0.0/24"
+    description = "allow 80 lb to airs"
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "career_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-career-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  # }
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "pub_lb_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-pub-lb-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  # }
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "priv_lb_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-priv-lb-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow"
+  # }
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "api_gw_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-api-gw-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  # }
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all egress"
+  }
 
   freeform_tags = var.freeform_tags
 
@@ -376,12 +627,12 @@ resource "oci_core_network_security_group" "nsg_prod_web" {
 
 locals {
   nsg_lb_ingress_target = {
-    http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
-    https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
+    lb_http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
+    lb_https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
   }
 }
 
-# INGRESS: 80 from anywhere
+# INGRESS: 80 , 443  from PROD_LB
 resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress" {
   for_each                  = local.nsg_lb_ingress_target
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
@@ -399,6 +650,24 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress" 
     }
   }
 }
+
+# # INGRESS: all  from PROD_CMS
+# resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_from_cms" {
+#   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
+#   direction                 = "INGRESS"
+#   protocol                  = "6"
+#   source                    = "0.0.0.0/0"
+#   source_type               = "CIDR_BLOCK"
+#   description               = "Allow allow from NSG-PROD-CMS"
+
+#   # Optional: Restrict to ping only (echo request = type 8)
+#   # tcp_options {
+#   #   destination_port_range {
+#   #     min = each.value.port
+#   #     max = each.value.port
+#   #   }
+#   # }
+# }
 
 # EGRESS: Allow all
 resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress" {
