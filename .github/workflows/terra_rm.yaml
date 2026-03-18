@@ -311,15 +311,21 @@ jobs:
             --max-wait-seconds 900 \
             --output json > path_run.json
 
+          oci vn-monitoring work-request list --help
+
+          oci vn-monitoring work-request-result --help
+
+
+
           
-          WR_STATUS=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
-            # --sort-by timeAccepted \
-            # --sort-order DESC \
-            # --all \
-            --query 'data.items[0].status' \
-            --raw-output)
+          # WR_ID=$(oci vn-monitoring work-request list \
+          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
+          #   --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
+          #   # --sort-by timeAccepted \
+          #   # --sort-order DESC \
+          #   # --all \
+          #   --query 'data.items[0].status' \
+          #   --raw-output)
 
           
           # if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
@@ -337,15 +343,15 @@ jobs:
           # echo "Work request status: ${WR_STATUS}"
 
 
-          if [ "${WR_STATUS}" != "SUCCEEDED" ]; then
-            echo "ERROR: Unreachable";
-          else
-            echo "Reachable"
-            # oci vn-monitoring work-request-error list \
-            #   --work-request-id "${WR_ID}" \
-            #   --output json || true
-            # exit 1
-          fi
+          # if [ "${WR_STATUS}" != "SUCCEEDED" ]; then
+          #   echo "ERROR: Unreachable";
+          # else
+          #   echo "Reachable"
+          #   # oci vn-monitoring work-request-error list \
+          #   #   --work-request-id "${WR_ID}" \
+          #   #   --output json || true
+          #   # exit 1
+          # fi
 
 
 
