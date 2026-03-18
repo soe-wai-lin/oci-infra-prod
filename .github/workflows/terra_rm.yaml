@@ -295,7 +295,7 @@ jobs:
       - name: Run web-to-db subnet connectivity check
         shell: bash
         env:
-          WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_test_id }}
+          WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_npa.test_id }}
           OCI_COMPARTMENT_OCID: ${{ steps.get_rm_outputs.outputs.net_compartment_id }}
         run: |
           set -euo pipefail
