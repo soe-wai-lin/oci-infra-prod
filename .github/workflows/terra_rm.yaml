@@ -361,6 +361,10 @@ jobs:
           # grep reachability web_to_db_npa_result.json
           WEB_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
           WEB_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_db_npa_result.json)
+          
+          echo "${WEB_TO_DB_FW_Route_NPA}"
+          echo "${WEB_TO_DB_RT_Route_NPA}"
+
 
           if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE"] && "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_TO_DB_CONNECTION IS REACHABLE"
