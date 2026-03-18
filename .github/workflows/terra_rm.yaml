@@ -316,8 +316,8 @@ jobs:
             --compartment-id "${OCI_COMPARTMENT_OCID}" \
             --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
             # --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
+            # --sort-order DESC \
+            --all \
             --query 'data.items[0].status' \
             --raw-output)
 
