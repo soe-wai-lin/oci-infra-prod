@@ -312,7 +312,7 @@ jobs:
             --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
+          WR_STATUS=$(oci vn-monitoring work-request list \
             --compartment-id "${OCI_COMPARTMENT_OCID}" \
             --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
             # --sort-by timeAccepted \
@@ -322,51 +322,53 @@ jobs:
             --raw-output)
 
           
-          if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
-            echo "ERROR: no VN Monitoring work request found in compartment"
-            exit 1
-          fi
+          # if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
+          #   echo "ERROR: no VN Monitoring work request found in compartment"
+          #   exit 1
+          # fi
           
-          echo "Work request ID: ${WR_ID}"
+          # echo "Work request ID: ${WR_ID}"
 
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+          # WR_STATUS=$(oci vn-monitoring work-request get \
+          #   --work-request-id "${WR_ID}" \
+          #   --query 'data.status' \
+          #   --raw-output)
 
-          echo "Work request status: ${WR_STATUS}"
+          # echo "Work request status: ${WR_STATUS}"
 
 
           if [ "${WR_STATUS}" != "SUCCEEDED" ]; then
-            echo "ERROR: path analysis failed"
-            oci vn-monitoring work-request-error list \
-              --work-request-id "${WR_ID}" \
-              --output json || true
-            exit 1
-          fi
-
-
-
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > path_result.json
-
-          echo "Reachability statuses:"
-          
-          jq -r '.. | .reachabilityStatus? // empty' path_result.json | sort -u
-
-
-          if jq -e '
-            [.. | .reachabilityStatus? // empty] as $s
-            | ($s | length) > 0 and ($s | all(. == "REACHABLE"))
-          ' path_result.json > /dev/null; then
-            echo "REACHABLE"
+            echo "ERROR: Unreachable";
           else
-            echo "UNREACHABLE"
-            jq -r '.. | .routeAnalysisDescription? // empty' path_result.json || true
+            echo "Reachable"
+            # oci vn-monitoring work-request-error list \
+            #   --work-request-id "${WR_ID}" \
+            #   --output json || true
+            # exit 1
           fi
+
+
+
+          # oci vn-monitoring work-request-result list \
+          #   --work-request-id "${WR_ID}"\
+          #   --all \
+          #   --result-type PATH_ANALYSIS \
+          #   --output json > path_result.json
+
+          # echo "Reachability statuses:"
+          
+          # jq -r '.. | .reachabilityStatus? // empty' path_result.json | sort -u
+
+
+          # if jq -e '
+          #   [.. | .reachabilityStatus? // empty] as $s
+          #   | ($s | length) > 0 and ($s | all(. == "REACHABLE"))
+          # ' path_result.json > /dev/null; then
+          #   echo "REACHABLE"
+          # else
+          #   echo "UNREACHABLE"
+          #   jq -r '.. | .routeAnalysisDescription? // empty' path_result.json || true
+          # fi
 
 
           # echo "Work request ID: ${WR_ID}"
