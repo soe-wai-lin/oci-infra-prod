@@ -306,11 +306,11 @@ jobs:
 
           echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "web_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          echo "cms_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "web_to_db_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          echo "web_to_cms_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "web_to_db_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          echo "cms_to_web_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
           echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
 
