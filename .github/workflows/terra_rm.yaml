@@ -320,6 +320,53 @@ jobs:
             --query 'data[0].id' \
             --raw-output)
 
-          echo "Work request ID: ${WR_ID}"
+          
+          if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
+            echo "ERROR: no work request found for this NPA test"
+            exit 1
+          fi
+          
+
+          WR_STATUS=$(oci vn-monitoring work-request get \
+            --work-request-id "${WR_ID}" \
+            --query 'data.status' \
+            --raw-output)
+
+          echo "Work request status: ${WR_STATUS}"
+
+
+          if [ "${WR_STATUS}" != "SUCCEEDED" ]; then
+            echo "ERROR: path analysis failed"
+            oci vn-monitoring work-request-error list \
+              --work-request-id "${WR_ID}" \
+              --output json || true
+            exit 1
+          fi
+
+
+
+          oci vn-monitoring work-request-result list \
+            --work-request-id "${WR_ID}"\
+            --all \
+            --result-type PATH_ANALYSIS \
+            --output json > path_result.json
+
+          echo "Reachability statuses:"
+          
+          jq -r '.. | .reachabilityStatus? // empty' path_result.json | sort -u
+
+
+          if jq -e '
+            [.. | .reachabilityStatus? // empty] as $s
+            | ($s | length) > 0 and ($s | all(. == "REACHABLE"))
+          ' path_result.json > /dev/null; then
+            echo "REACHABLE"
+          else
+            echo "UNREACHABLE"
+            jq -r '.. | .routeAnalysisDescription? // empty' path_result.json || true
+          fi
+
+
+          # echo "Work request ID: ${WR_ID}"
 
 

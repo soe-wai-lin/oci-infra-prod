@@ -574,7 +574,7 @@ variable "db_destination_ip" {
 variable "db_destination_port" {
   description = "Destination port for TCP/UDP analysis."
   type        = number
-  default     = 3307
+  default     = 3306
 }
 
 variable "cms_destination_port" {
