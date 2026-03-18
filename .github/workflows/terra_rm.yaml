@@ -316,7 +316,7 @@ jobs:
 
           echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
 
-      - name: Run web-to-db subnet connectivity check
+      - name: Subnet Connectivity Check
         # shell: bash
         env:
           WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_npa_test_id }}
@@ -359,7 +359,7 @@ jobs:
             --output json > web_to_db_npa_result.json
 
           grep reachability web_to_db_npa_result.json
-          WEB_TO_DB_NPA_TEST=$(jq -r '.data.items[*].path[*].forward-route.reachability-status' web_to_db_npa_result.json)
+          WEB_TO_DB_NPA_TEST=$(jq -r '.data.items[*]' web_to_db_npa_result.json)
 
           ###############################
           echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
