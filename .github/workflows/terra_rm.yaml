@@ -358,7 +358,6 @@ jobs:
             --result-type PATH_ANALYSIS \
             --output json > web_to_db_npa_result.json
 
-          # grep reachability web_to_db_npa_result.json
           WEB_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
           WEB_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_db_npa_result.json)
           
@@ -366,112 +365,145 @@ jobs:
           echo "${WEB_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE"] && "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE"] && ["${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_TO_DB_CONNECTION IS REACHABLE"
           else
             echo "WEB_TO_DB_CONNECTION IS NOT REACHABLE"
           fi
 
-          # ###############################
-          # echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
+          ###############################
+          echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
           
-          # oci vn-monitoring path-analysis get-path-analysis-persisted \
-          #   --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
-          #   --wait-for-state SUCCEEDED \
-          #   --wait-for-state FAILED \
-          #   --max-wait-seconds 900 \
-          #   --output json > path_run.json
+          oci vn-monitoring path-analysis get-path-analysis-persisted \
+            --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
+            --wait-for-state SUCCEEDED \
+            --wait-for-state FAILED \
+            --max-wait-seconds 900 \
+            --output json > path_run.json
 
           
-          # WR_ID=$(oci vn-monitoring work-request list \
-          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
-          #   --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
-          #   --sort-by timeAccepted \
-          #   --sort-order DESC \
-          #   --limit 1 \
-          #   --query 'data.items[0].id' \
-          #   --raw-output)
+          WR_ID=$(oci vn-monitoring work-request list \
+            --compartment-id "${OCI_COMPARTMENT_OCID}" \
+            --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
+            --sort-by timeAccepted \
+            --sort-order DESC \
+            --limit 1 \
+            --query 'data.items[0].id' \
+            --raw-output)
         
-          # WR_STATUS=$(oci vn-monitoring work-request get \
-          #   --work-request-id "${WR_ID}" \
-          #   --query 'data.status' \
-          #   --raw-output)
+          WR_STATUS=$(oci vn-monitoring work-request get \
+            --work-request-id "${WR_ID}" \
+            --query 'data.status' \
+            --raw-output)
 
-          # oci vn-monitoring work-request-result list \
-          #   --work-request-id "${WR_ID}"\
-          #   --all \
-          #   --result-type PATH_ANALYSIS \
-          #   --output json > cms_to_db_npa_result.json
+          oci vn-monitoring work-request-result list \
+            --work-request-id "${WR_ID}"\
+            --all \
+            --result-type PATH_ANALYSIS \
+            --output json > cms_to_db_npa_result.json
             
-          # grep reachability cms_to_db_npa_result.json
-          # #####################################
-
-          # ###############################
-          # echo "Running saved NPA test for WEB-to-CMS: ${WEB_TO_CMS_NPA_TEST_ID}"
+          CMS_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_db_npa_result.json)
+          CMS_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_db_npa_result.json)
           
-          # oci vn-monitoring path-analysis get-path-analysis-persisted \
-          #   --path-analyzer-test-id "${WEB_TO_CMS_NPA_TEST_ID}" \
-          #   --wait-for-state SUCCEEDED \
-          #   --wait-for-state FAILED \
-          #   --max-wait-seconds 900 \
-          #   --output json > path_run.json
+          echo "${CMS_TO_DB_FW_Route_NPA}"
+          echo "${CMS_TO_DB_RT_Route_NPA}"
+
+
+          if [ "${CMS_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+            echo "CMS_TO_DB_CONNECTION IS REACHABLE"
+          else
+            echo "CMS_TO_DB_CONNECTION IS NOT REACHABLE"
+          fi
+          #####################################
+
+          ###############################
+          echo "Running NPA test for WEB-to-CMS: ${WEB_TO_CMS_NPA_TEST_ID}"
+          
+          oci vn-monitoring path-analysis get-path-analysis-persisted \
+            --path-analyzer-test-id "${WEB_TO_CMS_NPA_TEST_ID}" \
+            --wait-for-state SUCCEEDED \
+            --wait-for-state FAILED \
+            --max-wait-seconds 900 \
+            --output json > path_run.json
 
           
-          # WR_ID=$(oci vn-monitoring work-request list \
-          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
-          #   --resource-id "${WEB_TO_CMS_NPA_TEST_ID}" \
-          #   --sort-by timeAccepted \
-          #   --sort-order DESC \
-          #   --limit 1 \
-          #   --query 'data.items[0].id' \
-          #   --raw-output)
+          WR_ID=$(oci vn-monitoring work-request list \
+            --compartment-id "${OCI_COMPARTMENT_OCID}" \
+            --resource-id "${WEB_TO_CMS_NPA_TEST_ID}" \
+            --sort-by timeAccepted \
+            --sort-order DESC \
+            --limit 1 \
+            --query 'data.items[0].id' \
+            --raw-output)
         
-          # WR_STATUS=$(oci vn-monitoring work-request get \
-          #   --work-request-id "${WR_ID}" \
-          #   --query 'data.status' \
-          #   --raw-output)
+          WR_STATUS=$(oci vn-monitoring work-request get \
+            --work-request-id "${WR_ID}" \
+            --query 'data.status' \
+            --raw-output)
 
-          # oci vn-monitoring work-request-result list \
-          #   --work-request-id "${WR_ID}"\
-          #   --all \
-          #   --result-type PATH_ANALYSIS \
-          #   --output json > web_to_cms_npa_result.json
+          oci vn-monitoring work-request-result list \
+            --work-request-id "${WR_ID}"\
+            --all \
+            --result-type PATH_ANALYSIS \
+            --output json > web_to_cms_npa_result.json
             
-          # grep reachability web_to_cms_npa_result.json
-          # #####################################
-          # ###############################
-          # echo "Running saved NPA test for CMS-to-WEB: ${CMS_TO_WEB_NPA_TEST_ID}"
+          WEB_TO_CMS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_cms_npa_result.json)
+          WEB_TO_CMS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_cms_npa_result.json)
           
-          # oci vn-monitoring path-analysis get-path-analysis-persisted \
-          #   --path-analyzer-test-id "${CMS_TO_WEB_NPA_TEST_ID}" \
-          #   --wait-for-state SUCCEEDED \
-          #   --wait-for-state FAILED \
-          #   --max-wait-seconds 900 \
-          #   --output json > path_run.json
+          echo "${WEB_TO_CMS_FW_Route_NPA}"
+          echo "${WEB_TO_CMS_RT_Route_NPA}"
+
+
+          if [ "${WEB_TO_CMS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_CMS_RT_Route_NPA}"  = "REACHABLE" ]; then
+            echo "WEB_TO_CMS_CONNECTION IS REACHABLE"
+          else
+            echo "WEB_TO_CMS_CONNECTION IS NOT REACHABLE"
+          fi
+          #####################################
+          ###############################
+          echo "Running NPA test for CMS-to-WEB: ${CMS_TO_WEB_NPA_TEST_ID}"
+          
+          oci vn-monitoring path-analysis get-path-analysis-persisted \
+            --path-analyzer-test-id "${CMS_TO_WEB_NPA_TEST_ID}" \
+            --wait-for-state SUCCEEDED \
+            --wait-for-state FAILED \
+            --max-wait-seconds 900 \
+            --output json > path_run.json
 
           
-          # WR_ID=$(oci vn-monitoring work-request list \
-          #   --compartment-id "${OCI_COMPARTMENT_OCID}" \
-          #   --resource-id "${CMS_TO_WEB_NPA_TEST_ID}" \
-          #   --sort-by timeAccepted \
-          #   --sort-order DESC \
-          #   --limit 1 \
-          #   --query 'data.items[0].id' \
-          #   --raw-output)
+          WR_ID=$(oci vn-monitoring work-request list \
+            --compartment-id "${OCI_COMPARTMENT_OCID}" \
+            --resource-id "${CMS_TO_WEB_NPA_TEST_ID}" \
+            --sort-by timeAccepted \
+            --sort-order DESC \
+            --limit 1 \
+            --query 'data.items[0].id' \
+            --raw-output)
         
-          # WR_STATUS=$(oci vn-monitoring work-request get \
-          #   --work-request-id "${WR_ID}" \
-          #   --query 'data.status' \
-          #   --raw-output)
+          WR_STATUS=$(oci vn-monitoring work-request get \
+            --work-request-id "${WR_ID}" \
+            --query 'data.status' \
+            --raw-output)
 
-          # oci vn-monitoring work-request-result list \
-          #   --work-request-id "${WR_ID}"\
-          #   --all \
-          #   --result-type PATH_ANALYSIS \
-          #   --output json > cms_to_web_npa_result.json
+          oci vn-monitoring work-request-result list \
+            --work-request-id "${WR_ID}"\
+            --all \
+            --result-type PATH_ANALYSIS \
+            --output json > cms_to_web_npa_result.json
             
-          # grep reachability cms_to_web_npa_result.json
-          # #####################################
+          CMS_TO_WEB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_web_npa_result.json)
+          CMS_TO_WEB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_web_npa_result.json)
+          
+          echo "${CMS_TO_WEB_FW_Route_NPA}"
+          echo "${CMS_TO_WEB_RT_Route_NPA}"
+
+
+          if [ "${CMS_TO_WEB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_WEB_RT_Route_NPA}"  = "REACHABLE" ]; then
+            echo "CMS_TO_WEB_CONNECTION IS REACHABLE"
+          else
+            echo "CMS_TO_WEB_CONNECTION IS NOT REACHABLE"
+          fi
+          #####################################
 
         
 
