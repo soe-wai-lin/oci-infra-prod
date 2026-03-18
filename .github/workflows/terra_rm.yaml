@@ -297,6 +297,7 @@ jobs:
         env:
           WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_npa_test_id }}
           OCI_COMPARTMENT_OCID: ${{ steps.get_rm_outputs.outputs.net_compartment_id }}
+          SUPPRESS_LABEL_WARNING: "True"
         run: |
           set -euo pipefail
 
@@ -313,7 +314,7 @@ jobs:
           
           WR_ID=$(oci vn-monitoring work-request list \
             --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
+            # --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
             --sort-by timeAccepted \
             --sort-order DESC \
             --limit 1 \
@@ -322,10 +323,11 @@ jobs:
 
           
           if [ -z "${WR_ID}" ] || [ "${WR_ID}" = "null" ]; then
-            echo "ERROR: no work request found for this NPA test"
+            echo "ERROR: no VN Monitoring work request found in compartment"
             exit 1
           fi
           
+          echo "Work request ID: ${WR_ID}"
 
           WR_STATUS=$(oci vn-monitoring work-request get \
             --work-request-id "${WR_ID}" \
