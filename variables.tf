@@ -8,7 +8,7 @@ variable "region" {
 }
 
 variable "compartment_id" {
-  default = "ocid1.compartment.oc1..aaaaaaaafmd3eynylajhayrhegk6typot73nexdgkj7iksc3374pcv3zb45q"
+  default     = "ocid1.compartment.oc1..aaaaaaaafmd3eynylajhayrhegk6typot73nexdgkj7iksc3374pcv3zb45q"
   description = "mgmt compartment"
 }
 
@@ -68,6 +68,18 @@ variable "priv_lb_cidr_block" {
   default = "10.10.55.0/24"
 }
 
+variable "web_worker_pod_cidr_block" {
+  default = "10.10.112.0/20"
+}
+
+variable "cms_worker_pod_cidr_block" {
+  default = "10.10.128.0/20"
+}
+
+variable "k8s_priv_api_endpoint_cidr_block" {
+  default = "10.10.60.0/24"
+}
+
 variable "nsg_lb" {
   default = "NSG-PROD-LB"
 }
@@ -102,6 +114,14 @@ variable "nsg_bastion" {
 
 variable "nsg_redis" {
   default = "NSG-PROD-REDIS"
+}
+
+variable "nsg_k8s_api_endpoint" {
+  default = "NSG-PROD-K8S_API_ENDPOINTS"
+}
+
+variable "nsg_web_pod" {
+  default = "NSG-PROD-WEB-POD"
 }
 
 variable "alert_email" {
@@ -543,38 +563,38 @@ variable "protocol" {
 variable "cms_source_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
-  default = "10.10.16.10"
+  default     = "10.10.16.10"
 }
 
 variable "cms_destination_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
-  default = "10.10.16.10"
+  default     = "10.10.16.10"
 }
 
 variable "web_source_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
-  default = "10.10.32.10"
+  default     = "10.10.32.10"
 }
 
 variable "web_destination_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
-  default = "10.10.32.10"
+  default     = "10.10.32.10"
 }
 
 
 variable "db_destination_ip" {
   description = "Destination IPv4 address inside the destination subnet CIDR. It does not need to be active."
   type        = string
-  default = "10.10.80.30"
+  default     = "10.10.80.30"
 }
 
 variable "db_destination_port" {
   description = "Destination port for TCP/UDP analysis."
   type        = number
-  default     = 3307
+  default     = 3306
 }
 
 variable "cms_destination_port" {
@@ -602,6 +622,348 @@ variable "is_bi_directional_analysis" {
 }
 
 
+############################
+# Bastion host variables
+############################
+
+
+variable "bastion_ad_index" {
+  description = "Which AD index to use (0 = first AD)."
+  type        = number
+  default     = 0
+}
+
+
+# variable "bastion_image_id" {
+#   description = "Image OCID for the bastion host (for example Oracle Linux image OCID)."
+#   type        = string
+# }
+
+variable "bastion_ssh_public_keys" {
+  description = "One or more OpenSSH public keys that can log in to the bastion host. Separate keys with newlines."
+  type        = string
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMMNtwjmuKJ2sZgOm6hFTD0Vu2LVyR9ac72w5uyiRe8U swl@swl"
+}
+
+variable "bastion_image_operating_system" {
+  default = "Oracle Linux"
+  type    = string
+}
+
+variable "bastion_image_operating_system_version" {
+  default = "9"
+  type    = string
+}
+
+variable "bastion_node_source_image_id" {
+  default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
+}
+
+variable "bastion_instance_shape" {
+  description = "Compute shape for the bastion host."
+  type        = string
+  default     = "VM.Standard.E4.Flex"
+}
+
+variable "bastion_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "bastion_shape_is_flex" {
+  description = "Set to true when using a Flex shape for the bastion host."
+  type        = bool
+  default     = true
+}
+
+variable "bastion_shape_ocpus" {
+  description = "OCPUs for bastion Flex shape."
+  type        = number
+  default     = 1
+}
+
+variable "bastion_shape_memory_in_gbs" {
+  description = "Memory in GB for bastion Flex shape."
+  type        = number
+  default     = 8
+}
+
+variable "bastion_boot_volume_size_in_gbs" {
+  description = "Boot volume size for the bastion host."
+  type        = number
+  default     = 50
+}
+
+##############################
+### OKE cluster variables  ###
+##############################
+
+#########################################
+# Optional pod networking (VCN-native)  #
+#########################################
+
+variable "cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+# variable "pods_cidr" {
+#   description = "Kubernetes pod CIDR. For flannel this is the overlay CIDR. For VCN-native this setting can still be provided at cluster level if desired."
+#   type        = string
+#   default     = "10.244.0.0/16"
+# }
+
+variable "services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+
+variable "worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#####################
+# Cluster settings  #
+#####################
+
+variable "cluster_name" {
+  description = "OKE cluster name."
+  type        = string
+  default     = "prod-test-cluster"
+}
+
+variable "node_image_id" {
+  default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
+  description = "Need to compatitable with node shape,oke cluster version"
+}
+
+variable "kubernetes_version" {
+  description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
+  type        = string
+  default     = "v1.34.2"
+}
+
+variable "cluster_type" {
+  description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
+  type        = string
+  default     = "ENHANCED_CLUSTER"
+
+  validation {
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.cluster_type)
+    error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
+  }
+}
+
+# variable "availability_domain_names" {
+#   description = "Optional explicit AD names to pin for placement configs. Leave empty to auto-discover the region's ADs."
+#   type        = list(string)
+#   default     = []
+# }
+
+##############################
+# SSH / node instance extras #
+##############################
+
+variable "oke_ssh_public_key" {
+  description = "SSH public key injected into OKE worker nodes."
+  type        = string
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMMNtwjmuKJ2sZgOm6hFTD0Vu2LVyR9ac72w5uyiRe8U swl@swl"
+}
+
+# variable "node_metadata" {
+#   description = "Optional metadata to pass to the worker node instances."
+#   type        = map(string)
+#   default     = {}
+# }
+
+#####################
+# System node pool  #
+#####################
+
+variable "system_node_pool_name" {
+  description = "Name of the system node pool."
+  type        = string
+  default     = "system-pool"
+}
+
+variable "system_node_count" {
+  description = "Desired number of nodes in the system node pool."
+  type        = number
+  default     = 1
+}
+
+variable "system_node_shape" {
+  description = "Compute shape for the system node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+# variable "system_node_shape_config" {
+#   description = "Optional flex shape config for the system node pool. Set to null for fixed shapes."
+#   type = object({
+#     ocpus         = number
+#     memory_in_gbs = number
+#   })
+#   default = {
+#     ocpus         = 2
+#     memory_in_gbs = 16
+#   }
+# }
+
+variable "system_memory_in_gbs" {
+  default = 16
+}
+
+variable "system_ocpus" {
+  default = 2
+}
+
+# variable "system_node_boot_volume_size_in_gbs" {
+#   description = "Boot volume size for system nodes. OCI documents a minimum of 50 GB for node source details."
+#   type        = number
+#   default     = 100
+# }
+
+# variable "system_node_os_type" {
+#   description = "OS type used to discover compatible OKE node images for the system node pool."
+#   type        = string
+#   default     = "OL8"
+# }
+
+# variable "system_node_os_arch" {
+#   description = "OS architecture used to discover compatible OKE node images for the system node pool."
+#   type        = string
+#   default     = "X86_64"
+# }
+
+# variable "system_node_image_name_regex" {
+#   description = "Regex used to select a compatible OKE node image from the OCI node pool options data source."
+#   type        = string
+#   default     = "Oracle-Linux-.*-OKE-.*"
+# }
+
+
+# variable "system_node_image_id_override" {
+#   description = "Explicit image OCID for the system node pool. If set, it overrides auto-discovery."
+#   type        = string
+#   default     = null
+# }
+
+
+# variable "system_node_labels" {
+#   description = "Kubernetes node labels to apply to all system pool nodes."
+#   type        = map(string)
+#   default = {
+#     "node-role.oraclecloud.com/system" = "true"
+#     "workload-type"                    = "system"
+#   }
+# }
+
+variable "system_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+#####################
+# Worker node pool  #
+#####################
+
+variable "worker_node_pool_name" {
+  description = "Name of the worker node pool."
+  type        = string
+  default     = "worker-pool"
+}
+
+variable "worker_node_count" {
+  description = "Desired number of nodes in the worker node pool."
+  type        = number
+  default     = 1
+}
+
+variable "worker_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "worker_node_shape" {
+  description = "Compute shape for the worker node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "worker_memory_in_gbs" {
+  default = "16"
+}
+
+variable "worker_ocpus" {
+  default = "2"
+}
+
+
+
+############################
+# Rolling update behaviors #
+############################
+
+variable "node_eviction_grace_duration" {
+  description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+  type        = string
+  default     = "PT60M"
+}
+
+variable "node_force_action_after_grace_duration" {
+  description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+  type        = bool
+  default     = false
+}
+
+variable "node_force_delete_after_grace_duration" {
+  description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+  type        = bool
+  default     = false
+}
+
+variable "node_cycling_enabled" {
+  description = "Enable node cycling for safer rolling replacement/updates."
+  type        = bool
+  default     = true
+}
+
+variable "node_cycling_maximum_surge" {
+  description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+  type        = string
+  default     = "25%"
+}
+
+variable "node_cycling_maximum_unavailable" {
+  description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+  type        = string
+  default     = "0"
+}
+
+################
+# Tagging      #
+################
+
+
+variable "defined_tags" {
+  description = "Defined tags to apply to the cluster and node pools."
+  type        = map(string)
+  default     = {}
+}
 
 
 

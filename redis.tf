@@ -9,7 +9,7 @@
 #   cluster_mode            = var.cluster_mode
 #   shard_count             = var.cluster_mode == "SHARDED" ? var.shard_count : null
 #   nsg_ids                 = [oci_core_network_security_group.nsg_prod_redis.id]
-  
+
 #   oci_cache_config_set_id = var.oci_cache_config_set_id
 # #   defined_tags            = var.defined_tags
 #   freeform_tags           = var.freeform_tags

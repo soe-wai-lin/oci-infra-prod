@@ -10,7 +10,7 @@
 #   protocol       = "EMAIL"
 #   topic_id       = oci_ons_notification_topic.network_alert_topic.id
 # }
- 
+
 # resource "oci_events_rule" "network_security_change_rule" {
 
 #   compartment_id = oci_identity_compartment.net_compartment.id

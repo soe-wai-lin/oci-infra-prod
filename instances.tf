@@ -43,8 +43,8 @@
 #   availability_domain = local.ad_name
 #   display_name        = var.career_vm
 #   shape               = var.instance_shape
-  
-  
+
+
 
 #   source_details {
 #     source_type = "image"
@@ -62,7 +62,7 @@
 #     subnet_id        = oci_core_subnet.career_vm_sub.id
 #     assign_public_ip = true
 #     nsg_ids = [oci_core_network_security_group.nsg_prod_careers.id]
-    
+
 #   }
 
 #   metadata = {
