@@ -48,8 +48,12 @@ variable "web_worker_sub_cidr" {
   default = "10.10.32.0/20"
 }
 
-variable "airs_micro_oke_cidr_block" {
+variable "airs_micro_oke_worker_cidr_block" {
   default = "10.10.96.0/20"
+}
+
+variable "airs_micro_oke_pod_cidr_block" {
+  default = "10.10.144.0/20"
 }
 
 variable "carrer_vm_cidr_block" {
@@ -85,15 +89,15 @@ variable "nsg_lb" {
 }
 
 variable "nsg_cms" {
-  default = "NSG-PROD-CMS"
+  default = "NSG-PROD-CMS-WORKER"
 }
 
 variable "nsg_web" {
-  default = "NSG-PROD-WEB"
+  default = "NSG-PROD-WEB-WORKER"
 }
 
 variable "nsg_airs" {
-  default = "NSG-PROD-AIRS"
+  default = "NSG-PROD-AIRS-WORKER"
 }
 
 variable "nsg_careers" {
@@ -122,6 +126,14 @@ variable "nsg_k8s_api_endpoint" {
 
 variable "nsg_web_pod" {
   default = "NSG-PROD-WEB-POD"
+}
+
+variable "nsg_cms_pod" {
+  default = "NSG-PROD-CMS-POD"
+}
+
+variable "nsg_airs_pod" {
+  default = "NSG-PROD-AIRS-POD"
 }
 
 variable "alert_email" {
