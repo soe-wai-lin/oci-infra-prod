@@ -1,5 +1,5 @@
 # resource "oci_kms_vault" "vault" {
-#   compartment_id = oci_identity_compartment.app_compartment.id
+#   compartment_id = oci_identity_compartment.mgmt_compartment.id
 #   display_name   = var.vault_name
 #   vault_type     = var.vault_type
 #   freeform_tags = var.freeform_tags
@@ -10,7 +10,7 @@
 # }
 
 # resource "oci_kms_key" "secret_key" {
-#   compartment_id      = oci_identity_compartment.app_compartment.id
+#   compartment_id      = oci_identity_compartment.mgmt_compartment.id
 #   display_name        = "${var.vault_name}-secret-key"
 #   management_endpoint = data.oci_kms_vault.vault.management_endpoint
 # #   protection_mode     = "HSM"
@@ -23,7 +23,7 @@
 
 #  auto_key_rotation_details {
 #     rotation_interval_in_days = 7
-#     time_of_schedule_start    = "2026-03-20T00:00:00Z"
+#     # time_of_schedule_start    = "2026-03-20T00:00:00Z"
 # }
 
 
@@ -37,7 +37,7 @@
 # }
 
 # resource "oci_vault_secret" "secret" {
-#   compartment_id = oci_identity_compartment.app_compartment.id
+#   compartment_id = oci_identity_compartment.mgmt_compartment.id
 #   vault_id       = oci_kms_vault.vault.id
 #   key_id         = oci_kms_key.secret_key.id
 #   secret_name    = var.secret_name

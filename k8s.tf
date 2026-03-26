@@ -1,93 +1,93 @@
 
-# # #########################################
-# # # Data source: region availability domains
-# # # OCI notes that AD list ordering can change, so this module
-# # # allows you to override/pin AD names through a variable.
-# # #########################################
-# # data "oci_identity_availability_domains" "this" {
-# #   compartment_id = oci_identity_compartment.app_compartment.id
-# # }
+# # # #########################################
+# # # # Data source: region availability domains
+# # # # OCI notes that AD list ordering can change, so this module
+# # # # allows you to override/pin AD names through a variable.
+# # # #########################################
+# # # data "oci_identity_availability_domains" "this" {
+# # #   compartment_id = oci_identity_compartment.app_compartment.id
+# # # }
 
-# # #########################################
-# # # Data source: system node pool options
-# # # Retrieves compatible shapes / image sources for the requested
-# # # Kubernetes version, OS type, and architecture.
-# # #########################################
-# # data "oci_containerengine_node_pool_option" "system" {
-# #   depends_on = [ oci_containerengine_cluster.this ]
-# #   node_pool_option_id     = oci_containerengine_cluster.this.id
-# #   compartment_id          = oci_identity_compartment.app_compartment.id
-# #   node_pool_k8s_version   = var.kubernetes_version
-# #   node_pool_os_type       = var.system_node_os_type
-# #   node_pool_os_arch       = var.system_node_os_arch
-# # }
+# # # #########################################
+# # # # Data source: system node pool options
+# # # # Retrieves compatible shapes / image sources for the requested
+# # # # Kubernetes version, OS type, and architecture.
+# # # #########################################
+# # # data "oci_containerengine_node_pool_option" "system" {
+# # #   depends_on = [ oci_containerengine_cluster.this ]
+# # #   node_pool_option_id     = oci_containerengine_cluster.this.id
+# # #   compartment_id          = oci_identity_compartment.app_compartment.id
+# # #   node_pool_k8s_version   = var.kubernetes_version
+# # #   node_pool_os_type       = var.system_node_os_type
+# # #   node_pool_os_arch       = var.system_node_os_arch
+# # # }
 
-# # #########################################
-# # # Data source: worker node pool options
-# # # Retrieves compatible shapes / image sources for the requested
-# # # Kubernetes version, OS type, and architecture.
-# # #########################################
-# # data "oci_containerengine_node_pool_option" "worker" {
-# #   depends_on = [ oci_containerengine_cluster.this ]
-# #   node_pool_option_id     = oci_containerengine_cluster.this.id
-# #   compartment_id          = oci_identity_compartment.app_compartment.id
-# #   node_pool_k8s_version   = var.kubernetes_version
-# #   node_pool_os_type       = var.worker_node_os_type
-# #   node_pool_os_arch       = var.worker_node_os_arch
-# # }
-
-
-
-# # locals {
-# #   discovered_ad_names = sort([
-# #     for ad in data.oci_identity_availability_domains.this.availability_domains : ad.name
-# #   ])
-
-# #   ad_names = length(var.availability_domain_names) > 0 ? var.availability_domain_names : local.discovered_ad_names
-
-# #   auto_system_image_candidates = [
-# #     for s in data.oci_containerengine_node_pool_option.system.sources : s
-# #     if s.source_type == "IMAGE" && length(regexall(var.system_node_image_name_regex, s.source_name)) > 0
-# #   ]
-
-# #   auto_worker_image_candidates = [
-# #     for s in data.oci_containerengine_node_pool_option.worker.sources : s
-# #     if s.source_type == "IMAGE" && length(regexall(var.worker_node_image_name_regex, s.source_name)) > 0
-# #   ]
-
-# #   auto_system_image_id   = try(local.auto_system_image_candidates[0].image_id, null)
-# #   auto_system_image_name = try(local.auto_system_image_candidates[0].source_name, null)
-
-# #   auto_worker_image_id   = try(local.auto_worker_image_candidates[0].image_id, null)
-# #   auto_worker_image_name = try(local.auto_worker_image_candidates[0].source_name, null)
-
-# #   system_image_id   = var.system_node_image_id_override != null ? var.system_node_image_id_override : local.auto_system_image_id
-# #   system_image_name = local.auto_system_image_name
-
-# #   worker_image_id   = var.worker_node_image_id_override != null ? var.worker_node_image_id_override : local.auto_worker_image_id
-# #   worker_image_name = local.auto_worker_image_name
-# # }
+# # # #########################################
+# # # # Data source: worker node pool options
+# # # # Retrieves compatible shapes / image sources for the requested
+# # # # Kubernetes version, OS type, and architecture.
+# # # #########################################
+# # # data "oci_containerengine_node_pool_option" "worker" {
+# # #   depends_on = [ oci_containerengine_cluster.this ]
+# # #   node_pool_option_id     = oci_containerengine_cluster.this.id
+# # #   compartment_id          = oci_identity_compartment.app_compartment.id
+# # #   node_pool_k8s_version   = var.kubernetes_version
+# # #   node_pool_os_type       = var.worker_node_os_type
+# # #   node_pool_os_arch       = var.worker_node_os_arch
+# # # }
 
 
-# # #########################################
-# # # Data source: validate system shape compatibility
-# # # Filters shapes by image_id + shape so we can validate that the
-# # # chosen shape is compatible with the selected OKE image.
-# # #########################################
-# # data "oci_core_shapes" "system" {
-# #   compartment_id = oci_identity_compartment.app_compartment.id
-# #   image_id       = local.system_image_id
-# #   shape          = var.system_node_shape
-# # }
 
-# # #########################################
-# # # Data source: validate worker shape compatibility
-# # #########################################
-# # data "oci_core_shapes" "worker" {
-# #   compartment_id = oci_identity_compartment.app_compartment.id
-# #   image_id       = local.worker_image_id
-# #   shape          = var.worker_node_shape
-# # }
+# # # locals {
+# # #   discovered_ad_names = sort([
+# # #     for ad in data.oci_identity_availability_domains.this.availability_domains : ad.name
+# # #   ])
+
+# # #   ad_names = length(var.availability_domain_names) > 0 ? var.availability_domain_names : local.discovered_ad_names
+
+# # #   auto_system_image_candidates = [
+# # #     for s in data.oci_containerengine_node_pool_option.system.sources : s
+# # #     if s.source_type == "IMAGE" && length(regexall(var.system_node_image_name_regex, s.source_name)) > 0
+# # #   ]
+
+# # #   auto_worker_image_candidates = [
+# # #     for s in data.oci_containerengine_node_pool_option.worker.sources : s
+# # #     if s.source_type == "IMAGE" && length(regexall(var.worker_node_image_name_regex, s.source_name)) > 0
+# # #   ]
+
+# # #   auto_system_image_id   = try(local.auto_system_image_candidates[0].image_id, null)
+# # #   auto_system_image_name = try(local.auto_system_image_candidates[0].source_name, null)
+
+# # #   auto_worker_image_id   = try(local.auto_worker_image_candidates[0].image_id, null)
+# # #   auto_worker_image_name = try(local.auto_worker_image_candidates[0].source_name, null)
+
+# # #   system_image_id   = var.system_node_image_id_override != null ? var.system_node_image_id_override : local.auto_system_image_id
+# # #   system_image_name = local.auto_system_image_name
+
+# # #   worker_image_id   = var.worker_node_image_id_override != null ? var.worker_node_image_id_override : local.auto_worker_image_id
+# # #   worker_image_name = local.auto_worker_image_name
+# # # }
+
+
+# # # #########################################
+# # # # Data source: validate system shape compatibility
+# # # # Filters shapes by image_id + shape so we can validate that the
+# # # # chosen shape is compatible with the selected OKE image.
+# # # #########################################
+# # # data "oci_core_shapes" "system" {
+# # #   compartment_id = oci_identity_compartment.app_compartment.id
+# # #   image_id       = local.system_image_id
+# # #   shape          = var.system_node_shape
+# # # }
+
+# # # #########################################
+# # # # Data source: validate worker shape compatibility
+# # # #########################################
+# # # data "oci_core_shapes" "worker" {
+# # #   compartment_id = oci_identity_compartment.app_compartment.id
+# # #   image_id       = local.worker_image_id
+# # #   shape          = var.worker_node_shape
+# # # }
 
 # #########################################
 # # Resource: OKE cluster

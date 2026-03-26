@@ -162,12 +162,28 @@ variable "app_comp" {
   default = "prod-app-comp"
 }
 
-variable "db_comp" {
-  default = "prod-db-comp"
+variable "data_comp" {
+  default = "prod-data-comp"
 }
 
-variable "compartment_description" {
-  default = "prod-compartment"
+variable "mgmt_comp" {
+  default = "prod-mgmt-comp"
+}
+
+variable "net_compartment_description" {
+  default = "All subnets, Network Security Group, security list, route tables,etc"
+}
+
+variable "app_compartment_description" {
+  default = "All OKE, workers nodes, Instances, etc "
+}
+
+variable "data_compartment_description" {
+  default = "All Database, Redis, Block Storage, etc "
+}
+
+variable "mgmt_compartment_description" {
+  default = "log analytics, log group, key vault, etc "
 }
 
 variable "service_gateway_display_name" {
@@ -498,56 +514,56 @@ variable "service_gateway_display_name" {
 ###############
 
 
-# variable "vault_name" {
-#   description = "Display name of the OCI KMS vault."
-#   type        = string
-#   default = "prod_vault"
-# }
+variable "vault_name" {
+  description = "Display name of the OCI KMS vault."
+  type        = string
+  default = "prod_vault"
+}
 
-# variable "vault_type" {
-#   description = "Vault type to create. DEFAULT is the standard OCI vault type."
-#   type        = string
-#   default     = "VIRTUAL_PRIVATE"
-# }
+variable "vault_type" {
+  description = "Vault type to create. DEFAULT is the standard OCI vault type."
+  type        = string
+  default     = "VIRTUAL_PRIVATE"
+}
 
-# variable "secret_name" {
-#   description = "Name of the secret."
-#   type        = string
-#   default = "db_cred"
-# }
+variable "secret_name" {
+  description = "Name of the secret."
+  type        = string
+  default = "db_cred"
+}
 
-# variable "secret_value" {
-#   description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
-#   type        = map(string)
-#   sensitive   = false
-#   default = {
-#     "username" = "user01"
-#     "password" = "pa55w0rd"
-#   }
-# }
+variable "secret_value" {
+  description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
+  type        = map(string)
+  sensitive   = false
+  default = {
+    "username" = "user01"
+    "password" = "pa55w0rd"
+  }
+}
 
-# variable "secret_version_name" {
-#   description = "Optional name for the secret version."
-#   type        = string
-#   default     = null
-# }
+variable "secret_version_name" {
+  description = "Optional name for the secret version."
+  type        = string
+  default     = null
+}
 
-# variable "secret_stage" {
-#   description = "Optional stage for the secret version, such as CURRENT or PENDING."
-#   type        = string
-#   default     = null
-# }
+variable "secret_stage" {
+  description = "Optional stage for the secret version, such as CURRENT or PENDING."
+  type        = string
+  default     = null
+}
 
-# variable "rotation_interval_in_days" {
-#   default = 7
-#   description = "Key Rotation Day"
-#   type = number
-# }
+variable "rotation_interval_in_days" {
+  default = 7
+  description = "Key Rotation Day"
+  type = number
+}
 
-# variable "time_of_schedule_start" {
-#   default = "2026-03-20T00:00:00Z"
-#   description = "Key Rotation Start Schedule"
-# }
+variable "time_of_schedule_start" {
+  default = "2026-03-20T00:00:00Z"
+  description = "Key Rotation Start Schedule"
+}
 
 #######################
 ###     NPA         ###
@@ -578,10 +594,22 @@ variable "cms_source_ip" {
   default     = "10.10.16.10"
 }
 
+variable "cms_pod_source_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.128.10"
+}
+
 variable "cms_destination_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
   default     = "10.10.16.10"
+}
+
+variable "cms_pod_destination_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.128.10"
 }
 
 variable "web_source_ip" {
@@ -590,10 +618,34 @@ variable "web_source_ip" {
   default     = "10.10.32.10"
 }
 
+variable "web_pod_source_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.112.10"
+}
+
 variable "web_destination_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
   type        = string
   default     = "10.10.32.10"
+}
+
+variable "web_pod_destination_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.112.10"
+}
+
+variable "airs_source_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.96.10"
+}
+
+variable "airs_pod_source_ip" {
+  description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.144.10"
 }
 
 
@@ -603,10 +655,22 @@ variable "db_destination_ip" {
   default     = "10.10.80.30"
 }
 
+variable "redis_destination_ip" {
+  description = "Destination IPv4 address inside the destination subnet CIDR. It does not need to be active."
+  type        = string
+  default     = "10.10.80.40"
+}
+
 variable "db_destination_port" {
   description = "Destination port for TCP/UDP analysis."
   type        = number
-  default     = 3306
+  default     = 5432
+}
+
+variable "redis_destination_port" {
+  description = "Destination port for TCP/UDP analysis."
+  type        = number
+  default     = 6379
 }
 
 variable "cms_destination_port" {
@@ -674,7 +738,7 @@ variable "bastion_node_source_image_id" {
 variable "bastion_instance_shape" {
   description = "Compute shape for the bastion host."
   type        = string
-  default     = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.A1.Flex"
 }
 
 variable "bastion_availability_domain" {
@@ -696,7 +760,7 @@ variable "bastion_shape_ocpus" {
 variable "bastion_shape_memory_in_gbs" {
   description = "Memory in GB for bastion Flex shape."
   type        = number
-  default     = 8
+  default     = 6
 }
 
 variable "bastion_boot_volume_size_in_gbs" {
