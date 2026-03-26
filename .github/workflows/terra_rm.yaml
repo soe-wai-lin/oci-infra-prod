@@ -413,7 +413,7 @@ jobs:
           echo "${WEB_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE"] && ["${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_TO_DB_CONNECTION IS REACHABLE"
           else
             echo "WEB_TO_DB_CONNECTION IS NOT REACHABLE"
