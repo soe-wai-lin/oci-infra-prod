@@ -358,8 +358,8 @@ jobs:
           CMS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_redis_npa_test_id }}
           CMS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_pod_to_redis_npa_test_id }}
 
-          AIRS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_airs_npa_test_id }}
-          AIRS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_db_npa_test_id }}
+          AIRS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_redis_npa_test_id }}
+          AIRS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_redis_npa_test_id }}
 
           WEB_TO_CMS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_cms_npa_test_id }}
           CMS_TO_WEB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_web_npa_test_id }}
