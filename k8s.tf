@@ -89,145 +89,145 @@
 # # #   shape          = var.worker_node_shape
 # # # }
 
-# #########################################
-# # Resource: OKE cluster
-# # Creates an ENHANCED or BASIC OKE cluster with a PRIVATE API endpoint.
-# #########################################
-# resource "oci_containerengine_cluster" "this" {
-#   compartment_id     = oci_identity_compartment.app_compartment.id
-#   name               = var.cluster_name
-#   kubernetes_version = var.kubernetes_version
-#   vcn_id             = oci_core_vcn.terra_vcn.id
-#   type               = var.cluster_type
+#########################################
+# Resource: OKE cluster
+# Creates an ENHANCED or BASIC OKE cluster with a PRIVATE API endpoint.
+#########################################
+resource "oci_containerengine_cluster" "this" {
+  compartment_id     = oci_identity_compartment.app_compartment.id
+  name               = var.cluster_name
+  kubernetes_version = var.kubernetes_version
+  vcn_id             = oci_core_vcn.terra_vcn.id
+  type               = var.cluster_type
 
-#   freeform_tags = var.freeform_tags
+  freeform_tags = var.freeform_tags
 
-#   # Private Kubernetes API endpoint
-#   endpoint_config {
-#     subnet_id            = oci_core_subnet.prod_k8s_priv_api_endpoint_sub.id
-#     nsg_ids              = [oci_core_network_security_group.nsg_prod_k8s_api_endpoints.id]
-#     is_public_ip_enabled = false
-#   }
+  # Private Kubernetes API endpoint
+  endpoint_config {
+    subnet_id            = oci_core_subnet.prod_k8s_priv_api_endpoint_sub.id
+    nsg_ids              = [oci_core_network_security_group.nsg_prod_k8s_api_endpoints.id]
+    is_public_ip_enabled = false
+  }
 
-#   # Cluster-wide pod networking mode
-#   cluster_pod_network_options {
-#     cni_type = var.cni_type
-#   }
+  # Cluster-wide pod networking mode
+  cluster_pod_network_options {
+    cni_type = var.cni_type
+  }
 
-#   # Core cluster options
-#   options {
-#     ip_families = ["IPv4"]
+  # Core cluster options
+  options {
+    ip_families = ["IPv4"]
 
-#     kubernetes_network_config {
-#       pods_cidr     = oci_core_subnet.web_worker_pod_sub.cidr_block
-#       services_cidr = var.services_cidr
-#     }
+    kubernetes_network_config {
+      pods_cidr     = oci_core_subnet.web_worker_pod_sub.cidr_block
+      services_cidr = var.services_cidr
+    }
 
-#     # These legacy add-ons are disabled for modern production setups.
-#     add_ons {
-#       is_kubernetes_dashboard_enabled = true
-#       is_tiller_enabled               = false
-#     }
+    # These legacy add-ons are disabled for modern production setups.
+    add_ons {
+      is_kubernetes_dashboard_enabled = true
+      is_tiller_enabled               = false
+    }
 
-#     # Optional attributes applied to dynamically created Kubernetes LBs and PVC backing resources.
-#     service_lb_subnet_ids = [oci_core_subnet.lb_subnet.id]
+    # Optional attributes applied to dynamically created Kubernetes LBs and PVC backing resources.
+    service_lb_subnet_ids = [oci_core_subnet.lb_subnet.id]
 
-#     service_lb_config {
-#       freeform_tags = merge(var.freeform_tags, {
-#         "oke-resource-type" = "service-lb"
-#       })
-#       defined_tags = var.defined_tags
-#     }
+    service_lb_config {
+      freeform_tags = merge(var.freeform_tags, {
+        "oke-resource-type" = "service-lb"
+      })
+      defined_tags = var.defined_tags
+    }
 
-#     persistent_volume_config {
-#       freeform_tags = merge(var.freeform_tags, {
-#         "oke-resource-type" = "persistent-volume"
-#       })
-#       defined_tags = var.defined_tags
-#     }
-#   }
+    persistent_volume_config {
+      freeform_tags = merge(var.freeform_tags, {
+        "oke-resource-type" = "persistent-volume"
+      })
+      defined_tags = var.defined_tags
+    }
+  }
 
-#   timeouts {
-#     create = "2h"
-#     update = "2h"
-#     delete = "2h"
-#   }
+  timeouts {
+    create = "2h"
+    update = "2h"
+    delete = "2h"
+  }
 
-#   # lifecycle {
-#   #   precondition {
-#   #     condition     = length(local.ad_names) > 0
-#   #     error_message = "No availability domains were discovered. Set availability_domain_names explicitly."
-#   #   }
-#   # }
-# }
+  # lifecycle {
+  #   precondition {
+  #     condition     = length(local.ad_names) > 0
+  #     error_message = "No availability domains were discovered. Set availability_domain_names explicitly."
+  #   }
+  # }
+}
 
-# #########################################
-# # Resource: system node pool
-# # Intended for platform/system workloads.
-# #########################################
-# resource "oci_containerengine_node_pool" "system" {
-#   cluster_id      = oci_containerengine_cluster.this.id
-#   compartment_id  = oci_identity_compartment.app_compartment.id
-#   name            = var.system_node_pool_name
-#   kubernetes_version = var.kubernetes_version
+#########################################
+# Resource: system node pool
+# Intended for platform/system workloads.
+#########################################
+resource "oci_containerengine_node_pool" "system" {
+  cluster_id      = oci_containerengine_cluster.this.id
+  compartment_id  = oci_identity_compartment.app_compartment.id
+  name            = var.system_node_pool_name
+  kubernetes_version = var.kubernetes_version
 
-#   node_shape = var.system_node_shape
+  node_shape = var.system_node_shape
 
-#   freeform_tags = merge(var.freeform_tags, {
-#     "oke-nodepool-role" = "system"
-#   })
-#   defined_tags = var.defined_tags
-
-
-#   # Rolling replacement / safer maintenance behavior.
-#   node_eviction_node_pool_settings {
-#     eviction_grace_duration               = var.node_eviction_grace_duration
-#     is_force_action_after_grace_duration  = var.node_force_action_after_grace_duration
-#     is_force_delete_after_grace_duration  = var.node_force_delete_after_grace_duration
-#   }
-
-#   node_pool_cycling_details {
-#     is_node_cycling_enabled = var.node_cycling_enabled
-#     maximum_surge           = var.node_cycling_maximum_surge
-#     maximum_unavailable     = var.node_cycling_maximum_unavailable
-#   }
-
-#   node_source_details {
-#     image_id = var.node_image_id
-#     source_type = "IMAGE"
-#   }
-#   node_shape_config {
-#         memory_in_gbs = var.system_memory_in_gbs
-#         ocpus = var.system_ocpus
-#     }
+  freeform_tags = merge(var.freeform_tags, {
+    "oke-nodepool-role" = "system"
+  })
+  defined_tags = var.defined_tags
 
 
+  # Rolling replacement / safer maintenance behavior.
+  node_eviction_node_pool_settings {
+    eviction_grace_duration               = var.node_eviction_grace_duration
+    is_force_action_after_grace_duration  = var.node_force_action_after_grace_duration
+    is_force_delete_after_grace_duration  = var.node_force_delete_after_grace_duration
+  }
 
-#   # Node placement and network configuration.
-#   node_config_details {
-#     size         = var.system_node_count
+  node_pool_cycling_details {
+    is_node_cycling_enabled = var.node_cycling_enabled
+    maximum_surge           = var.node_cycling_maximum_surge
+    maximum_unavailable     = var.node_cycling_maximum_unavailable
+  }
 
-#     # For regional subnets, OCI expects a placement config for each AD.
-#     placement_configs {
-#         availability_domain = var.system_availability_domain
-#         subnet_id           = oci_core_subnet.web_worker_sub.id
-#     }
-#     nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
+  node_source_details {
+    image_id = var.node_image_id
+    source_type = "IMAGE"
+  }
+  node_shape_config {
+        memory_in_gbs = var.system_memory_in_gbs
+        ocpus = var.system_ocpus
+    }
 
 
 
+  # Node placement and network configuration.
+  node_config_details {
+    size         = var.system_node_count
 
-#     # Only required / rendered for OCI_VCN_IP_NATIVE pod networking.
-#     node_pool_pod_network_option_details {
-#         cni_type          = var.cni_type
-#         max_pods_per_node = var.system_max_pods_per_node
-#         pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
-#         pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
+    # For regional subnets, OCI expects a placement config for each AD.
+    placement_configs {
+        availability_domain = var.system_availability_domain
+        subnet_id           = oci_core_subnet.web_worker_sub.id
+    }
+    nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
 
-#     }
 
-#   }
-# }
+
+
+    # Only required / rendered for OCI_VCN_IP_NATIVE pod networking.
+    node_pool_pod_network_option_details {
+        cni_type          = var.cni_type
+        max_pods_per_node = var.system_max_pods_per_node
+        pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
+        pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
+
+    }
+
+  }
+}
 
 # #########################################
 # # Resource: worker node pool

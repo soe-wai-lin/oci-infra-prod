@@ -457,7 +457,7 @@ jobs:
           echo "${WEB_POD_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${WEB_POD_TO_DB_FW_Route_NPA}" = "REACHABLE"] && ["${WEB_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+          if [ "${WEB_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_POD_TO_DB_CONNECTION IS REACHABLE"
           else
             echo "WEB_POD_TO_DB_CONNECTION IS NOT REACHABLE"
@@ -680,7 +680,7 @@ jobs:
           echo "${WEB_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${WEB_TO_REDIS_FW_Route_NPA}" = "REACHABLE"] && ["${WEB_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+          if [ "${WEB_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_TO_REDIS_CONNECTION IS REACHABLE"
           else
             echo "WEB_TO_REDIS_CONNECTION IS NOT REACHABLE"
@@ -724,7 +724,7 @@ jobs:
           echo "${WEB_POD_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${WEB_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE"] && ["${WEB_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+          if [ "${WEB_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
             echo "WEB_POD_TO_REDIS_CONNECTION IS REACHABLE"
           else
             echo "WEB_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
