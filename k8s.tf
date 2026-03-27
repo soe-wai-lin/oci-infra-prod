@@ -229,72 +229,72 @@ resource "oci_containerengine_node_pool" "system" {
   }
 }
 
-# #########################################
-# # Resource: worker node pool
-# # Intended for platform/worker workloads.
-# #########################################
+#########################################
+# Resource: worker node pool
+# Intended for platform/worker workloads.
+#########################################
 
-# resource "oci_containerengine_node_pool" "worker" {
-#   cluster_id      = oci_containerengine_cluster.this.id
-#   compartment_id  = oci_identity_compartment.app_compartment.id
-#   name            = var.worker_node_pool_name
-#   kubernetes_version = var.kubernetes_version
+resource "oci_containerengine_node_pool" "worker" {
+  cluster_id      = oci_containerengine_cluster.this.id
+  compartment_id  = oci_identity_compartment.app_compartment.id
+  name            = var.worker_node_pool_name
+  kubernetes_version = var.kubernetes_version
 
-#   node_shape = var.worker_node_shape
+  node_shape = var.worker_node_shape
 
-#   freeform_tags = merge(var.freeform_tags, {
-#     "oke-nodepool-role" = "worker"
-#   })
-#   defined_tags = var.defined_tags
-
-
-#   # Rolling replacement / safer maintenance behavior.
-#   node_eviction_node_pool_settings {
-#     eviction_grace_duration               = var.node_eviction_grace_duration
-#     is_force_action_after_grace_duration  = var.node_force_action_after_grace_duration
-#     is_force_delete_after_grace_duration  = var.node_force_delete_after_grace_duration
-#   }
-
-#   node_pool_cycling_details {
-#     is_node_cycling_enabled = var.node_cycling_enabled
-#     maximum_surge           = var.node_cycling_maximum_surge
-#     maximum_unavailable     = var.node_cycling_maximum_unavailable
-#   }
-
-#   node_source_details {
-#     image_id = var.node_image_id
-#     source_type = "IMAGE"
-#   }
-#   node_shape_config {
-#         memory_in_gbs = var.worker_memory_in_gbs
-#         ocpus = var.worker_ocpus
-#     }
+  freeform_tags = merge(var.freeform_tags, {
+    "oke-nodepool-role" = "worker"
+  })
+  defined_tags = var.defined_tags
 
 
+  # Rolling replacement / safer maintenance behavior.
+  node_eviction_node_pool_settings {
+    eviction_grace_duration               = var.node_eviction_grace_duration
+    is_force_action_after_grace_duration  = var.node_force_action_after_grace_duration
+    is_force_delete_after_grace_duration  = var.node_force_delete_after_grace_duration
+  }
 
-#   # Node placement and network configuration.
-#   node_config_details {
-#     size         = var.worker_node_count
+  node_pool_cycling_details {
+    is_node_cycling_enabled = var.node_cycling_enabled
+    maximum_surge           = var.node_cycling_maximum_surge
+    maximum_unavailable     = var.node_cycling_maximum_unavailable
+  }
 
-#     # For regional subnets, OCI expects a placement config for each AD.
-#     placement_configs {
-#         availability_domain = var.worker_availability_domain
-#         subnet_id           = oci_core_subnet.web_worker_sub.id
-#     }
-#     nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
+  node_source_details {
+    image_id = var.node_image_id
+    source_type = "IMAGE"
+  }
+  node_shape_config {
+        memory_in_gbs = var.worker_memory_in_gbs
+        ocpus = var.worker_ocpus
+    }
 
 
 
+  # Node placement and network configuration.
+  node_config_details {
+    size         = var.worker_node_count
 
-#     # Only required / rendered for OCI_VCN_IP_NATIVE pod networking.
-#     node_pool_pod_network_option_details {
-#         cni_type          = var.cni_type
-#         max_pods_per_node = var.worker_max_pods_per_node
-#         pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
-#         pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
+    # For regional subnets, OCI expects a placement config for each AD.
+    placement_configs {
+        availability_domain = var.worker_availability_domain
+        subnet_id           = oci_core_subnet.web_worker_sub.id
+    }
+    nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
 
-#     }
 
-#   }
-# }
+
+
+    # Only required / rendered for OCI_VCN_IP_NATIVE pod networking.
+    node_pool_pod_network_option_details {
+        cni_type          = var.cni_type
+        max_pods_per_node = var.worker_max_pods_per_node
+        pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
+        pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
+
+    }
+
+  }
+}
 
