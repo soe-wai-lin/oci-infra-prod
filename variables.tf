@@ -967,7 +967,7 @@ variable "worker_node_pool_name" {
 variable "worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "worker_availability_domain" {
