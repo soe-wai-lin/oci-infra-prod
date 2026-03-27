@@ -225,8 +225,8 @@ resource "oci_containerengine_node_pool" "system" {
         pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
 
     }
-
   }
+  ssh_public_key = var.oke_ssh_public_key
 }
 
 #########################################
@@ -294,7 +294,7 @@ resource "oci_containerengine_node_pool" "worker" {
         pod_nsg_ids = [oci_core_network_security_group.nsg_prod_web_pod.id]
 
     }
-
   }
+  ssh_public_key = var.oke_ssh_public_key
 }
 

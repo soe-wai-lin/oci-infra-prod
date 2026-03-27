@@ -1146,15 +1146,24 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_s
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "0.0.0.0/0"
-  source_type               = "CIDR_BLOCK"
-  description               = "(optional) Allow inbound SSH traffic to worker nodes."
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "(optional) Allow inbound SSH traffic from Bastion NSG to worker nodes."
   tcp_options {
     destination_port_range {
       min = 22
       max = 22
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_icmp_from_bastion" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
+  direction                 = "INGRESS"
+  protocol                  = "1" # ICMP
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  stateless                 = false
+  description               = "Allow Ping from Bastion NSG"
 }
 
 # EGRESS: Allow all
@@ -1462,9 +1471,9 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "0.0.0.0/0"
-  source_type               = "CIDR_BLOCK"
-  description               = " Allow inbound SSH traffic to worker nodes."
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = " Allow inbound SSH traffic from Bastion to worker nodes."
   tcp_options {
     destination_port_range {
       min = 22
@@ -1486,8 +1495,17 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_i
     code = 4
   }
 }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_icmp_from_bastion" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
+  direction                 = "INGRESS"
+  protocol                  = "1" # ICMP
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  stateless                 = false
+  description               = "Allow Ping from Bastion NSG"
+}
 
-# EGRESS: Allow all
+# EGRESS:
 resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
@@ -1689,9 +1707,9 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "0.0.0.0/0"
-  source_type               = "CIDR_BLOCK"
-  description               = "(optional) Allow inbound SSH traffic to worker nodes."
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "(optional) Allow inbound SSH traffic from Bastion to worker nodes."
   tcp_options {
     destination_port_range {
       min = 22
@@ -1712,6 +1730,15 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
       max = 10256
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_icmp_from_bastion" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
+  direction                 = "INGRESS"
+  protocol                  = "1" # ICMP
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  stateless                 = false
+  description               = "Allow Ping from Bastion NSG"
 }
 
 # EGRESS
