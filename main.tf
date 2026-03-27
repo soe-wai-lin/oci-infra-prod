@@ -37,7 +37,7 @@ resource "oci_core_subnet" "cms_worker_sub" {
   #Optional
   cidr_block        = var.cms_worker_sub_cidr
   display_name      = "${var.vcn_display_name}-cms-worker-sub"
-  security_list_ids = [oci_core_security_list.cms_SL.id]
+  # security_list_ids = [oci_core_security_list.cms_SL.id]
   freeform_tags     = var.freeform_tags
   dns_label         = "cmsworker"
 
@@ -56,7 +56,7 @@ resource "oci_core_subnet" "web_worker_sub" {
   #Optional
   cidr_block   = var.web_worker_sub_cidr
   display_name = "${var.vcn_display_name}-web-worker-sub"
-  security_list_ids = [oci_core_security_list.web_SL.id]
+  # security_list_ids = [oci_core_security_list.web_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -90,7 +90,7 @@ resource "oci_core_subnet" "airs_micro_oke_pod_sub" {
   #Optional
   cidr_block    = var.airs_micro_oke_pod_cidr_block
   display_name  = "${var.vcn_display_name}-airs-micro-pod-sub"
-  security_list_ids = [oci_core_security_list.airs_SL.id]
+  # security_list_ids = [oci_core_security_list.airs_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
