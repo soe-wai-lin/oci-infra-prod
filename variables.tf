@@ -967,7 +967,7 @@ variable "worker_node_pool_name" {
 variable "worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "worker_availability_domain" {
@@ -1015,7 +1015,7 @@ variable "node_force_delete_after_grace_duration" {
 variable "node_cycling_enabled" {
   description = "Enable node cycling for safer rolling replacement/updates."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "node_cycling_maximum_surge" {
