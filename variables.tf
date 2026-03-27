@@ -880,7 +880,7 @@ variable "system_node_pool_name" {
 variable "system_node_count" {
   description = "Desired number of nodes in the system node pool."
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "system_node_shape" {
@@ -967,7 +967,7 @@ variable "worker_node_pool_name" {
 variable "worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "worker_availability_domain" {
