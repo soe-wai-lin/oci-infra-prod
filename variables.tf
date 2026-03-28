@@ -275,63 +275,9 @@ variable "service_gateway_display_name" {
 # }
 
 
-
-
-
-# ################################
-# ###      For Instances       ###
-# ################################
-
-# variable "ad_index" {
-#   description = "Which AD index to use (0 = first AD)."
-#   type        = number
-#   default     = 0
-# }
-
-
-# variable "instance_shape" {
-#   description = "Compute shape (e.g., VM.Standard.E4.Flex, VM.Standard.A1.Flex, etc.)"
-#   type        = string
-#   default     = "VM.Standard.E5.Flex"
-# }
-
-# # Image selection (auto)
-# variable "image_operating_system" {
-#   type        = string
-#   default     = "Oracle Linux"
-# }
-
-# variable "image_operating_system_version" {
-#   type        = string
-#   default     = "9"
-# }
-
-# variable "image_ocid" {
-#   type        = string
-#   default     = null
-# }
-
-
-# variable "instance_ocpus" {
-#   description = "OCPUs for Flex shapes."
-#   type        = number
-#   default     = 1
-# }
-
-# variable "instance_memory_in_gbs" {
-#   description = "Memory (GB) for Flex shapes."
-#   type        = number
-#   default     = 8
-# }
-
-# variable "career_vm" {
-#   default = "CareerVM"
-# }
-
 # ##################################
 # ### Loadbalancer Variable      ###
 # ##################################
-
 
 # variable "lb_display_name" {
 #   type    = string
@@ -442,72 +388,72 @@ variable "service_gateway_display_name" {
 #   default     = null
 # }
 
-# ###############
-# ##  Buckets  ##
-# ###############
+###############
+##  Buckets  ##
+###############
 
-# variable "bucket_name" {
-#   description = "Name of the Object Storage bucket."
-#   type        = string
-#   default = "prod_bucket"
-# }
+variable "bucket_name" {
+  description = "Name of the Object Storage bucket."
+  type        = string
+  default = "prod_bucket"
+}
 
-# variable "access_type" {
-#   description = "Bucket public access type: NoPublicAccess, ObjectRead, or ObjectReadWithoutList."
-#   type        = string
-#   default     = "NoPublicAccess"
+variable "access_type" {
+  description = "Bucket public access type: NoPublicAccess, ObjectRead, or ObjectReadWithoutList."
+  type        = string
+  default     = "NoPublicAccess"
 
-#   validation {
-#     condition     = contains(["NoPublicAccess", "ObjectRead", "ObjectReadWithoutList"], var.access_type)
-#     error_message = "access_type must be one of: NoPublicAccess, ObjectRead, ObjectReadWithoutList."
-#   }
-# }
+  validation {
+    condition     = contains(["NoPublicAccess", "ObjectRead", "ObjectReadWithoutList"], var.access_type)
+    error_message = "access_type must be one of: NoPublicAccess, ObjectRead, ObjectReadWithoutList."
+  }
+}
 
-# variable "storage_tier" {
-#   description = "Bucket storage tier: Standard or Archive."
-#   type        = string
-#   default     = "Standard"
+variable "storage_tier" {
+  description = "Bucket storage tier: Standard or Archive."
+  type        = string
+  default     = "Standard"
 
-#   validation {
-#     condition     = contains(["Standard", "Archive"], var.storage_tier)
-#     error_message = "storage_tier must be either Standard or Archive."
-#   }
-# }
+  validation {
+    condition     = contains(["Standard", "Archive"], var.storage_tier)
+    error_message = "storage_tier must be either Standard or Archive."
+  }
+}
 
-# variable "auto_tiering" {
-#   description = "Auto tiering setting. Common values are Disabled or InfrequentAccess."
-#   type        = string
-#   default     = "Disabled"
-# }
+variable "auto_tiering" {
+  description = "Auto tiering setting. Common values are Disabled or InfrequentAccess."
+  type        = string
+  default     = "Disabled"
+}
 
-# variable "versioning" {
-#   description = "Enable object versioning on the bucket: Enabled or Disabled."
-#   type        = string
-#   default     = "Enabled"
+variable "versioning" {
+  description = "Enable object versioning on the bucket: Enabled or Disabled."
+  type        = string
+  default     = "Enabled"
 
-#   validation {
-#     condition     = contains(["Enabled", "Disabled"], var.versioning)
-#     error_message = "versioning must be either Enabled or Disabled."
-#   }
-# }
+  validation {
+    condition     = contains(["Enabled", "Disabled"], var.versioning)
+    error_message = "versioning must be either Enabled or Disabled."
+  }
+}
 
-# variable "object_events_enabled" {
-#   description = "Whether Object Storage events are enabled for the bucket."
-#   type        = bool
-#   default     = false
-# }
+variable "object_events_enabled" {
+  description = "Whether Object Storage events are enabled for the bucket."
+  type        = bool
+  default     = false
+}
 
-# variable "kms_key_id" {
-#   description = "Optional KMS key OCID for bucket encryption."
-#   type        = string
-#   default     = null
-# }
+variable "kms_key_id" {
+  description = "Optional KMS key OCID for bucket encryption."
+  type        = string
+  default     = null
+}
 
-# variable "metadata" {
-#   description = "Optional bucket metadata map."
-#   type        = map(string)
-#   default     = {}
-# }
+variable "metadata" {
+  description = "Optional bucket metadata map."
+  type        = map(string)
+  default     = {}
+}
 
 ###############
 ###  Vault  ###
@@ -568,8 +514,6 @@ variable "time_of_schedule_start" {
 #######################
 ###     NPA         ###
 #######################
-
-
 variable "npa_display_name" {
   description = "Friendly name for the Path Analyzer Test."
   type        = string
@@ -586,7 +530,6 @@ variable "protocol" {
     error_message = "protocol must be one of: TCP, UDP, ICMP."
   }
 }
-
 
 variable "cms_source_ip" {
   description = "Source IPv4 address inside the source subnet CIDR. It does not need to be active."
@@ -698,22 +641,15 @@ variable "is_bi_directional_analysis" {
 }
 
 
-############################
-# Bastion host variables
-############################
-
+##############################
+### Bastion host variables ###
+##############################
 
 variable "bastion_ad_index" {
   description = "Which AD index to use (0 = first AD)."
   type        = number
   default     = 0
 }
-
-
-# variable "bastion_image_id" {
-#   description = "Image OCID for the bastion host (for example Oracle Linux image OCID)."
-#   type        = string
-# }
 
 variable "bastion_ssh_public_keys" {
   description = "One or more OpenSSH public keys that can log in to the bastion host. Separate keys with newlines."
@@ -729,10 +665,6 @@ variable "bastion_image_operating_system" {
 variable "bastion_image_operating_system_version" {
   default = "9"
   type    = string
-}
-
-variable "bastion_node_source_image_id" {
-  default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
 }
 
 variable "bastion_instance_shape" {
@@ -788,11 +720,7 @@ variable "cni_type" {
   }
 }
 
-# variable "pods_cidr" {
-#   description = "Kubernetes pod CIDR. For flannel this is the overlay CIDR. For VCN-native this setting can still be provided at cluster level if desired."
-#   type        = string
-#   default     = "10.244.0.0/16"
-# }
+
 
 variable "services_cidr" {
   description = "Kubernetes services CIDR."
@@ -824,14 +752,15 @@ variable "cluster_name" {
 }
 
 variable "node_image_id" {
-  default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
+  # default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
+  default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaazzzecbburmrbeythywibbgs6iukplxkxvjpqmen2klhv62yscf7q"
   description = "Need to compatitable with node shape,oke cluster version"
 }
 
 variable "kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.34.1"
 }
 
 variable "cluster_type" {
@@ -845,11 +774,7 @@ variable "cluster_type" {
   }
 }
 
-# variable "availability_domain_names" {
-#   description = "Optional explicit AD names to pin for placement configs. Leave empty to auto-discover the region's ADs."
-#   type        = list(string)
-#   default     = []
-# }
+
 
 ##############################
 # SSH / node instance extras #
@@ -860,12 +785,6 @@ variable "oke_ssh_public_key" {
   type        = string
   default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
 }
-
-# variable "node_metadata" {
-#   description = "Optional metadata to pass to the worker node instances."
-#   type        = map(string)
-#   default     = {}
-# }
 
 #####################
 # System node pool  #
@@ -886,20 +805,8 @@ variable "system_node_count" {
 variable "system_node_shape" {
   description = "Compute shape for the system node pool."
   type        = string
-  default     = "VM.Standard.E5.Flex"
+  default     = "VM.Standard.E4.Flex"
 }
-
-# variable "system_node_shape_config" {
-#   description = "Optional flex shape config for the system node pool. Set to null for fixed shapes."
-#   type = object({
-#     ocpus         = number
-#     memory_in_gbs = number
-#   })
-#   default = {
-#     ocpus         = 2
-#     memory_in_gbs = 16
-#   }
-# }
 
 variable "system_memory_in_gbs" {
   default = 16
@@ -909,46 +816,29 @@ variable "system_ocpus" {
   default = 2
 }
 
-# variable "system_node_boot_volume_size_in_gbs" {
-#   description = "Boot volume size for system nodes. OCI documents a minimum of 50 GB for node source details."
-#   type        = number
-#   default     = 100
-# }
+variable "system_node_os_type" {
+  description = "OS type used to discover compatible OKE node images for the system node pool."
+  type        = string
+  default     = "OL8"
+}
 
-# variable "system_node_os_type" {
-#   description = "OS type used to discover compatible OKE node images for the system node pool."
-#   type        = string
-#   default     = "OL8"
-# }
+variable "system_node_os_arch" {
+  description = "OS architecture used to discover compatible OKE node images for the system node pool."
+  type        = string
+  default     = "X86_64"
+}
 
-# variable "system_node_os_arch" {
-#   description = "OS architecture used to discover compatible OKE node images for the system node pool."
-#   type        = string
-#   default     = "X86_64"
-# }
+variable "worker_node_os_type" {
+  description = "OS type used to discover compatible OKE node images for the worker node pool."
+  type        = string
+  default     = "OL8"
+}
 
-# variable "system_node_image_name_regex" {
-#   description = "Regex used to select a compatible OKE node image from the OCI node pool options data source."
-#   type        = string
-#   default     = "Oracle-Linux-.*-OKE-.*"
-# }
-
-
-# variable "system_node_image_id_override" {
-#   description = "Explicit image OCID for the system node pool. If set, it overrides auto-discovery."
-#   type        = string
-#   default     = null
-# }
-
-
-# variable "system_node_labels" {
-#   description = "Kubernetes node labels to apply to all system pool nodes."
-#   type        = map(string)
-#   default = {
-#     "node-role.oraclecloud.com/system" = "true"
-#     "workload-type"                    = "system"
-#   }
-# }
+variable "worker_node_os_arch" {
+  description = "OS architecture used to discover compatible OKE node images for the worker node pool."
+  type        = string
+  default     = "X86_64"
+}
 
 variable "system_availability_domain" {
   default = "aluk:AP-SINGAPORE-1-AD-1"
@@ -977,7 +867,7 @@ variable "worker_availability_domain" {
 variable "worker_node_shape" {
   description = "Compute shape for the worker node pool."
   type        = string
-  default     = "VM.Standard.E5.Flex"
+  default     = "VM.Standard.E4.Flex"
 }
 
 variable "worker_memory_in_gbs" {

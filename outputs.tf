@@ -118,44 +118,44 @@ output "vcn_name" {
 # }
 
 
-# ##################
-# ##  Bucket      ##
-# ##################
+##################
+##  Bucket      ##
+##################
 
-# output "namespace" {
-#   description = "Object Storage namespace used for the bucket."
-#   value       = data.oci_objectstorage_namespace.ns.namespace
-# }
+output "namespace" {
+  description = "Object Storage namespace used for the bucket."
+  value       = data.oci_objectstorage_namespace.ns.namespace
+}
 
-# output "bucket_name" {
-#   description = "Bucket name."
-#   value       = oci_objectstorage_bucket.bucket.name
-# }
+output "bucket_name" {
+  description = "Bucket name."
+  value       = oci_objectstorage_bucket.bucket.name
+}
 
-# output "bucket_id" {
-#   description = "Bucket identifier returned by OCI."
-#   value       = data.oci_objectstorage_bucket.bucket.bucket_id
-# }
+output "bucket_id" {
+  description = "Bucket identifier returned by OCI."
+  value       = data.oci_objectstorage_bucket.bucket.bucket_id
+}
 
-# output "bucket_access_type" {
-#   description = "Configured public access type."
-#   value       = data.oci_objectstorage_bucket.bucket.access_type
-# }
+output "bucket_access_type" {
+  description = "Configured public access type."
+  value       = data.oci_objectstorage_bucket.bucket.access_type
+}
 
-# output "bucket_storage_tier" {
-#   description = "Configured storage tier."
-#   value       = data.oci_objectstorage_bucket.bucket.storage_tier
-# }
+output "bucket_storage_tier" {
+  description = "Configured storage tier."
+  value       = data.oci_objectstorage_bucket.bucket.storage_tier
+}
 
-# output "bucket_versioning" {
-#   description = "Bucket versioning status."
-#   value       = data.oci_objectstorage_bucket.bucket.versioning
-# }
+output "bucket_versioning" {
+  description = "Bucket versioning status."
+  value       = data.oci_objectstorage_bucket.bucket.versioning
+}
 
-# output "bucket_approximate_size" {
-#   description = "Approximate total size in bytes of all objects in the bucket."
-#   value       = data.oci_objectstorage_bucket.bucket.approximate_size
-# }
+output "bucket_approximate_size" {
+  description = "Approximate total size in bytes of all objects in the bucket."
+  value       = data.oci_objectstorage_bucket.bucket.approximate_size
+}
 
 ##############
 ### Vault  ###
@@ -328,6 +328,8 @@ output "airs_pod_to_redis_npa_test_id" {
 output "system_pool_shape" {
   value = var.system_node_shape
 }
+
+
 
 # output "system_pool_shape_arch" {
 #   value = local.system_node_shape_arch

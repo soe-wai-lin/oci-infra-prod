@@ -3,26 +3,14 @@
 # # # Bastion host (compute instance)        ###
 # # ############################################
 
-# # data "oci_identity_availability_domains" "ads" {
-# #   compartment_id = oci_identity_compartment.app_compartment.id
-# # }
+data "oci_identity_availability_domains" "ads" {
+  compartment_id = oci_identity_compartment.app_compartment.id
+}
 
-# # locals {
-# #   ad_name = data.oci_identity_availability_domains.ads.availability_domains[var.bastion_ad_index].name
-# # }
+locals {
+  ad_name = data.oci_identity_availability_domains.ads.availability_domains[var.bastion_ad_index].name
+}
 
-# # locals {
-# #   selected_image_ocid = data.oci_core_images.ol_images.images[0].id
-# # }
-
-# # data "oci_core_vnic_attachments" "bastion_vnic_attachments" {
-# #   compartment_id = oci_identity_compartment.app_compartment.id
-# #   instance_id    = oci_core_instance.bastion.id
-# # }
-
-# data "oci_core_vnic" "bastion_primary_vnic" {
-#   vnic_id = data.oci_core_vnic_attachments.bastion_vnic_attachments.vnic_attachments[0].vnic_id
-# }
 
 #############################################
 # Image selection (Oracle Linux)
@@ -54,7 +42,8 @@ locals {
 
 resource "oci_core_instance" "bastion" {
   compartment_id      = oci_identity_compartment.app_compartment.id
-  availability_domain = var.bastion_availability_domain
+  # availability_domain = var.bastion_availability_domain
+  availability_domain = local.ad_name
   display_name        = "${var.vcn_display_name}-bastion-host"
   shape               = var.bastion_instance_shape
 
@@ -67,7 +56,7 @@ resource "oci_core_instance" "bastion" {
 
   source_details {
     source_type             = "image"
-    # source_id               = var.bastion_node_source_image_id
+
     source_id = local.bastion_image_id
     boot_volume_size_in_gbs = var.bastion_boot_volume_size_in_gbs
   }
@@ -86,13 +75,6 @@ resource "oci_core_instance" "bastion" {
   }
 }
 
-# #   dynamic "shape_config" {
-# #     for_each = var.bastion_shape_is_flex ? [1] : []
-# #     content {
-# #       ocpus         = var.bastion_shape_ocpus
-# #       memory_in_gbs = var.bastion_shape_memory_in_gbs
-# #     }
-# #   }
 
 
 
