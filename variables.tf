@@ -137,7 +137,10 @@ variable "nsg_airs_pod" {
 }
 
 variable "alert_email" {
-  default = "wailin.s@trinitywizards.com"
+  type = list(string)
+  default = [
+    "wailin.s@trinitywizards.com"
+  ]
 }
 
 
