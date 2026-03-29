@@ -51,7 +51,6 @@ resource "oci_core_instance" "bastion" {
     subnet_id        = oci_core_subnet.lb_subnet.id
     assign_public_ip = true
     nsg_ids          = [oci_core_network_security_group.nsg_prod_bastion.id]
-    # hostname_label   = var.bastion_hostname_label
   }
 
   source_details {

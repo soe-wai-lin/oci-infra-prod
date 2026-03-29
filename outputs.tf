@@ -259,90 +259,16 @@ output "airs_pod_to_redis_npa_test_id" {
   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
 }
 
-
-
-
-# ###################
-# #### Bastion   ####
-# ###################
-
-# output "bastion_instance_id" {
-#   description = "OCID of the bastion host compute instance."
-#   value       = oci_core_instance.bastion.id
-# }
-
-# output "bastion_public_ip" {
-#   description = "Public IP address of the bastion host."
-#   value       = data.oci_core_vnic.bastion_primary_vnic.public_ip_address
-# }
-
-# output "bastion_private_ip" {
-#   description = "Private IP address of the bastion host."
-#   value       = data.oci_core_vnic.bastion_primary_vnic.private_ip_address
-# }
-
-# output "bastion_ssh_example" {
-#   description = "Example SSH command for the bastion host."
-#   value       = "ssh opc@${data.oci_core_vnic.bastion_primary_vnic.public_ip_address}"
-# }
-
-# output "oke_cluster_id" {
-#   description = "OCID of the OKE cluster."
-#   value       = oci_containerengine_cluster.oke_cluster.id
-# }
-
-# output "oke_private_endpoint" {
-#   description = "Private Kubernetes API endpoint for the OKE cluster."
-#   value       = try(oci_containerengine_cluster.oke_cluster.endpoints[0].private_endpoint, null)
-# }
-
-# output "oke_public_endpoint" {
-#   description = "Public Kubernetes API endpoint for the OKE cluster, if enabled."
-#   value       = try(oci_containerengine_cluster.oke_cluster.endpoints[0].public_endpoint, null)
-# }
-
-# output "oke_vcn_hostname_endpoint" {
-#   description = "VCN hostname endpoint for the private Kubernetes API endpoint, if available."
-#   value       = try(oci_containerengine_cluster.oke_cluster.endpoints[0].vcn_hostname_endpoint, null)
-# }
-
-# output "system_node_pool_id" {
-#   description = "OCID of the system node pool."
-#   value       = oci_containerengine_node_pool.system_pool.id
-# }
-
-# output "app_node_pool_id" {
-#   description = "OCID of the application node pool."
-#   value       = oci_containerengine_node_pool.app_pool.id
-# }
-
-# output "create_kubeconfig_private_endpoint_command" {
-#   description = "Example command to build a kubeconfig on the bastion host using the private OKE endpoint."
-#   value       = "oci ce cluster create-kubeconfig --cluster-id ${oci_containerengine_cluster.oke_cluster.id} --file $HOME/.kube/config --region ${var.region} --token-version 2.0.0 --kube-endpoint PRIVATE_ENDPOINT"
-# }
-
 #################
 ###    OKE    ###
 #################
-
-output "system_pool_shape" {
-  value = var.system_node_shape
+output "system_node_image_id" {
+  value = local.system_node_image_id
 }
 
-
-
-# output "system_pool_shape_arch" {
-#   value = local.system_node_shape_arch
-# }
-
-# output "system_pool_selected_source_name" {
-#   value = local.oke_selected_source_name
-# }
-
-# output "system_pool_selected_image_id" {
-#   value = local.oke_selected_image_ocid
-# }
-
+output "worker_node_image_id" {
+  value = local.worker_node_image_id
+}
 
 
 
