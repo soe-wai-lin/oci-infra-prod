@@ -260,655 +260,655 @@ jobs:
           echo "Timed out waiting for apply job."
           exit 1
 
-      - name: Read apply outputs
-        id: get_rm_outputs
-        shell: bash
-        env:
-          APPLY_JOB_ID: ${{ steps.create_apply.outputs.apply_job_id }}
-        run: |
-          set -euo pipefail
+      # - name: Read apply outputs
+      #   id: get_rm_outputs
+      #   shell: bash
+      #   env:
+      #     APPLY_JOB_ID: ${{ steps.create_apply.outputs.apply_job_id }}
+      #   run: |
+      #     set -euo pipefail
 
-          oci resource-manager job-output-summary list-job-outputs \
-          --job-id "${APPLY_JOB_ID}" \
-          --all \
-          --output json > rm_outputs.json
+      #     oci resource-manager job-output-summary list-job-outputs \
+      #     --job-id "${APPLY_JOB_ID}" \
+      #     --all \
+      #     --output json > rm_outputs.json
 
-          WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-          WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          CMS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-          CMS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     CMS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     CMS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          AIRS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-          AIRS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     AIRS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     AIRS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          WEB_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-          WEB_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     WEB_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     WEB_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          CMS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-          CMS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     CMS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     CMS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          AIRS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-          AIRS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     AIRS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     AIRS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-          NET_COMPARTMENT_ID=$(jq -r '.data.items[] | select(."output-name"=="net_compartment_id") | ."output-value"' rm_outputs.json)
+      #     NET_COMPARTMENT_ID=$(jq -r '.data.items[] | select(."output-name"=="net_compartment_id") | ."output-value"' rm_outputs.json)
 
-          # WEB_TO_CMS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_cms_npa_test_id") | ."output-value"' rm_outputs.json)
-          # CMS_TO_WEB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_web_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     # WEB_TO_CMS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_cms_npa_test_id") | ."output-value"' rm_outputs.json)
+      #     # CMS_TO_WEB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_web_npa_test_id") | ."output-value"' rm_outputs.json)
           
 
-          # if [ -z "${WEB_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
-          #   echo "ERROR: output web_to_db_npa_test_id not found"
-          #   exit 1
-          # fi
+      #     # if [ -z "${WEB_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
+      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
+      #     #   exit 1
+      #     # fi
 
-          # if [ -z "${CMS_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
-          #   echo "ERROR: output web_to_db_npa_test_id not found"
-          #   exit 1
-          # fi
+      #     # if [ -z "${CMS_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
+      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
+      #     #   exit 1
+      #     # fi
 
-          # if [ -z "${WEB_TO_CMS_NPA_TEST_ID}" ]  = "null" ]; then
-          #   echo "ERROR: output web_to_db_npa_test_id not found"
-          #   exit 1
-          # fi
+      #     # if [ -z "${WEB_TO_CMS_NPA_TEST_ID}" ]  = "null" ]; then
+      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
+      #     #   exit 1
+      #     # fi
 
-          # if [ -z "${CMS_TO_WEB_NPA_TEST_ID}" ]  = "null" ]; then
-          #   echo "ERROR: output web_to_db_npa_test_id not found"
-          #   exit 1
-          # fi
+      #     # if [ -z "${CMS_TO_WEB_NPA_TEST_ID}" ]  = "null" ]; then
+      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
+      #     #   exit 1
+      #     # fi
 
-          # if [ -z "${NET_COMPARTMENT_ID}" ] = "null" ]; then
-          #   echo "ERROR: output net_compartment_id not found"
-          #   exit 1
-          # fi
+      #     # if [ -z "${NET_COMPARTMENT_ID}" ] = "null" ]; then
+      #     #   echo "ERROR: output net_compartment_id not found"
+      #     #   exit 1
+      #     # fi
 
-          echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "cms_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "cms_pod_to_db_npa_test_id=${CMS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "cms_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "cms_pod_to_db_npa_test_id=${CMS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "airs_to_db_npa_test_id=${AIRS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "airs_pod_to_db_npa_test_id=${AIRS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "airs_to_db_npa_test_id=${AIRS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "airs_pod_to_db_npa_test_id=${AIRS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "web_to_redis_npa_test_id=${WEB_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "web_pod_to_redis_npa_test_id=${WEB_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "web_to_redis_npa_test_id=${WEB_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "web_pod_to_redis_npa_test_id=${WEB_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "cms_to_redis_npa_test_id=${CMS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "cms_pod_to_redis_npa_test_id=${CMS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "cms_to_redis_npa_test_id=${CMS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "cms_pod_to_redis_npa_test_id=${CMS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "airs_to_redis_npa_test_id=${AIRS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-          echo "airs_pod_to_redis_npa_test_id=${AIRS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "airs_to_redis_npa_test_id=${AIRS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "airs_pod_to_redis_npa_test_id=${AIRS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          # echo "web_to_cms_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     # echo "web_to_cms_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          # echo "cms_to_web_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+      #     # echo "cms_to_web_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
 
-          echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
+      #     echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
 
-      - name: Subnet Connectivity Check
-        # shell: bash
-        env:
-          WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_npa_test_id }}
-          WEB_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_pod_to_db_npa_test_id }}
+      # - name: Subnet Connectivity Check
+      #   # shell: bash
+      #   env:
+      #     WEB_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_db_npa_test_id }}
+      #     WEB_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_pod_to_db_npa_test_id }}
 
-          CMS_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_db_npa_test_id }}
-          CMS_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_pod_to_db_npa_test_id }}
+      #     CMS_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_db_npa_test_id }}
+      #     CMS_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_pod_to_db_npa_test_id }}
 
-          AIRS_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_db_npa_test_id }}
-          AIRS_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_db_npa_test_id }}
+      #     AIRS_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_db_npa_test_id }}
+      #     AIRS_POD_TO_DB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_db_npa_test_id }}
 
-          WEB_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_redis_npa_test_id }}
-          WEB_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_pod_to_redis_npa_test_id }}
+      #     WEB_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_redis_npa_test_id }}
+      #     WEB_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_pod_to_redis_npa_test_id }}
 
-          CMS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_redis_npa_test_id }}
-          CMS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_pod_to_redis_npa_test_id }}
+      #     CMS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_redis_npa_test_id }}
+      #     CMS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_pod_to_redis_npa_test_id }}
 
-          AIRS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_redis_npa_test_id }}
-          AIRS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_redis_npa_test_id }}
+      #     AIRS_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_to_redis_npa_test_id }}
+      #     AIRS_POD_TO_REDIS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.airs_pod_to_redis_npa_test_id }}
 
-          # WEB_TO_CMS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_cms_npa_test_id }}
-          # CMS_TO_WEB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_web_npa_test_id }}
-          OCI_COMPARTMENT_OCID: ${{ steps.get_rm_outputs.outputs.net_compartment_id }}
-          SUPPRESS_LABEL_WARNING: "True"
-        run: |
-          set -euo pipefail
+      #     # WEB_TO_CMS_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.web_to_cms_npa_test_id }}
+      #     # CMS_TO_WEB_NPA_TEST_ID: ${{ steps.get_rm_outputs.outputs.cms_to_web_npa_test_id }}
+      #     OCI_COMPARTMENT_OCID: ${{ steps.get_rm_outputs.outputs.net_compartment_id }}
+      #     SUPPRESS_LABEL_WARNING: "True"
+      #   run: |
+      #     set -euo pipefail
 
-          echo "Running saved NPA test for WEB-to-DB: ${WEB_TO_DB_NPA_TEST_ID}"
+      #     echo "Running saved NPA test for WEB-to-DB: ${WEB_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${WEB_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${WEB_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${WEB_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > web_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > web_to_db_npa_result.json
 
-          WEB_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
-          WEB_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_db_npa_result.json)
+      #     WEB_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_db_npa_result.json)
+      #     WEB_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_db_npa_result.json)
           
-          echo "${WEB_TO_DB_FW_Route_NPA}"
-          echo "${WEB_TO_DB_RT_Route_NPA}"
+      #     echo "${WEB_TO_DB_FW_Route_NPA}"
+      #     echo "${WEB_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "WEB_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "WEB_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
+      #     if [ "${WEB_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "WEB_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "WEB_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
 
-          ################################
-          echo "Running saved NPA test for WEB-POD-to-DB: ${WEB_POD_TO_DB_NPA_TEST_ID}"
+      #     ################################
+      #     echo "Running saved NPA test for WEB-POD-to-DB: ${WEB_POD_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${WEB_POD_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${WEB_POD_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_POD_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${WEB_POD_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > web_pod_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > web_pod_to_db_npa_result.json
 
-          WEB_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_pod_to_db_npa_result.json)
-          WEB_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_pod_to_db_npa_result.json)
+      #     WEB_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_pod_to_db_npa_result.json)
+      #     WEB_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_pod_to_db_npa_result.json)
           
-          echo "${WEB_POD_TO_DB_FW_Route_NPA}"
-          echo "${WEB_POD_TO_DB_RT_Route_NPA}"
+      #     echo "${WEB_POD_TO_DB_FW_Route_NPA}"
+      #     echo "${WEB_POD_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${WEB_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "WEB_POD_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "WEB_POD_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
+      #     if [ "${WEB_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "WEB_POD_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "WEB_POD_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
 
-          ###############################
-          echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for CMS-to-DB: ${CMS_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${CMS_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${CMS_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > cms_to_db_npa_result.json
             
-          CMS_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_db_npa_result.json)
-          CMS_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_db_npa_result.json)
+      #     CMS_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_db_npa_result.json)
+      #     CMS_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_db_npa_result.json)
           
-          echo "${CMS_TO_DB_FW_Route_NPA}"
-          echo "${CMS_TO_DB_RT_Route_NPA}"
+      #     echo "${CMS_TO_DB_FW_Route_NPA}"
+      #     echo "${CMS_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${CMS_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "CMS_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "CMS_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${CMS_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "CMS_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "CMS_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for CMS-POD-to-DB: ${CMS_POD_TO_DB_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for CMS-POD-to-DB: ${CMS_POD_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_POD_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${CMS_POD_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_POD_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${CMS_POD_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_pod_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > cms_pod_to_db_npa_result.json
             
-          CMS_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_pod_to_db_npa_result.json)
-          CMS_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_pod_to_db_npa_result.json)
+      #     CMS_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_pod_to_db_npa_result.json)
+      #     CMS_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_pod_to_db_npa_result.json)
           
-          echo "${CMS_POD_TO_DB_FW_Route_NPA}"
-          echo "${CMS_POD_TO_DB_RT_Route_NPA}"
+      #     echo "${CMS_POD_TO_DB_FW_Route_NPA}"
+      #     echo "${CMS_POD_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${CMS_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "CMS_POD_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "CMS_POD_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${CMS_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "CMS_POD_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "CMS_POD_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for AIRS-to-DB: ${AIRS_TO_DB_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for AIRS-to-DB: ${AIRS_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${AIRS_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${AIRS_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${AIRS_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${AIRS_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > airs_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > airs_to_db_npa_result.json
             
-          AIRS_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_to_db_npa_result.json)
-          AIRS_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_to_db_npa_result.json)
+      #     AIRS_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_to_db_npa_result.json)
+      #     AIRS_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_to_db_npa_result.json)
           
-          echo "${AIRS_TO_DB_FW_Route_NPA}"
-          echo "${AIRS_TO_DB_RT_Route_NPA}"
+      #     echo "${AIRS_TO_DB_FW_Route_NPA}"
+      #     echo "${AIRS_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${AIRS_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "AIRS_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "AIRS_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${AIRS_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "AIRS_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "AIRS_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for AIRS-POD-to-DB: ${AIRS_POD_TO_DB_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for AIRS-POD-to-DB: ${AIRS_POD_TO_DB_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${AIRS_POD_TO_DB_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${AIRS_POD_TO_DB_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${AIRS_POD_TO_DB_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${AIRS_POD_TO_DB_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > airs_pod_to_db_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > airs_pod_to_db_npa_result.json
             
-          AIRS_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_pod_to_db_npa_result.json)
-          AIRS_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_pod_to_db_npa_result.json)
+      #     AIRS_POD_TO_DB_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_pod_to_db_npa_result.json)
+      #     AIRS_POD_TO_DB_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_pod_to_db_npa_result.json)
           
-          echo "${AIRS_POD_TO_DB_FW_Route_NPA}"
-          echo "${AIRS_POD_TO_DB_RT_Route_NPA}"
+      #     echo "${AIRS_POD_TO_DB_FW_Route_NPA}"
+      #     echo "${AIRS_POD_TO_DB_RT_Route_NPA}"
 
 
-          if [ "${AIRS_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "AIRS_POD_TO_DB_CONNECTION IS REACHABLE"
-          else
-            echo "AIRS_POD_TO_DB_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${AIRS_POD_TO_DB_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_POD_TO_DB_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "AIRS_POD_TO_DB_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "AIRS_POD_TO_DB_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          echo "Running saved NPA test for WEB-to-REDIS: ${WEB_TO_REDIS_NPA_TEST_ID}"
+      #     echo "Running saved NPA test for WEB-to-REDIS: ${WEB_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${WEB_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${WEB_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${WEB_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > web_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > web_to_redis_npa_result.json
 
-          WEB_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_redis_npa_result.json)
-          WEB_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_redis_npa_result.json)
+      #     WEB_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_to_redis_npa_result.json)
+      #     WEB_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_to_redis_npa_result.json)
           
-          echo "${WEB_TO_REDIS_FW_Route_NPA}"
-          echo "${WEB_TO_REDIS_RT_Route_NPA}"
+      #     echo "${WEB_TO_REDIS_FW_Route_NPA}"
+      #     echo "${WEB_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${WEB_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "WEB_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "WEB_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
+      #     if [ "${WEB_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "WEB_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "WEB_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
 
-          ################################
-          echo "Running saved NPA test for WEB-POD-to-REDIS: ${WEB_POD_TO_REDIS_NPA_TEST_ID}"
+      #     ################################
+      #     echo "Running saved NPA test for WEB-POD-to-REDIS: ${WEB_POD_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${WEB_POD_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${WEB_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${WEB_POD_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${WEB_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > web_pod_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > web_pod_to_redis_npa_result.json
 
-          WEB_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_pod_to_redis_npa_result.json)
-          WEB_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_pod_to_redis_npa_result.json)
+      #     WEB_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' web_pod_to_redis_npa_result.json)
+      #     WEB_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' web_pod_to_redis_npa_result.json)
           
-          echo "${WEB_POD_TO_REDIS_FW_Route_NPA}"
-          echo "${WEB_POD_TO_REDIS_RT_Route_NPA}"
+      #     echo "${WEB_POD_TO_REDIS_FW_Route_NPA}"
+      #     echo "${WEB_POD_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${WEB_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "WEB_POD_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "WEB_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
+      #     if [ "${WEB_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${WEB_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "WEB_POD_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "WEB_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
 
-          ###############################
-          echo "Running saved NPA test for CMS-to-REDIS: ${CMS_TO_REDIS_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for CMS-to-REDIS: ${CMS_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${CMS_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${CMS_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > cms_to_redis_npa_result.json
             
-          CMS_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_redis_npa_result.json)
-          CMS_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_redis_npa_result.json)
+      #     CMS_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_to_redis_npa_result.json)
+      #     CMS_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_to_redis_npa_result.json)
           
-          echo "${CMS_TO_REDIS_FW_Route_NPA}"
-          echo "${CMS_TO_REDIS_RT_Route_NPA}"
+      #     echo "${CMS_TO_REDIS_FW_Route_NPA}"
+      #     echo "${CMS_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${CMS_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "CMS_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "CMS_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${CMS_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "CMS_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "CMS_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for CMS-POD-to-REDIS: ${CMS_POD_TO_REDIS_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for CMS-POD-to-REDIS: ${CMS_POD_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${CMS_POD_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${CMS_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${CMS_POD_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${CMS_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > cms_pod_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > cms_pod_to_redis_npa_result.json
             
-          CMS_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_pod_to_redis_npa_result.json)
-          CMS_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_pod_to_redis_npa_result.json)
+      #     CMS_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' cms_pod_to_redis_npa_result.json)
+      #     CMS_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' cms_pod_to_redis_npa_result.json)
           
-          echo "${CMS_POD_TO_REDIS_FW_Route_NPA}"
-          echo "${CMS_POD_TO_REDIS_RT_Route_NPA}"
+      #     echo "${CMS_POD_TO_REDIS_FW_Route_NPA}"
+      #     echo "${CMS_POD_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${CMS_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "CMS_POD_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "CMS_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${CMS_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${CMS_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "CMS_POD_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "CMS_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for AIRS-to-REDIS: ${AIRS_TO_REDIS_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for AIRS-to-REDIS: ${AIRS_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${AIRS_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${AIRS_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${AIRS_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${AIRS_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > airs_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > airs_to_redis_npa_result.json
             
-          AIRS_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_to_redis_npa_result.json)
-          AIRS_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_to_redis_npa_result.json)
+      #     AIRS_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_to_redis_npa_result.json)
+      #     AIRS_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_to_redis_npa_result.json)
           
-          echo "${AIRS_TO_REDIS_FW_Route_NPA}"
-          echo "${AIRS_TO_REDIS_RT_Route_NPA}"
+      #     echo "${AIRS_TO_REDIS_FW_Route_NPA}"
+      #     echo "${AIRS_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${AIRS_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "AIRS_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "AIRS_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${AIRS_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "AIRS_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "AIRS_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
-          ###############################
-          echo "Running saved NPA test for AIRS-POD-to-REDIS: ${AIRS_POD_TO_REDIS_NPA_TEST_ID}"
+      #     ###############################
+      #     echo "Running saved NPA test for AIRS-POD-to-REDIS: ${AIRS_POD_TO_REDIS_NPA_TEST_ID}"
           
-          oci vn-monitoring path-analysis get-path-analysis-persisted \
-            --path-analyzer-test-id "${AIRS_POD_TO_REDIS_NPA_TEST_ID}" \
-            --wait-for-state SUCCEEDED \
-            --wait-for-state FAILED \
-            --max-wait-seconds 900 \
-            --output json > path_run.json
+      #     oci vn-monitoring path-analysis get-path-analysis-persisted \
+      #       --path-analyzer-test-id "${AIRS_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --wait-for-state SUCCEEDED \
+      #       --wait-for-state FAILED \
+      #       --max-wait-seconds 900 \
+      #       --output json > path_run.json
 
           
-          WR_ID=$(oci vn-monitoring work-request list \
-            --compartment-id "${OCI_COMPARTMENT_OCID}" \
-            --resource-id "${AIRS_POD_TO_REDIS_NPA_TEST_ID}" \
-            --sort-by timeAccepted \
-            --sort-order DESC \
-            --limit 1 \
-            --query 'data.items[0].id' \
-            --raw-output)
+      #     WR_ID=$(oci vn-monitoring work-request list \
+      #       --compartment-id "${OCI_COMPARTMENT_OCID}" \
+      #       --resource-id "${AIRS_POD_TO_REDIS_NPA_TEST_ID}" \
+      #       --sort-by timeAccepted \
+      #       --sort-order DESC \
+      #       --limit 1 \
+      #       --query 'data.items[0].id' \
+      #       --raw-output)
         
-          WR_STATUS=$(oci vn-monitoring work-request get \
-            --work-request-id "${WR_ID}" \
-            --query 'data.status' \
-            --raw-output)
+      #     WR_STATUS=$(oci vn-monitoring work-request get \
+      #       --work-request-id "${WR_ID}" \
+      #       --query 'data.status' \
+      #       --raw-output)
 
-          oci vn-monitoring work-request-result list \
-            --work-request-id "${WR_ID}"\
-            --all \
-            --result-type PATH_ANALYSIS \
-            --output json > airs_pod_to_redis_npa_result.json
+      #     oci vn-monitoring work-request-result list \
+      #       --work-request-id "${WR_ID}"\
+      #       --all \
+      #       --result-type PATH_ANALYSIS \
+      #       --output json > airs_pod_to_redis_npa_result.json
             
-          AIRS_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_pod_to_redis_npa_result.json)
-          AIRS_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_pod_to_redis_npa_result.json)
+      #     AIRS_POD_TO_REDIS_FW_Route_NPA=$(jq -r '.data.items[0].paths[0]["forward-route"]["reachability-status"]' airs_pod_to_redis_npa_result.json)
+      #     AIRS_POD_TO_REDIS_RT_Route_NPA=$(jq -r '.data.items[0].paths[0]["return-route"]["reachability-status"]' airs_pod_to_redis_npa_result.json)
           
-          echo "${AIRS_POD_TO_REDIS_FW_Route_NPA}"
-          echo "${AIRS_POD_TO_REDIS_RT_Route_NPA}"
+      #     echo "${AIRS_POD_TO_REDIS_FW_Route_NPA}"
+      #     echo "${AIRS_POD_TO_REDIS_RT_Route_NPA}"
 
 
-          if [ "${AIRS_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
-            echo "AIRS_POD_TO_REDIS_CONNECTION IS REACHABLE"
-          else
-            echo "AIRS_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
-          fi
-          #####################################
+      #     if [ "${AIRS_POD_TO_REDIS_FW_Route_NPA}" = "REACHABLE" ] && [ "${AIRS_POD_TO_REDIS_RT_Route_NPA}"  = "REACHABLE" ]; then
+      #       echo "AIRS_POD_TO_REDIS_CONNECTION IS REACHABLE"
+      #     else
+      #       echo "AIRS_POD_TO_REDIS_CONNECTION IS NOT REACHABLE"
+      #     fi
+      #     #####################################
 
           # ###############################
           # echo "Running NPA test for WEB-to-CMS: ${WEB_TO_CMS_NPA_TEST_ID}"
