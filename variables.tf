@@ -12,13 +12,13 @@ variable "dr_region" {
 }
 
 
-provider "oci" {
+provider "ocidc" {
   alias  = "dc"
   region = var.dc_region
 }
 
 
-provider "oci" {
+provider "ocidr" {
   alias  = "dr"
   region = var.dr_region
 }

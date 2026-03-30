@@ -9,10 +9,10 @@ terraform {
   }
 }
 
-# provider "oci" {
-#   region = var.dc_region
-# }
+provider "ocidc" {
+  region = var.dc_region
+}
 
-provider "oci" {
+provider "ocidr" {
   region = var.dr_region
 }
