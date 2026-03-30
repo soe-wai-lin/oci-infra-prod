@@ -3,9 +3,24 @@
 ################################
 
 
-variable "region" {
+variable "dc_region" {
   default = "ap-singapore-1"
-  # default = "ap-osaka-1"
+}
+
+variable "dr_region" {
+  default = "ap-sydney-1"
+}
+
+
+provider "oci" {
+  alias  = "dc"
+  region = var.dc_region
+}
+
+
+provider "oci" {
+  alias  = "dr"
+  region = var.dr_region
 }
 
 variable "compartment_id" {
