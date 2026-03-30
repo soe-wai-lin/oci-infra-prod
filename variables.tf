@@ -768,7 +768,7 @@ variable "cluster_name" {
 variable "kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.34.1"
 }
 
 variable "cluster_type" {
