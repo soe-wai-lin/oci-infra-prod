@@ -1,6 +1,5 @@
 resource "oci_identity_compartment" "net_compartment" {
   #Required
-  provider = oci.dc
   compartment_id = var.compartment_id
   description    = var.net_compartment_description
   name           = var.net_comp
@@ -10,7 +9,6 @@ resource "oci_identity_compartment" "net_compartment" {
 
 resource "oci_identity_compartment" "app_compartment" {
   #Required
-  provider = oci.dc
   compartment_id = var.compartment_id
   description    = var.app_compartment_description
   name           = var.app_comp
@@ -20,7 +18,6 @@ resource "oci_identity_compartment" "app_compartment" {
 
 resource "oci_identity_compartment" "data_compartment" {
   #Required
-  provider = oci.dc
   compartment_id = var.compartment_id
   description    = var.data_compartment_description
   name           = var.data_comp
@@ -30,7 +27,6 @@ resource "oci_identity_compartment" "data_compartment" {
 
 resource "oci_identity_compartment" "mgmt_compartment" {
   #Required
-  provider = oci.dc
   compartment_id = var.compartment_id
   description    = var.mgmt_compartment_description
   name           = var.mgmt_comp

@@ -12,15 +12,6 @@ variable "dr_region" {
 }
 
 
-# variable "dc_vcn_provider" {
-#   default = oci.dc
-# }
-
-
-# provider "ocidr" {
-#   alias  = "dr"
-#   region = var.dr_region
-# }
 
 variable "compartment_id" {
   default     = "ocid1.compartment.oc1..aaaaaaaafmd3eynylajhayrhegk6typot73nexdgkj7iksc3374pcv3zb45q"
