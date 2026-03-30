@@ -5,6 +5,7 @@
 
 variable "region" {
   default = "ap-singapore-1"
+  # default = "ap-osaka-1"
 }
 
 variable "compartment_id" {

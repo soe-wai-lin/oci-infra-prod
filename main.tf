@@ -235,7 +235,8 @@ resource "oci_core_security_list" "redis_SL" {
   display_name   = "${var.vcn_display_name}-redis-SL"
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.80.0/24"
+    source      = var.db_cidr_block
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from db subnet"
     tcp_options {
       min = 6379
@@ -244,7 +245,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.16.0/24"
+    source      = var.cms_worker_sub_cidr
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from cms subnet"
     tcp_options {
       min = 6379
@@ -253,7 +255,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.128.0/24"
+    source      = var.cms_worker_pod_cidr_block
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from cms pod subnet"
     tcp_options {
       min = 6379
@@ -262,7 +265,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
    ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.32.0/24"
+    source      = var.web_worker_sub_cidr
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from web subnet"
     tcp_options {
       min = 6379
@@ -271,7 +275,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.112.0/24"
+    source      = var.web_worker_pod_cidr_block
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from web pod subnet"
     tcp_options {
       min = 6379
@@ -280,7 +285,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
    ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.96.0/24"
+    source      = var.airs_micro_oke_worker_cidr_block
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from airs subnet"
     tcp_options {
       min = 6379
@@ -289,7 +295,8 @@ resource "oci_core_security_list" "redis_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.144.0/24"
+    source      = var.airs_micro_oke_pod_cidr_block
+    source_type = "CIDR_BLOCK"
     description = "allow 6379 from airs pod subnet"
     tcp_options {
       min = 6379
@@ -299,37 +306,44 @@ resource "oci_core_security_list" "redis_SL" {
 
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.80.0/24"
+    destination = var.db_cidr_block
+    destination_type = "CIDR_BLOCK"
     description = "Allow to db egress"
   }
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.16.0/24"
+    destination = var.cms_worker_sub_cidr
+    destination_type = "CIDR_BLOCK"
     description = "Allow to cms egress"
   }
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.32.0/24"
+    destination = var.web_worker_sub_cidr
+    destination_type = "CIDR_BLOCK"
     description = "Allow to web egress"
   }
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.96.0/24"
+    destination = var.airs_micro_oke_worker_cidr_block
+    destination_type = "CIDR_BLOCK"
     description = "Allow to airs egress"
   }
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.112.0/24"
+    destination = var.web_worker_pod_cidr_block
+    destination_type = "CIDR_BLOCK"
     description = "Allow to web pod egress"
   }
   egress_security_rules {
     protocol    = "6"
-    destination = "10.10.128.0/24"
+    destination = var.cms_worker_pod_cidr_block
+    destination_type = "CIDR_BLOCK"
     description = "Allow to cms pod egress"
   }
     egress_security_rules {
     protocol    = "6"
-    destination = "10.10.14.0/24"
+    destination = var.airs_micro_oke_pod_cidr_block
+    destination_type = "CIDR_BLOCK"
     description = "Allow to air pod egress"
   }
 
@@ -345,12 +359,14 @@ resource "oci_core_security_list" "web_SL" {
   display_name   = "${var.vcn_display_name}-web-worker-SL"
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.16.0/20"
+    # source      = "10.10.16.0/20"
+    source = var.cms_worker_sub_cidr
     description = "allow all cms to web"
   }
     ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.80.0/24"
+    # source      = "10.10.80.0/24"
+    source = var.db_cidr_block
     description = "allow all db to web"
   }
 
@@ -454,7 +470,8 @@ resource "oci_core_security_list" "web_worker_pod_SL" {
   display_name   = "${var.vcn_display_name}-web-worker-pod-SL"
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.32.0/20"
+    # source      = "10.10.32.0/20"
+    source = var.web_worker_sub_cidr
     description = "Allow worker nodes to access pods."
   }
 
@@ -542,12 +559,14 @@ resource "oci_core_security_list" "cms_SL" {
   display_name   = "${var.vcn_display_name}-cms-worker-SL"
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.32.0/20"
+    # source      = "10.10.32.0/20"
+    source = var.web_worker_sub_cidr
     description = "allow all web to cms"
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.80.0/24"
+    # source      = "10.10.80.0/24"
+    source = var.db_cidr_block
     description = "allow all db to cms"
   }
 
@@ -701,7 +720,8 @@ resource "oci_core_security_list" "db_SL" {
 
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.16.0/20"
+    # source      = "10.10.16.0/20"
+    source = var.cms_worker_sub_cidr
     description = "allow_from_cms_to_db"
     tcp_options {
       min = 5432
@@ -711,7 +731,8 @@ resource "oci_core_security_list" "db_SL" {
 
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.32.0/20"
+    # source      = "10.10.32.0/20"
+    source = var.web_worker_sub_cidr
     description = "allow_web_to_db"
     tcp_options {
       min = 5432
@@ -720,7 +741,8 @@ resource "oci_core_security_list" "db_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.96.0/20"
+    # source      = "10.10.96.0/20"
+    source = var.airs_micro_oke_worker_cidr_block
     description = "allow_airs_to_db"
     tcp_options {
       min = 5432
@@ -729,7 +751,8 @@ resource "oci_core_security_list" "db_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.112.0/20"
+    # source      = "10.10.112.0/20"
+    source = var.web_worker_pod_cidr_block
     description = "allow_web_pod_to_db"
     tcp_options {
       min = 5432
@@ -738,7 +761,8 @@ resource "oci_core_security_list" "db_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.128.0/20"
+    # source      = "10.10.128.0/20"
+    source = var.cms_worker_pod_cidr_block
     description = "allow_cms_pod_to_db"
     tcp_options {
       min = 5432
@@ -747,7 +771,8 @@ resource "oci_core_security_list" "db_SL" {
   }
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.144.0/20"
+    # source      = "10.10.144.0/20"
+    source = var.airs_micro_oke_pod_cidr_block
     description = "allow_airs_pod_to_db"
     tcp_options {
       min = 5432
@@ -779,7 +804,8 @@ resource "oci_core_security_list" "airs_SL" {
   display_name   = "${var.vcn_display_name}-airs-SL"
   ingress_security_rules {
     protocol    = "6"
-    source      = "10.10.80.0/24"
+    # source      = "10.10.80.0/24"
+    source = var.db_cidr_block
     description = "allow db to airs"
   }
   egress_security_rules {
@@ -961,7 +987,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_web_worker
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allow traffic to web worker nodes."
   tcp_options {
@@ -975,7 +1002,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_web_worker
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes"
   tcp_options {
@@ -989,7 +1017,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_cms_worker
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allow traffic to cms worker nodes."
   tcp_options {
@@ -1003,7 +1032,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_cms_worker
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes"
   tcp_options {
@@ -1017,7 +1047,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_airs_worke
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow traffic to cms worker nodes."
   tcp_options {
@@ -1031,7 +1062,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_airs_worke
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes"
   tcp_options {
@@ -1082,7 +1114,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_w
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.16.0/20"
+  # source                    = "10.10.16.0/20"
+  source = var.cms_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1090,7 +1123,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_p
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.128.0/20"
+  # source                    = "10.10.128.0/20"
+  source = var.cms_worker_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1098,7 +1132,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_l
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.0.0/24"
+  # source                    = "10.10.0.0/24"
+  source = var.lb_subnet_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes."
   tcp_options {
@@ -1124,7 +1159,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow Kubernetes API endpoint to communicate with worker nodes."
 }
@@ -1132,7 +1168,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to worker node communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1171,7 +1208,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_egress" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.80.0/24"
+  # destination               = "10.10.80.0/24"
+  destination = var.db_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow to DB subnet"
   tcp_options {
@@ -1185,7 +1223,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_egress_wo
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1193,7 +1232,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_egress_po
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.128.0/20"
+  # destination               = "10.10.128.0/20"
+  destination = var.cms_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow worker nodes to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1213,7 +1253,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_egress_ap
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1235,7 +1276,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_egress_ap
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1268,7 +1310,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_k8s_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to pod communication (when using VCN-native pod networking)."
 }
@@ -1276,7 +1319,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_woker
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.16.0/20"
+  # source                    = "10.10.16.0/20"
+  source = var.cms_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes."
 }
@@ -1284,7 +1328,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_ingre
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.128.0/20"
+  # source                    = "10.10.128.0/20"
+  source = var.cms_worker_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -1294,7 +1339,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.128.0/20"
+  # destination               = "10.10.128.0/20"
+  destination = var.cms_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -1339,7 +1385,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1353,7 +1400,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1418,7 +1466,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.32.0/20"
+  # source                    = "10.10.32.0/20"
+  source = var.web_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1426,7 +1475,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.112.0/20"
+  # source                    = "10.10.112.0/20"
+  source = var.web_worker_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1434,7 +1484,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow Kubernetes API endpoint to communicate with worker nodes"
   tcp_options {}
@@ -1443,7 +1494,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to worker node communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1457,7 +1509,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_f
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.0.0/24"
+  # source                    = "10.10.0.0/24"
+  source = var.lb_subnet_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes.."
   tcp_options {
@@ -1518,7 +1571,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_al
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1526,7 +1580,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_al
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.112.0/20"
+  # destination               = "10.10.112.0/20"
+  destination = var.web_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow worker nodes to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1558,7 +1613,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_10
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1572,7 +1628,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_10
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.0.0/24"
+  # destination               = "10.10.0.0/24"
+  destination = var.lb_subnet_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes."
   tcp_options {
@@ -1586,7 +1643,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_64
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1608,7 +1666,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_egress_1"
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.80.0/24"
+  # destination               = "10.10.80.0/24"
+  destination = var.db_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow 3306 to DB"
   tcp_options {
@@ -1657,7 +1716,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.96.0/20"
+  # source                    = "10.10.96.0/20"
+  source = var.airs_micro_oke_worker_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1665,7 +1725,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.144.0/20"
+  # source                    = "10.10.144.0/20"
+  source = var.airs_micro_oke_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1685,7 +1746,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow Kubernetes API endpoint to communicate with worker nodes."
 }
@@ -1693,7 +1755,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to worker node communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1721,7 +1784,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.0.0/24"
+  # source                    = "10.10.0.0/24"
+  source = var.lb_subnet_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes."
   tcp_options {
@@ -1746,7 +1810,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_egress" 
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.80.0/24"
+  # destination               = "10.10.80.0/24"
+  destination = var.db_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow to db_subnet"
 }
@@ -1754,7 +1819,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_egress_w
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allows communication from (or to) worker nodes."
 }
@@ -1762,7 +1828,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_egress_p
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.144.0/20"
+  # destination               = "10.10.144.0/20"
+  destination = var.airs_micro_oke_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow worker nodes to communicate with pods on other worker nodes (when using VCN-native pod networking)."
 }
@@ -1782,7 +1849,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_egress_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1804,7 +1872,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_egress_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes worker to Kubernetes API endpoint communication."
   tcp_options {
@@ -1837,7 +1906,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_k8s_
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to pod communication (when using VCN-native pod networking)."
 }
@@ -1845,7 +1915,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_woke
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.96.0/20"
+  # source                    = "10.10.96.0/20"
+  source = var.airs_micro_oke_worker_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes."
 }
@@ -1853,7 +1924,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_ingr
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.144.0/20"
+  # source                    = "10.10.144.0/20"
+  source = var.airs_micro_oke_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -1863,7 +1935,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.144.0/20"
+  # destination               = "10.10.144.0/20"
+  destination = var.airs_micro_oke_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -1908,7 +1981,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1922,7 +1996,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -1959,7 +2034,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_k8s_a
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.60.0/24"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to pod communication (when using VCN-native pod networking)."
 }
@@ -1967,7 +2043,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_woker
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.32.0/20"
+  # source                    = "10.10.32.0/20"
+  source = var.web_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods on one worker node to communicate with pods on other worker nodes."
 }
@@ -1975,7 +2052,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_ingre
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "INGRESS"
   protocol                  = "all"
-  source                    = "10.10.112.0/20"
+  # source                    = "10.10.112.0/20"
+  source = var.web_worker_pod_cidr_block
   source_type               = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -1985,7 +2063,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "EGRESS"
   protocol                  = "all"
-  destination               = "10.10.112.0/20"
+  # destination               = "10.10.112.0/20"
+  destination = var.web_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow pods to communicate with each other."
 }
@@ -2030,7 +2109,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -2044,7 +2124,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
   tcp_options {
@@ -2154,7 +2235,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_bastion_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_bastion.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.60.0/24"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow access to k8s API endpoints"
   tcp_options {
@@ -2168,7 +2250,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_bastion_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_bastion.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "SSH access to WEB Worker Nodes"
   tcp_options {
@@ -2182,7 +2265,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_bastion_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_bastion.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "SSH access to CMS Worker Nodes"
   tcp_options {
@@ -2196,7 +2280,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_bastion_egres
   network_security_group_id = oci_core_network_security_group.nsg_prod_bastion.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "SSH access to AIRS Worker Nodes"
   tcp_options {
@@ -2294,7 +2379,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress
   network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "10.10.32.0/20"
+  # source                    = "10.10.32.0/20"
+  source = var.web_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   description               = "Allow 6379 from web_worker"
 
@@ -2320,18 +2406,18 @@ resource "oci_core_network_security_group" "nsg_prod_k8s_api_endpoints" {
 
 locals {
   k8s_api_ep = {
-    web_worker_6443  = { cidr = "10.10.32.0/20", port = "6443" }
-    web_worker_12250 = { cidr = "10.10.32.0/20", port = "12250" }
-    web_pod_6443     = { cidr = "10.10.112.0/20", port = "6443" }
-    web_pod_12250    = { cidr = "10.10.112.0/20", port = "12250" }
-    cms_worker_6443  = { cidr = "10.10.16.0/20", port = "6443" }
-    cms_worker_12250 = { cidr = "10.10.16.0/20", port = "12250" }
-    cms_pod_6443     = { cidr = "10.10.128.0/20", port = "6443" }
-    cms_pod_12250    = { cidr = "10.10.128.0/20", port = "12250" }
-    airs_worker_6443  = { cidr = "10.10.96.0/20", port = "6443" }
-    airs_worker_12250 = { cidr = "10.10.96.0/20", port = "12250" }
-    airs_pod_6443     = { cidr = "10.10.144.0/20", port = "6443" }
-    airs_pod_12250    = { cidr = "10.10.144.0/20", port = "12250" }
+    web_worker_6443  = { cidr = var.web_worker_sub_cidr, port = "6443" }
+    web_worker_12250 = { cidr = var.web_worker_sub_cidr, port = "12250" }
+    web_pod_6443     = { cidr = var.web_worker_pod_cidr_block, port = "6443" }
+    web_pod_12250    = { cidr = var.web_worker_pod_cidr_block, port = "12250" }
+    cms_worker_6443  = { cidr = var.cms_worker_sub_cidr, port = "6443" }
+    cms_worker_12250 = { cidr = var.cms_worker_sub_cidr, port = "12250" }
+    cms_pod_6443     = { cidr = var.cms_worker_pod_cidr_block, port = "6443" }
+    cms_pod_12250    = { cidr = var.cms_worker_pod_cidr_block, port = "12250" }
+    airs_worker_6443  = { cidr = var.airs_micro_oke_worker_cidr_block, port = "6443" }
+    airs_worker_12250 = { cidr = var.airs_micro_oke_worker_cidr_block, port = "12250" }
+    airs_pod_6443     = { cidr = var.airs_micro_oke_pod_cidr_block, port = "6443" }
+    airs_pod_12250    = { cidr = var.airs_micro_oke_pod_cidr_block, port = "12250" }
   }
 }
 
@@ -2356,7 +2442,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_k8s_api_endpo
   network_security_group_id = oci_core_network_security_group.nsg_prod_k8s_api_endpoints.id
   direction                 = "INGRESS"
   protocol                  = "1" # ICMP
-  source                    = "10.10.32.0/20"
+  # source                    = "10.10.32.0/20"
+  source = var.web_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   stateless                 = false
   description               = "Path MTU Discovery from web worker nodes (ICMP type 3 code 4)."
@@ -2370,7 +2457,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_k8s_api_endpo
   network_security_group_id = oci_core_network_security_group.nsg_prod_k8s_api_endpoints.id
   direction                 = "INGRESS"
   protocol                  = "1" # ICMP
-  source                    = "10.10.16.0/20"
+  # source                    = "10.10.16.0/20"
+  source = var.cms_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
   stateless                 = false
   description               = "Path MTU Discovery from cms worker nodes (ICMP type 3 code 4)."
@@ -2384,7 +2472,8 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_k8s_api_endpo
   network_security_group_id = oci_core_network_security_group.nsg_prod_k8s_api_endpoints.id
   direction                 = "INGRESS"
   protocol                  = "1" # ICMP
-  source                    = "10.10.96.0/20"
+  # source                    = "10.10.96.0/20"
+  source = var.airs_micro_oke_worker_cidr_block
   source_type               = "CIDR_BLOCK"
   stateless                 = false
   description               = "Path MTU Discovery from airs worker nodes (ICMP type 3 code 4)."
@@ -2433,7 +2522,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "all"
   stateless                 = false
-  destination               = "10.10.112.0/20"
+  # destination               = "10.10.112.0/20"
+  destination = var.web_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to pod communication (when using VCN-native pod networking)"
 }
@@ -2442,7 +2532,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "6" # TCP
   stateless                 = false
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to worker node communication over TCP/10250 (when using VCN-native pod networking)."
   tcp_options {
@@ -2457,7 +2548,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "1" # ICMP
   stateless                 = false
-  destination               = "10.10.32.0/20"
+  # destination               = "10.10.32.0/20"
+  destination = var.web_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Path Discovery (ICMP type 3 code 4) to worker nodes."
 
@@ -2471,7 +2563,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "all"
   stateless                 = false
-  destination               = "10.10.128.0/20"
+  # destination               = "10.10.128.0/20"
+  destination = var.cms_worker_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to cms pod communication (when using VCN-native pod networking)"
 }
@@ -2480,7 +2573,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "6" # TCP
   stateless                 = false
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to cms worker node communication over TCP/10250 (when using VCN-native pod networking)."
   tcp_options {
@@ -2495,7 +2589,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "1" # ICMP
   stateless                 = false
-  destination               = "10.10.16.0/20"
+  # destination               = "10.10.16.0/20"
+  destination = var.cms_worker_sub_cidr
   destination_type          = "CIDR_BLOCK"
   description               = "Path Discovery (ICMP type 3 code 4) to cms worker nodes."
 
@@ -2509,7 +2604,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "all"
   stateless                 = false
-  destination               = "10.10.144.0/20"
+  # destination               = "10.10.144.0/20"
+  destination = var.airs_micro_oke_pod_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to airs pod communication (when using VCN-native pod networking)"
 }
@@ -2518,7 +2614,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "6" # TCP
   stateless                 = false
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Kubernetes API endpoint to airs worker node communication over TCP/10250 (when using VCN-native pod networking)."
   tcp_options {
@@ -2533,7 +2630,8 @@ resource "oci_core_network_security_group_security_rule" "k8s_api_endpoint_egres
   direction                 = "EGRESS"
   protocol                  = "1" # ICMP
   stateless                 = false
-  destination               = "10.10.96.0/20"
+  # destination               = "10.10.96.0/20"
+  destination = var.airs_micro_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Path Discovery (ICMP type 3 code 4) to cms worker nodes."
 
