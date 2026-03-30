@@ -9,10 +9,12 @@ terraform {
   }
 }
 
-provider "ocidc" {
+provider "oci" {
   region = var.dc_region
+  alias = "dc"
 }
 
-provider "ocidr" {
+provider "oci" {
   region = var.dr_region
+  alias = "dr"
 }
