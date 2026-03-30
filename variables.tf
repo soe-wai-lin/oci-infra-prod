@@ -756,14 +756,14 @@ variable "worker_max_pods_per_node" {
 variable "cluster_name" {
   description = "OKE cluster name."
   type        = string
-  default     = "prod-test-cluster"
+  default     = "prod-web-cluster"
 }
 
-variable "node_image_id" {
-  # default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
-  default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaazzzecbburmrbeythywibbgs6iukplxkxvjpqmen2klhv62yscf7q"
-  description = "Need to compatitable with node shape,oke cluster version"
-}
+# variable "node_image_id" {
+#   # default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
+#   default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaazzzecbburmrbeythywibbgs6iukplxkxvjpqmen2klhv62yscf7q"
+#   description = "Need to compatitable with node shape,oke cluster version"
+# }
 
 variable "kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
