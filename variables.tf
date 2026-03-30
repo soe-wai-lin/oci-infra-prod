@@ -12,9 +12,8 @@ variable "dr_region" {
 }
 
 
-# provider "ocidc" {
-#   alias  = "dc"
-#   region = var.dc_region
+# variable "dc_vcn_provider" {
+#   default = oci.dc
 # }
 
 

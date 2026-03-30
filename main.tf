@@ -1,6 +1,6 @@
 resource "oci_core_vcn" "terra_vcn" {
   #Required
-  provider = oci.dr
+  provider = oci.dc
   depends_on     = [oci_identity_compartment.net_compartment]
   compartment_id = oci_identity_compartment.net_compartment.id
 
