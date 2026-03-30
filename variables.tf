@@ -3,14 +3,13 @@
 ################################
 
 
-variable "dc_region" {
+variable "home_region" {
   default = "ap-singapore-1"
 }
 
-variable "dr_region" {
+variable "target_region" {
   default = "ap-sydney-1"
 }
-
 
 
 variable "compartment_id" {

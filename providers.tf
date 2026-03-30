@@ -10,11 +10,11 @@ terraform {
 }
 
 provider "oci" {
-  region = var.dc_region
-  alias = "dc"
+  region = var.home_region
+  alias = "home"
 }
 
 provider "oci" {
-  region = var.dr_region
-  alias = "dr"
+  region = var.target_region
+  alias = "target"
 }
