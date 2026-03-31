@@ -615,7 +615,7 @@ variable "redis_destination_ip" {
 variable "db_destination_port" {
   description = "Destination port for TCP/UDP analysis."
   type        = number
-  default     = 5432
+  default     = 5430
 }
 
 variable "redis_destination_port" {
@@ -768,7 +768,7 @@ variable "cluster_name" {
 variable "kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.1"
+  default     = "v1.34.2"
 }
 
 variable "cluster_type" {
