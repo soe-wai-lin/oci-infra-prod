@@ -182,6 +182,14 @@ resource "oci_containerengine_node_pool" "system" {
     }
   }
 
+  ###  system pool stays static, and the autoscaler pod is scheduled there rather than
+  ### on the worker pool it may later scale down
+
+  initial_node_labels {
+    key   = "nodepool-role"
+    value = "system"
+  }
+
   ssh_public_key = var.oke_ssh_public_key
 
   lifecycle {
@@ -197,79 +205,236 @@ resource "oci_containerengine_node_pool" "system" {
   }
 }
 
-# #########################################
-# # Resource: worker node pool
-# # Intended for platform/worker workloads.
-# #########################################
-# resource "oci_containerengine_node_pool" "worker" {
-#   cluster_id         = oci_containerengine_cluster.this.id
-#   compartment_id     = oci_identity_compartment.app_compartment.id
-#   name               = var.worker_node_pool_name
-#   kubernetes_version = var.kubernetes_version
+#########################################
+# Resource: worker node pool
+# Intended for platform/worker workloads.
+#########################################
+resource "oci_containerengine_node_pool" "worker" {
+  cluster_id         = oci_containerengine_cluster.this.id
+  compartment_id     = oci_identity_compartment.app_compartment.id
+  name               = var.worker_node_pool_name
+  kubernetes_version = var.kubernetes_version
 
-#   node_shape = var.worker_node_shape
+  node_shape = var.worker_node_shape
 
-#   freeform_tags = merge(var.freeform_tags, {
-#     "oke-nodepool-role" = "worker"
-#   })
-#   defined_tags = var.defined_tags
+  freeform_tags = merge(var.freeform_tags, {
+    "oke-nodepool-role" = "worker"
+  })
+  defined_tags = var.defined_tags
 
-#   # Rolling replacement / safer maintenance behavior.
-#   node_eviction_node_pool_settings {
-#     eviction_grace_duration              = var.node_eviction_grace_duration
-#     is_force_action_after_grace_duration = var.node_force_action_after_grace_duration
-#     is_force_delete_after_grace_duration = var.node_force_delete_after_grace_duration
-#   }
+  # Rolling replacement / safer maintenance behavior.
+  node_eviction_node_pool_settings {
+    eviction_grace_duration              = var.node_eviction_grace_duration
+    is_force_action_after_grace_duration = var.node_force_action_after_grace_duration
+    is_force_delete_after_grace_duration = var.node_force_delete_after_grace_duration
+  }
 
-#   node_pool_cycling_details {
-#     is_node_cycling_enabled = var.node_cycling_enabled
-#     maximum_surge           = var.node_cycling_maximum_surge
-#     maximum_unavailable     = var.node_cycling_maximum_unavailable
-#   }
+  node_pool_cycling_details {
+    is_node_cycling_enabled = var.node_cycling_enabled
+    maximum_surge           = var.node_cycling_maximum_surge
+    maximum_unavailable     = var.node_cycling_maximum_unavailable
+  }
 
-#   node_source_details {
-#     image_id    = local.worker_node_image_id
-#     source_type = "IMAGE"
-#   }
+  node_source_details {
+    image_id    = local.worker_node_image_id
+    source_type = "IMAGE"
+  }
 
-#   node_shape_config {
-#     memory_in_gbs = var.worker_memory_in_gbs
-#     ocpus         = var.worker_ocpus
-#   }
+  node_shape_config {
+    memory_in_gbs = var.worker_memory_in_gbs
+    ocpus         = var.worker_ocpus
+  }
 
-#   # Node placement and network configuration.
-#   node_config_details {
-#     size = var.worker_node_count
+  # Node placement and network configuration.
+  node_config_details {
+    # This is only the INITIAL size.
+    # After the autoscaler starts, it can move between min/max.
 
-#     placement_configs {
-#       availability_domain = var.worker_availability_domain
-#       subnet_id           = oci_core_subnet.web_worker_sub.id
-#     }
+    size = var.worker_node_count
 
-#     nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
+    placement_configs {
+      availability_domain = var.worker_availability_domain
+      subnet_id           = oci_core_subnet.web_worker_sub.id
+    }
 
-#     node_pool_pod_network_option_details {
-#       cni_type          = var.cni_type
-#       max_pods_per_node = var.worker_max_pods_per_node
-#       pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
-#       pod_nsg_ids       = [oci_core_network_security_group.nsg_prod_web_pod.id]
-#     }
-#   }
+    nsg_ids = [oci_core_network_security_group.nsg_prod_web.id]
 
-#   ssh_public_key = var.oke_ssh_public_key
+    node_pool_pod_network_option_details {
+      cni_type          = var.cni_type
+      max_pods_per_node = var.worker_max_pods_per_node
+      pod_subnet_ids    = [oci_core_subnet.web_worker_pod_sub.id]
+      pod_nsg_ids       = [oci_core_network_security_group.nsg_prod_web_pod.id]
+    }
+  }
 
-#   lifecycle {
-#     precondition {
-#       condition     = contains(data.oci_containerengine_node_pool_option.all_options.shapes, var.worker_node_shape)
-#       error_message = "The requested worker_node_shape is not listed as a supported OKE node-pool shape in this tenancy/region."
-#     }
+  ssh_public_key = var.oke_ssh_public_key
 
-#     precondition {
-#       condition     = local.worker_node_image_id != null
-#       error_message = "No compatible OKE image was found in node-pool-options for the requested Kubernetes version."
-#     }
-#   }
-# }
+  lifecycle {
+      ignore_changes = [
+        node_config_details[0].size
+      ]
+
+    precondition {
+      condition     = contains(data.oci_containerengine_node_pool_option.all_options.shapes, var.worker_node_shape)
+      error_message = "The requested worker_node_shape is not listed as a supported OKE node-pool shape in this tenancy/region."
+    }
+
+    precondition {
+      condition     = local.worker_node_image_id != null
+      error_message = "No compatible OKE image was found in node-pool-options for the requested Kubernetes version."
+    }
+
+    precondition {
+      condition     = var.worker_node_min_count <= var.worker_node_count && var.worker_node_count <= var.worker_node_max_count
+      error_message = "worker_node_count must be between worker_node_min_count and worker_node_max_count."
+    }
+  }
+}
+
+#########################################
+# IAM for Cluster Autoscaler (instance principal)
+#########################################
+resource "oci_identity_dynamic_group" "cluster_autoscaler" {
+  compartment_id = var.tenancy_ocid
+  name           = "${var.cluster_name}-ca-dg"
+  description    = "Dynamic group for OKE Cluster Autoscaler instances"
+  # Autoscaler runs on OKE nodes in prod-app-comp
+  matching_rule = "ALL {instance.compartment.id = '${oci_identity_compartment.app_compartment.id}'}"
+}
+
+resource "oci_identity_policy" "cluster_autoscaler" {
+  compartment_id = var.tenancy_ocid
+
+  # Change the name once if Terraform is trying to update an old wrongly-attached policy
+  name        = "${var.cluster_name}-ca-policy"
+  description = "allow worker nodes to manage node pools"
+
+  statements = [
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to manage cluster-node-pools in compartment id ${oci_identity_compartment.app_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to manage instance-family in compartment id ${oci_identity_compartment.app_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to use subnets in compartment id ${oci_identity_compartment.app_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to use vnics in compartment id ${oci_identity_compartment.app_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to inspect compartments in compartment id ${oci_identity_compartment.app_compartment.id}",
+
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to use subnets in compartment id ${oci_identity_compartment.net_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to read virtual-network-family in compartment id ${oci_identity_compartment.net_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to use vnics in compartment id ${oci_identity_compartment.net_compartment.id}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.cluster_autoscaler.name} to inspect compartments in compartment id ${oci_identity_compartment.net_compartment.id}"
+  ]
+}
+
+resource "oci_identity_policy" "enable_access_node_pool" {
+  # Attach at tenancy/root
+  compartment_id = var.tenancy_ocid
+
+  name        = "${var.cluster_name}-enable-access-node-pool-policy"
+  description = "allow node pool management"
+
+  statements = [
+    # Permissions in prod-app-comp (OKE cluster + node pools)
+    "Allow any-user to manage cluster-node-pools in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to manage instance-family in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to inspect compartments in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to use subnets in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to use vnics in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+
+    # Permissions in prod-net-comp (VCN, subnets, vnics, network metadata)
+    "Allow any-user to use subnets in compartment id ${oci_identity_compartment.net_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to read virtual-network-family in compartment id ${oci_identity_compartment.net_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to use vnics in compartment id ${oci_identity_compartment.net_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}",
+    "Allow any-user to inspect compartments in compartment id ${oci_identity_compartment.net_compartment.id} where ALL {request.principal.type='workload', request.principal.namespace='kube-system', request.principal.service_account='cluster-autoscaler', request.principal.cluster_id='${oci_containerengine_cluster.this.id}'}"
+  ]
+}
+
+
+
+#########################################
+# OKE Cluster Autoscaler add-on
+# Works for ENHANCED clusters.
+#########################################
+resource "oci_containerengine_addon" "cluster_autoscaler" {
+  count = var.enable_cluster_autoscaler && var.cluster_type == "ENHANCED_CLUSTER" ? 1 : 0
+
+  cluster_id                        = oci_containerengine_cluster.this.id
+  addon_name                        = "ClusterAutoscaler"
+  remove_addon_resources_on_delete  = true
+  override_existing                 = true
+
+  configurations {
+    key   = "authType"
+    value = var.cluster_autoscaler_auth_type
+  }
+
+  configurations {
+    key   = "nodes"
+    value = "${var.worker_node_min_count}:${var.worker_node_max_count}:${oci_containerengine_node_pool.worker.id}"
+  }
+
+
+  configurations {
+    key   = "nodeSelectors"
+    value = jsonencode({
+      "nodepool-role" = "system"
+    })
+  }
+
+  configurations {
+    key   = "numOfReplicas"
+    value = tostring(var.cluster_autoscaler_num_replicas)
+  }
+
+  configurations {
+    key   = "maxNodeProvisionTime"
+    value = var.cluster_autoscaler_max_node_provision_time
+  }
+
+  configurations {
+    key   = "scaleDownDelayAfterAdd"
+    value = var.cluster_autoscaler_scale_down_delay_after_add
+  }
+
+  configurations {
+    key   = "scaleDownUnneededTime"
+    value = var.cluster_autoscaler_scale_down_unneeded_time
+  }
+
+  configurations {
+    key   = "cordonNodeBeforeTerminating"
+    value = var.cordonNodeBeforeTerminating
+  }
+
+  # configurations {
+  #   key   = "maxGracefulTerminationSec"
+  #   value = var.cluster_autoscaler_max_graceful_termination_sec
+  # }
+ 
+  
+  # # Keep these protective defaults unless you have a very specific reason to relax them
+  # configurations {
+  #   key   = "skipNodesWithSystemPods"
+  #   value = "false"
+  # }
+
+  # configurations {
+  #   key   = "skipNodesWithLocalStorage"
+  #   value = "false"                # If true, cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath.   
+  # }
+
+
+  depends_on = [
+    oci_identity_policy.cluster_autoscaler,
+    oci_containerengine_node_pool.system,
+    oci_containerengine_node_pool.worker
+  ]
+
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
+}
+
+
 
 
 

@@ -768,7 +768,7 @@ variable "cluster_name" {
 variable "kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.34.1"
 }
 
 variable "cluster_type" {
@@ -813,7 +813,7 @@ variable "system_node_count" {
 variable "system_node_shape" {
   description = "Compute shape for the system node pool."
   type        = string
-  default     = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.E5.Flex"
 }
 
 variable "system_memory_in_gbs" {
@@ -875,7 +875,7 @@ variable "worker_availability_domain" {
 variable "worker_node_shape" {
   description = "Compute shape for the worker node pool."
   type        = string
-  default     = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.E5.Flex"
 }
 
 variable "worker_memory_in_gbs" {
@@ -885,6 +885,68 @@ variable "worker_memory_in_gbs" {
 variable "worker_ocpus" {
   default = "2"
 }
+
+#########################################
+# OKE Worker Autoscaler variables
+#########################################
+variable "enable_cluster_autoscaler" {
+  type    = bool
+  default = true
+}
+
+variable "worker_node_min_count" {
+  type    = number
+  default = 1
+}
+
+variable "worker_node_max_count" {
+  type    = number
+  default = 5
+}
+
+variable "cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "cluster_autoscaler_scale_down_utilization_threshold" {
+  type    = string
+  default = "0.4"
+}
+
+# variable "cluster_autoscaler_max_graceful_termination_sec" {
+#   type    = string
+#   default = "120"
+# }
+
+variable "cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
+
 
 
 
