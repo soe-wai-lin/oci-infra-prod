@@ -199,88 +199,88 @@ variable "service_gateway_display_name" {
 }
 
 
-###################################
-### Database Variable           ###
-###################################
+##################################
+## Database Variable           ###
+##################################
 
-# variable "db_display_name" {
-#   type        = string
-#   description = "Display name for the PostgreSQL DB system"
-#   default     = "oci-postgresql-db"
-# }
+variable "db_display_name" {
+  type        = string
+  description = "Display name for the PostgreSQL DB system"
+  default     = "oci-postgresql-db"
+}
 
-# variable "description" {
-#   type        = string
-#   description = "Description for the PostgreSQL DB system"
-#   default     = "Managed PostgreSQL DB system created by Terraform"
-# }
+variable "description" {
+  type        = string
+  description = "Description for the PostgreSQL DB system"
+  default     = "Managed PostgreSQL DB system created by Terraform"
+}
 
-# variable "db_version" {
-#   type        = number
-#   description = "PostgreSQL major version"
-#   default     = 14
-# }
+variable "db_version" {
+  type        = number
+  description = "PostgreSQL major version"
+  default     = 16
+}
 
-# variable "shape" {
-#   type        = string
-#   description = "Shape for OCI PostgreSQL DB system"
-#   default     = "PostgreSQL.VM.Standard.E5.Flex"
-# }
+variable "pg_db_shape" {
+  type        = string
+  description = "Shape for OCI PostgreSQL DB system"
+  default     = "PostgreSQL.VM.Standard.E5.Flex"
+}
 
-# variable "instance_count" {
-#   type        = number
-#   description = "Number of DB instances/nodes"
-#   default     = 1
-# }
+variable "pg_db_instance_count" {
+  type        = number
+  description = "Number of DB instances/nodes"
+  default     = 1
+}
 
-# variable "instance_ocpu_count" {
-#   type        = number
-#   description = "OCPU count per DB instance"
-#   default     = 4
-# }
+variable "pg_db_instance_ocpu_count" {
+  type        = number
+  description = "OCPU count per DB instance"
+  default     = 1
+}
 
-# variable "instance_memory_size_in_gbs" {
-#   type        = number
-#   description = "Memory per DB instance in GB"
-#   default     = 16
-# }
+variable "pg_db_instance_memory_size_in_gbs" {
+  type        = number
+  description = "Memory per DB instance in GB"
+  default     = 16
+}
 
-# variable "admin_username" {
-#   type        = string
-#   description = "PostgreSQL admin username"
-#   default     = "admin"
-# }
+variable "admin_username" {
+  type        = string
+  description = "PostgreSQL admin username"
+  default     = "admin"
+}
 
-# variable "admin_password" {
-#   type        = string
-#   description = "PostgreSQL admin password"
-#   default = "153709Swl$%"
-#   # sensitive   = true  
-# }
+variable "admin_password" {
+  type        = string
+  description = "PostgreSQL admin password"
+  default = "153709Swl$%"
+  # sensitive   = true  
+}
 
-# variable "enable_reader_endpoint" {
-#   type        = bool
-#   description = "Enable reader endpoint"
-#   default     = false
-# }
+variable "pg_db_enable_reader_endpoint" {
+  type        = bool
+  description = "Enable reader endpoint"
+  default     = false
+}
 
-# variable "storage_is_regionally_durable" {
-#   type        = bool
-#   description = "Use regionally durable storage"
-#   default     = false
-# }
+variable "pg_db_storage_is_regionally_durable" {
+  type        = bool
+  description = "Use regionally durable storage"
+  default     = false
+}
 
-# variable "storage_system_type" {
-#   type        = string
-#   description = "Storage system type"
-#   default     = "OCI_OPTIMIZED_STORAGE"
-# }
+variable "pg_db_storage_system_type" {
+  type        = string
+  description = "Storage system type"
+  default     = "OCI_OPTIMIZED_STORAGE"
+}
 
-# variable "availability_domain" {
-#   type        = string
-#   description = "Required only when storage_is_regionally_durable = false"
-#   default     = "aluk:AP-SINGAPORE-1-AD-1" ## null
-# }
+variable "pg_db_availability_domain" {
+  type        = string
+  description = "Required only when storage_is_regionally_durable = false"
+  default     = "aluk:AP-SINGAPORE-1-AD-1" ## null
+}
 
 
 # ##################################
@@ -463,61 +463,71 @@ variable "metadata" {
   default     = {}
 }
 
-###############
-###  Vault  ###
-###############
+# ###############
+# ###  Vault  ###
+# ###############
 
 
-variable "vault_name" {
-  description = "Display name of the OCI KMS vault."
-  type        = string
-  default = "prod_vault"
-}
+# variable "vault_name" {
+#   description = "Display name of the OCI KMS vault."
+#   type        = string
+#   default = "prod_vault"
+# }
 
-variable "vault_type" {
-  description = "Vault type to create. DEFAULT is the standard OCI vault type."
-  type        = string
-  default     = "VIRTUAL_PRIVATE"
-}
+# variable "vault_type" {
+#   description = "Vault type to create. DEFAULT is the standard OCI vault type."
+#   type        = string
+#   default     = "DEFAULT"
+# }
 
-variable "secret_name" {
-  description = "Name of the secret."
-  type        = string
-  default = "db_cred"
-}
+# variable "secret_name" {
+#   description = "Name of the secret."
+#   type        = string
+#   default = "db_cred"
+# }
 
-variable "secret_value" {
-  description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
-  type        = map(string)
-  sensitive   = false
-  default = {
-    "username" = "user01"
-    "password" = "pa55w0rd"
-  }
-}
+# variable "vault_rotation_interval_in_days" {
+#   default = 60
+#   type = string
+# }
 
-variable "secret_version_name" {
-  description = "Optional name for the secret version."
-  type        = string
-  default     = null
-}
+# variable "key_protection_mode" {
+#   default = "HSM"
+#   type = string
+#   description = "HSM is default"
+# }
 
-variable "secret_stage" {
-  description = "Optional stage for the secret version, such as CURRENT or PENDING."
-  type        = string
-  default     = null
-}
+# variable "secret_value" {
+#   description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
+#   type        = map(string)
+#   sensitive   = false
+#   default = {
+#     password = "pa55w0rd"
+#   }
+# }
 
-variable "rotation_interval_in_days" {
-  default = 7
-  description = "Key Rotation Day"
-  type = number
-}
+# variable "secret_version_name" {
+#   description = "Optional name for the secret version."
+#   type        = string
+#   default     = null
+# }
 
-variable "time_of_schedule_start" {
-  default = "2026-03-20T00:00:00Z"
-  description = "Key Rotation Start Schedule"
-}
+# variable "secret_stage" {
+#   description = "Optional stage for the secret version, such as CURRENT or PENDING."
+#   type        = string
+#   default     = null
+# }
+
+# variable "rotation_interval_in_days" {
+#   default = 7
+#   description = "Key Rotation Day"
+#   type = number
+# }
+
+# variable "time_of_schedule_start" {
+#   default = "2026-03-20T00:00:00Z"
+#   description = "Key Rotation Start Schedule"
+# }
 
 #######################
 ###     NPA         ###
