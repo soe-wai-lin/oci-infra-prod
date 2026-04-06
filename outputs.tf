@@ -198,77 +198,77 @@ output "bucket_approximate_size" {
 #   }, null)
 # }
 
-##################################
-###### Network Path Analyzer   ###
-##################################
+# ##################################
+# ###### Network Path Analyzer   ###
+# ##################################
 
 
-output "web_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
-}
-
-output "cms_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.cms_to_db_subnet_connectivity.id
-}
-
-output "airs_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.airs_to_db_subnet_connectivity.id
-}
-
-output "web_pod_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.web_pod_to_db_subnet_connectivity.id
-}
-
-output "cms_pod_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_db_subnet_connectivity.id
-}
-
-output "airs_pod_to_db_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_db_subnet_connectivity.id
-}
-
-# output "web_to_cms_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.web_to_cms_subnet_connectivity.id
+# output "web_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
 # }
 
-# output "cms_to_web_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.cms_to_web_subnet_connectivity.id
+# output "cms_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.cms_to_db_subnet_connectivity.id
 # }
 
-output "web_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.web_to_redis_subnet_connectivity.id
-}
+# output "airs_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.airs_to_db_subnet_connectivity.id
+# }
 
-output "web_pod_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.web_pod_to_redis_subnet_connectivity.id
-}
+# output "web_pod_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.web_pod_to_db_subnet_connectivity.id
+# }
 
-output "cms_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.cms_to_redis_subnet_connectivity.id
-}
+# output "cms_pod_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_db_subnet_connectivity.id
+# }
 
-output "cms_pod_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_redis_subnet_connectivity.id
-}
+# output "airs_pod_to_db_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_db_subnet_connectivity.id
+# }
 
-output "airs_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.airs_to_redis_subnet_connectivity.id
-}
+# # output "web_to_cms_npa_test_id" {
+# #   value = oci_vn_monitoring_path_analyzer_test.web_to_cms_subnet_connectivity.id
+# # }
 
-output "airs_pod_to_redis_npa_test_id" {
-  value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
-}
+# # output "cms_to_web_npa_test_id" {
+# #   value = oci_vn_monitoring_path_analyzer_test.cms_to_web_subnet_connectivity.id
+# # }
+
+# output "web_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.web_to_redis_subnet_connectivity.id
+# }
+
+# output "web_pod_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.web_pod_to_redis_subnet_connectivity.id
+# }
+
+# output "cms_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.cms_to_redis_subnet_connectivity.id
+# }
+
+# output "cms_pod_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_redis_subnet_connectivity.id
+# }
+
+# output "airs_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.airs_to_redis_subnet_connectivity.id
+# }
+
+# output "airs_pod_to_redis_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
+# }
 
 #################
 ###    OKE    ###
 #################
-output "system_node_image_id" {
-  value = local.system_node_image_id
-}
+# output "system_node_image_id" {
+#   value = local.system_node_image_id
+# }
 
-output "worker_node_image_id" {
-  value = local.worker_node_image_id
-}
+# output "worker_node_image_id" {
+#   value = local.worker_node_image_id
+# }
 
 
 

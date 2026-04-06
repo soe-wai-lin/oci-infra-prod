@@ -199,88 +199,88 @@ variable "service_gateway_display_name" {
 }
 
 
-###################################
-### Database Variable           ###
-###################################
+##################################
+## Database Variable           ###
+##################################
 
-# variable "db_display_name" {
-#   type        = string
-#   description = "Display name for the PostgreSQL DB system"
-#   default     = "oci-postgresql-db"
-# }
+variable "db_display_name" {
+  type        = string
+  description = "Display name for the PostgreSQL DB system"
+  default     = "oci-postgresql-db"
+}
 
-# variable "description" {
-#   type        = string
-#   description = "Description for the PostgreSQL DB system"
-#   default     = "Managed PostgreSQL DB system created by Terraform"
-# }
+variable "description" {
+  type        = string
+  description = "Description for the PostgreSQL DB system"
+  default     = "Managed PostgreSQL DB system created by Terraform"
+}
 
-# variable "db_version" {
-#   type        = number
-#   description = "PostgreSQL major version"
-#   default     = 14
-# }
+variable "db_version" {
+  type        = number
+  description = "PostgreSQL major version"
+  default     = 16
+}
 
-# variable "shape" {
-#   type        = string
-#   description = "Shape for OCI PostgreSQL DB system"
-#   default     = "PostgreSQL.VM.Standard.E5.Flex"
-# }
+variable "pg_db_shape" {
+  type        = string
+  description = "Shape for OCI PostgreSQL DB system"
+  default     = "PostgreSQL.VM.Standard.E5.Flex"
+}
 
-# variable "instance_count" {
-#   type        = number
-#   description = "Number of DB instances/nodes"
-#   default     = 1
-# }
+variable "pg_db_instance_count" {
+  type        = number
+  description = "Number of DB instances/nodes"
+  default     = 1
+}
 
-# variable "instance_ocpu_count" {
-#   type        = number
-#   description = "OCPU count per DB instance"
-#   default     = 4
-# }
+variable "pg_db_instance_ocpu_count" {
+  type        = number
+  description = "OCPU count per DB instance"
+  default     = 1
+}
 
-# variable "instance_memory_size_in_gbs" {
-#   type        = number
-#   description = "Memory per DB instance in GB"
-#   default     = 16
-# }
+variable "pg_db_instance_memory_size_in_gbs" {
+  type        = number
+  description = "Memory per DB instance in GB"
+  default     = 16
+}
 
-# variable "admin_username" {
-#   type        = string
-#   description = "PostgreSQL admin username"
-#   default     = "admin"
-# }
+variable "admin_username" {
+  type        = string
+  description = "PostgreSQL admin username"
+  default     = "admin"
+}
 
-# variable "admin_password" {
-#   type        = string
-#   description = "PostgreSQL admin password"
-#   default = "153709Swl$%"
-#   # sensitive   = true  
-# }
+variable "admin_password" {
+  type        = string
+  description = "PostgreSQL admin password"
+  default = "153709Swl$%"
+  # sensitive   = true  
+}
 
-# variable "enable_reader_endpoint" {
-#   type        = bool
-#   description = "Enable reader endpoint"
-#   default     = false
-# }
+variable "pg_db_enable_reader_endpoint" {
+  type        = bool
+  description = "Enable reader endpoint"
+  default     = false
+}
 
-# variable "storage_is_regionally_durable" {
-#   type        = bool
-#   description = "Use regionally durable storage"
-#   default     = false
-# }
+variable "pg_db_storage_is_regionally_durable" {
+  type        = bool
+  description = "Use regionally durable storage"
+  default     = false
+}
 
-# variable "storage_system_type" {
-#   type        = string
-#   description = "Storage system type"
-#   default     = "OCI_OPTIMIZED_STORAGE"
-# }
+variable "pg_db_storage_system_type" {
+  type        = string
+  description = "Storage system type"
+  default     = "OCI_OPTIMIZED_STORAGE"
+}
 
-# variable "availability_domain" {
-#   type        = string
-#   description = "Required only when storage_is_regionally_durable = false"
-#   default     = "aluk:AP-SINGAPORE-1-AD-1" ## null
-# }
+variable "pg_db_availability_domain" {
+  type        = string
+  description = "Required only when storage_is_regionally_durable = false"
+  default     = "aluk:AP-SINGAPORE-1-AD-1" ## null
+}
 
 
 # ##################################
@@ -463,61 +463,71 @@ variable "metadata" {
   default     = {}
 }
 
-###############
-###  Vault  ###
-###############
+# ###############
+# ###  Vault  ###
+# ###############
 
 
-variable "vault_name" {
-  description = "Display name of the OCI KMS vault."
-  type        = string
-  default = "prod_vault"
-}
+# variable "vault_name" {
+#   description = "Display name of the OCI KMS vault."
+#   type        = string
+#   default = "prod_vault"
+# }
 
-variable "vault_type" {
-  description = "Vault type to create. DEFAULT is the standard OCI vault type."
-  type        = string
-  default     = "VIRTUAL_PRIVATE"
-}
+# variable "vault_type" {
+#   description = "Vault type to create. DEFAULT is the standard OCI vault type."
+#   type        = string
+#   default     = "DEFAULT"
+# }
 
-variable "secret_name" {
-  description = "Name of the secret."
-  type        = string
-  default = "db_cred"
-}
+# variable "secret_name" {
+#   description = "Name of the secret."
+#   type        = string
+#   default = "db_cred"
+# }
 
-variable "secret_value" {
-  description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
-  type        = map(string)
-  sensitive   = false
-  default = {
-    "username" = "user01"
-    "password" = "pa55w0rd"
-  }
-}
+# variable "vault_rotation_interval_in_days" {
+#   default = 60
+#   type = string
+# }
 
-variable "secret_version_name" {
-  description = "Optional name for the secret version."
-  type        = string
-  default     = null
-}
+# variable "key_protection_mode" {
+#   default = "HSM"
+#   type = string
+#   description = "HSM is default"
+# }
 
-variable "secret_stage" {
-  description = "Optional stage for the secret version, such as CURRENT or PENDING."
-  type        = string
-  default     = null
-}
+# variable "secret_value" {
+#   description = "Plaintext secret value. It will be base64 encoded before being sent to OCI."
+#   type        = map(string)
+#   sensitive   = false
+#   default = {
+#     password = "pa55w0rd"
+#   }
+# }
 
-variable "rotation_interval_in_days" {
-  default = 7
-  description = "Key Rotation Day"
-  type = number
-}
+# variable "secret_version_name" {
+#   description = "Optional name for the secret version."
+#   type        = string
+#   default     = null
+# }
 
-variable "time_of_schedule_start" {
-  default = "2026-03-20T00:00:00Z"
-  description = "Key Rotation Start Schedule"
-}
+# variable "secret_stage" {
+#   description = "Optional stage for the secret version, such as CURRENT or PENDING."
+#   type        = string
+#   default     = null
+# }
+
+# variable "rotation_interval_in_days" {
+#   default = 7
+#   description = "Key Rotation Day"
+#   type = number
+# }
+
+# variable "time_of_schedule_start" {
+#   default = "2026-03-20T00:00:00Z"
+#   description = "Key Rotation Start Schedule"
+# }
 
 #######################
 ###     NPA         ###
@@ -717,33 +727,33 @@ variable "bastion_boot_volume_size_in_gbs" {
 # Optional pod networking (VCN-native)  #
 #########################################
 
-variable "cni_type" {
+variable "web_cni_type" {
   description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
   type        = string
   default     = "OCI_VCN_IP_NATIVE"
 
   validation {
-    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.cni_type)
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.web_cni_type)
     error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
   }
 }
 
 
 
-variable "services_cidr" {
+variable "web_services_cidr" {
   description = "Kubernetes services CIDR."
   type        = string
   default     = "10.96.0.0/16"
 }
 
-variable "system_max_pods_per_node" {
+variable "web_system_max_pods_per_node" {
   description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
   type        = number
   default     = 31
 }
 
 
-variable "worker_max_pods_per_node" {
+variable "web_worker_max_pods_per_node" {
   description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
   type        = number
   default     = 31
@@ -753,31 +763,26 @@ variable "worker_max_pods_per_node" {
 # Cluster settings  #
 #####################
 
-variable "cluster_name" {
+variable "web_cluster_name" {
   description = "OKE cluster name."
   type        = string
   default     = "prod-web-cluster"
 }
 
-# variable "node_image_id" {
-#   # default     = "ocid1.image.oc1.ap-singapore-1.aaaaaaaaepwcslo4gfwgfzw5saqpnfrjvqvlfj3izxtfaytcmvblyzxyvxza"
-#   default = "ocid1.image.oc1.ap-singapore-1.aaaaaaaazzzecbburmrbeythywibbgs6iukplxkxvjpqmen2klhv62yscf7q"
-#   description = "Need to compatitable with node shape,oke cluster version"
-# }
 
-variable "kubernetes_version" {
+variable "web_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.34.1"
 }
 
-variable "cluster_type" {
+variable "web_cluster_type" {
   description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
   type        = string
   default     = "ENHANCED_CLUSTER"
 
   validation {
-    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.cluster_type)
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.web_cluster_type)
     error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
   }
 }
@@ -788,7 +793,7 @@ variable "cluster_type" {
 # SSH / node instance extras #
 ##############################
 
-variable "oke_ssh_public_key" {
+variable "web_oke_ssh_public_key" {
   description = "SSH public key injected into OKE worker nodes."
   type        = string
   default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
@@ -798,57 +803,34 @@ variable "oke_ssh_public_key" {
 # System node pool  #
 #####################
 
-variable "system_node_pool_name" {
+variable "web_system_node_pool_name" {
   description = "Name of the system node pool."
   type        = string
   default     = "system-pool"
 }
 
-variable "system_node_count" {
+variable "web_system_node_count" {
   description = "Desired number of nodes in the system node pool."
   type        = number
   default     = 1
 }
 
-variable "system_node_shape" {
+variable "web_system_node_shape" {
   description = "Compute shape for the system node pool."
   type        = string
   default     = "VM.Standard.E4.Flex"
 }
 
-variable "system_memory_in_gbs" {
+variable "web_system_memory_in_gbs" {
   default = 16
 }
 
-variable "system_ocpus" {
+variable "web_system_ocpus" {
   default = 2
 }
 
-variable "system_node_os_type" {
-  description = "OS type used to discover compatible OKE node images for the system node pool."
-  type        = string
-  default     = "OL8"
-}
 
-variable "system_node_os_arch" {
-  description = "OS architecture used to discover compatible OKE node images for the system node pool."
-  type        = string
-  default     = "X86_64"
-}
-
-variable "worker_node_os_type" {
-  description = "OS type used to discover compatible OKE node images for the worker node pool."
-  type        = string
-  default     = "OL8"
-}
-
-variable "worker_node_os_arch" {
-  description = "OS architecture used to discover compatible OKE node images for the worker node pool."
-  type        = string
-  default     = "X86_64"
-}
-
-variable "system_availability_domain" {
+variable "web_system_availability_domain" {
   default = "aluk:AP-SINGAPORE-1-AD-1"
 }
 
@@ -856,35 +838,97 @@ variable "system_availability_domain" {
 # Worker node pool  #
 #####################
 
-variable "worker_node_pool_name" {
+variable "web_worker_node_pool_name" {
   description = "Name of the worker node pool."
   type        = string
   default     = "worker-pool"
 }
 
-variable "worker_node_count" {
+variable "web_worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
   default     = 1
 }
 
-variable "worker_availability_domain" {
+variable "web_worker_availability_domain" {
   default = "aluk:AP-SINGAPORE-1-AD-1"
 }
 
-variable "worker_node_shape" {
+variable "web_worker_node_shape" {
   description = "Compute shape for the worker node pool."
   type        = string
   default     = "VM.Standard.E4.Flex"
 }
 
-variable "worker_memory_in_gbs" {
+variable "web_worker_memory_in_gbs" {
   default = "16"
 }
 
-variable "worker_ocpus" {
+variable "web_worker_ocpus" {
   default = "2"
 }
+
+#########################################
+# OKE Worker Autoscaler variables
+#########################################
+variable "web_enable_cluster_autoscaler" {
+  type    = bool
+  default = true
+}
+
+variable "web_worker_node_min_count" {
+  type    = number
+  default = 1
+}
+
+variable "web_worker_node_max_count" {
+  type    = number
+  default = 5
+}
+
+variable "web_cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "web_cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "web_cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "web_cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "web_cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "web_cluster_autoscaler_scale_down_utilization_threshold" {
+  type    = string
+  default = "0.4"
+}
+
+# variable "cluster_autoscaler_max_graceful_termination_sec" {
+#   type    = string
+#   default = "120"
+# }
+
+variable "web_cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
+
 
 
 
@@ -892,37 +936,37 @@ variable "worker_ocpus" {
 # Rolling update behaviors #
 ############################
 
-variable "node_eviction_grace_duration" {
+variable "web_node_eviction_grace_duration" {
   description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
   type        = string
   default     = "PT60M"
 }
 
-variable "node_force_action_after_grace_duration" {
+variable "web_node_force_action_after_grace_duration" {
   description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
   type        = bool
   default     = false
 }
 
-variable "node_force_delete_after_grace_duration" {
+variable "web_node_force_delete_after_grace_duration" {
   description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
   type        = bool
   default     = false
 }
 
-variable "node_cycling_enabled" {
+variable "web_node_cycling_enabled" {
   description = "Enable node cycling for safer rolling replacement/updates."
   type        = bool
   default     = false
 }
 
-variable "node_cycling_maximum_surge" {
+variable "web_node_cycling_maximum_surge" {
   description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
   type        = string
   default     = "25%"
 }
 
-variable "node_cycling_maximum_unavailable" {
+variable "web_node_cycling_maximum_unavailable" {
   description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
   type        = string
   default     = "0"
@@ -938,6 +982,492 @@ variable "defined_tags" {
   type        = map(string)
   default     = {}
 }
+
+##############################
+### CMS OKE cluster variables  ###
+##############################
+
+#########################################
+# Optional pod networking (VCN-native)  #
+#########################################
+
+variable "cms_cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.cms_cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+
+
+variable "cms_services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "cms_system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+
+variable "cms_worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#########################
+# CMS Cluster settings  #
+#########################
+
+variable "cms_cluster_name" {
+  description = "CMS OKE cluster name."
+  type        = string
+  default     = "prod-cms-cluster"
+}
+
+
+variable "cms_kubernetes_version" {
+  description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
+  type        = string
+  default     = "v1.34.1"
+}
+
+variable "cms_cluster_type" {
+  description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
+  type        = string
+  default     = "ENHANCED_CLUSTER"
+
+  validation {
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.cms_cluster_type)
+    error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
+  }
+}
+
+
+
+##################################
+# CMS SSH / node instance extras #
+##################################
+
+variable "cms_oke_ssh_public_key" {
+  description = "SSH public key injected into OKE worker nodes."
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
+}
+
+#########################
+# CMS System node pool  #
+#########################
+
+variable "cms_system_node_pool_name" {
+  description = "Name of the system node pool."
+  type        = string
+  default     = "system-pool"
+}
+
+variable "cms_system_node_count" {
+  description = "Desired number of nodes in the system node pool."
+  type        = number
+  default     = 1
+}
+
+variable "cms_system_node_shape" {
+  description = "Compute shape for the system node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "cms_system_memory_in_gbs" {
+  default = 16
+}
+
+variable "cms_system_ocpus" {
+  default = 2
+}
+
+variable "cms_system_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+#########################
+# CMS Worker node pool  #
+#########################
+
+variable "cms_worker_node_pool_name" {
+  description = "Name of the worker node pool."
+  type        = string
+  default     = "worker-pool"
+}
+
+variable "cms_worker_node_count" {
+  description = "Desired number of nodes in the worker node pool."
+  type        = number
+  default     = 1
+}
+
+variable "cms_worker_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "cms_worker_node_shape" {
+  description = "Compute shape for the worker node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "cms_worker_memory_in_gbs" {
+  default = "16"
+}
+
+variable "cms_worker_ocpus" {
+  default = "2"
+}
+
+#########################################
+# CMS OKE Worker Autoscaler variables  ##
+#########################################
+# variable "cms_enable_cluster_autoscaler" {
+#   type    = bool
+#   default = true
+# }
+
+variable "cms_worker_node_min_count" {
+  type    = number
+  default = 1
+}
+
+variable "cms_worker_node_max_count" {
+  type    = number
+  default = 5
+}
+
+variable "cms_cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "cms_cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "cms_cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "cms_cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "cms_cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "cms_cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
+
+
+
+
+################################
+# CMS Rolling update behaviors #
+################################
+
+variable "cms_node_eviction_grace_duration" {
+  description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+  type        = string
+  default     = "PT60M"
+}
+
+variable "cms_node_force_action_after_grace_duration" {
+  description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+  type        = bool
+  default     = false
+}
+
+variable "cms_node_force_delete_after_grace_duration" {
+  description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+  type        = bool
+  default     = false
+}
+
+variable "cms_node_cycling_enabled" {
+  description = "Enable node cycling for safer rolling replacement/updates."
+  type        = bool
+  default     = false
+}
+
+variable "cms_node_cycling_maximum_surge" {
+  description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+  type        = string
+  default     = "25%"
+}
+
+variable "cms_node_cycling_maximum_unavailable" {
+  description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+  type        = string
+  default     = "0"
+}
+
+##############################
+### AIRS OKE cluster variables  ###
+##############################
+
+#########################################
+# Optional pod networking (VCN-native)  #
+#########################################
+
+variable "airs_cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.airs_cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+
+
+variable "airs_services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "airs_system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+
+variable "airs_worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#########################
+# AIRS Cluster settings  #
+#########################
+
+variable "airs_cluster_name" {
+  description = "AIRS OKE cluster name."
+  type        = string
+  default     = "prod-airs-cluster"
+}
+
+
+variable "airs_kubernetes_version" {
+  description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
+  type        = string
+  default     = "v1.34.1"
+}
+
+variable "airs_cluster_type" {
+  description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
+  type        = string
+  default     = "ENHANCED_CLUSTER"
+
+  validation {
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.airs_cluster_type)
+    error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
+  }
+}
+
+
+
+##################################
+# AIRS SSH / node instance extras #
+##################################
+
+variable "airs_oke_ssh_public_key" {
+  description = "SSH public key injected into OKE worker nodes."
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
+}
+
+#########################
+# AIRS System node pool  #
+#########################
+
+variable "airs_system_node_pool_name" {
+  description = "Name of the system node pool."
+  type        = string
+  default     = "system-pool"
+}
+
+variable "airs_system_node_count" {
+  description = "Desired number of nodes in the system node pool."
+  type        = number
+  default     = 1
+}
+
+variable "airs_system_node_shape" {
+  description = "Compute shape for the system node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "airs_system_memory_in_gbs" {
+  default = 16
+}
+
+variable "airs_system_ocpus" {
+  default = 2
+}
+
+
+variable "airs_system_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+#########################
+# CMS Worker node pool  #
+#########################
+
+variable "airs_worker_node_pool_name" {
+  description = "Name of the worker node pool."
+  type        = string
+  default     = "worker-pool"
+}
+
+variable "airs_worker_node_count" {
+  description = "Desired number of nodes in the worker node pool."
+  type        = number
+  default     = 1
+}
+
+variable "airs_worker_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "airs_worker_node_shape" {
+  description = "Compute shape for the worker node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "airs_worker_memory_in_gbs" {
+  default = "16"
+}
+
+variable "airs_worker_ocpus" {
+  default = "2"
+}
+
+#########################################
+# AIRS OKE Worker Autoscaler variables  ##
+#########################################
+# variable "cms_enable_cluster_autoscaler" {
+#   type    = bool
+#   default = true
+# }
+
+variable "airs_worker_node_min_count" {
+  type    = number
+  default = 1
+}
+
+variable "airs_worker_node_max_count" {
+  type    = number
+  default = 5
+}
+
+variable "airs_cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "airs_cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "airs_cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "airs_cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "airs_cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "airs_cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
+
+
+
+
+################################
+# CMS Rolling update behaviors #
+################################
+
+variable "airs_node_eviction_grace_duration" {
+  description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+  type        = string
+  default     = "PT60M"
+}
+
+variable "airs_node_force_action_after_grace_duration" {
+  description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+  type        = bool
+  default     = false
+}
+
+variable "airs_node_force_delete_after_grace_duration" {
+  description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+  type        = bool
+  default     = false
+}
+
+variable "airs_node_cycling_enabled" {
+  description = "Enable node cycling for safer rolling replacement/updates."
+  type        = bool
+  default     = false
+}
+
+variable "airs_node_cycling_maximum_surge" {
+  description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+  type        = string
+  default     = "25%"
+}
+
+variable "airs_node_cycling_maximum_unavailable" {
+  description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+  type        = string
+  default     = "0"
+}
+
 
 
 
