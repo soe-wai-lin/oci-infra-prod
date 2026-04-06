@@ -38,28 +38,6 @@ jobs:
     #   plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}   
 
     steps:
-
-      # - name: Resolve stack id and options
-      #   id: cfg
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
-
-      #     if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.stack_id }}" ]; then
-      #       STACK_ID="${{ github.event.inputs.stack_id }}"
-      #     else
-      #       STACK_ID="${{ vars.OCI_ORM_STACK_ID }}"
-      #     fi
-
-      #     if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-      #       UPGRADE="${{ github.event.inputs.upgrade_provider }}"
-      #     else
-      #       UPGRADE="false"
-      #     fi
-
-      #     echo "stack_id=${STACK_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "upgrade_provider=${UPGRADE}" >> "$GITHUB_OUTPUT
-
       - name: Install OCI CLI
         run: |
           python3 -m pip install --upgrade pip
@@ -185,7 +163,8 @@ jobs:
     # This environment must be created in GitHub repo settings
     # and configured with Required reviewers for manual approval.
     environment:
-      name: ${{ github.event.inputs.environment_name }}
+      # name: ${{ github.event.inputs.environment_name }}
+      name: prod-oci-infra-apply
 
     steps:
       - name: Install OCI CLI
@@ -243,7 +222,7 @@ jobs:
 
           # STACK_ID="${{ github.event.inputs.stack_id }}"
           # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
-          
+
           STACK_ID="${{ vars.STACK_ID }}"
           UPGRADE="false"
           PLAN_JOB_ID="${{ steps.read_plan_id.outputs.plan_job_id }}"
