@@ -109,13 +109,15 @@ jobs:
           set -euo pipefail
 
           # STACK_ID="${{ github.event.inputs.stack_id }}"
+          # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
           STACK_ID="${{ vars.STACK_ID }}"
-          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          UPGRADE="false"
+          
 
           PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
             --stack-id "${STACK_ID}" \
             --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
-            # --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
             --max-wait-seconds 1200 \
             --query 'data.id' \
