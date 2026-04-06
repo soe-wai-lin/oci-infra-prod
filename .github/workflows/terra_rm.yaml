@@ -39,26 +39,26 @@ jobs:
 
     steps:
 
-      - name: Resolve stack id and options
-        id: cfg
-        shell: bash
-        run: |
-          set -euo pipefail
+      # - name: Resolve stack id and options
+      #   id: cfg
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
 
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.stack_id }}" ]; then
-            STACK_ID="${{ github.event.inputs.stack_id }}"
-          else
-            STACK_ID="${{ vars.OCI_ORM_STACK_ID }}"
-          fi
+      #     if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.stack_id }}" ]; then
+      #       STACK_ID="${{ github.event.inputs.stack_id }}"
+      #     else
+      #       STACK_ID="${{ vars.OCI_ORM_STACK_ID }}"
+      #     fi
 
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            UPGRADE="${{ github.event.inputs.upgrade_provider }}"
-          else
-            UPGRADE="false"
-          fi
+      #     if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+      #       UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+      #     else
+      #       UPGRADE="false"
+      #     fi
 
-          echo "stack_id=${STACK_ID}" >> "$GITHUB_OUTPUT"
-          echo "upgrade_provider=${UPGRADE}" >> "$GITHUB_OUTPUT
+      #     echo "stack_id=${STACK_ID}" >> "$GITHUB_OUTPUT"
+      #     echo "upgrade_provider=${UPGRADE}" >> "$GITHUB_OUTPUT
 
       - name: Install OCI CLI
         run: |
@@ -108,7 +108,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          STACK_ID="${{ github.event.inputs.stack_id }}"
+          # STACK_ID="${{ github.event.inputs.stack_id }}"
+          STACK_ID="${{ vars.STACK_ID }}"
           UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
