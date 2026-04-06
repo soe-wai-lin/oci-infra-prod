@@ -5,7 +5,7 @@ on:
     inputs:
       stack_id:
         description: "OCI Resource Manager Stack OCID"
-        required: true
+        required: false    ## use "true" if want to maually trigger
         type: string
       upgrade_provider:
         description: "Upgrade provider versions during plan/apply"
@@ -17,6 +17,11 @@ on:
         required: false
         default: "prod-oci-infra-apply"
         type: string
+  push:
+    branches:
+      - ci
+    paths:
+      - '.github/workflows/terra_rm.yaml'
 
 permissions:
   contents: read
@@ -33,6 +38,28 @@ jobs:
     #   plan_job_id: ${{ steps.create_plan.outputs.plan_job_id }}   
 
     steps:
+
+      - name: Resolve stack id and options
+        id: cfg
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.stack_id }}" ]; then
+            STACK_ID="${{ github.event.inputs.stack_id }}"
+          else
+            STACK_ID="${{ vars.OCI_ORM_STACK_ID }}"
+          fi
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          else
+            UPGRADE="false"
+          fi
+
+          echo "stack_id=${STACK_ID}" >> "$GITHUB_OUTPUT"
+          echo "upgrade_provider=${UPGRADE}" >> "$GITHUB_OUTPUT
+
       - name: Install OCI CLI
         run: |
           python3 -m pip install --upgrade pip
