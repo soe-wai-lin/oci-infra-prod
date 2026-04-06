@@ -7,11 +7,11 @@ on:
         description: "OCI Resource Manager Stack OCID"
         required: true
         type: string
-      # upgrade_provider:
-      #   description: "Upgrade provider versions during plan/apply"
-      #   required: false
-      #   default: false
-      #   type: boolean
+      upgrade_provider:
+        description: "Upgrade provider versions during plan/apply"
+        required: false
+        default: false
+        type: boolean
       environment_name:
         description: "GitHub Environment name used for manual approval"
         required: false
@@ -82,12 +82,12 @@ jobs:
           set -euo pipefail
 
           STACK_ID="${{ github.event.inputs.stack_id }}"
-          # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
             --stack-id "${STACK_ID}" \
             --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
-            # --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
             --max-wait-seconds 1200 \
             --query 'data.id' \
@@ -213,14 +213,14 @@ jobs:
 
           STACK_ID="${{ github.event.inputs.stack_id }}"
           PLAN_JOB_ID="${{ steps.read_plan_id.outputs.plan_job_id }}"
-          # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
             --stack-id "${STACK_ID}" \
             --execution-plan-strategy FROM_PLAN_JOB_ID \
             --execution-plan-job-id "${PLAN_JOB_ID}" \
             --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
-            # --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
             --max-wait-seconds 1200 \
             --query 'data.id' \
