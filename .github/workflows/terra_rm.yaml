@@ -241,9 +241,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          STACK_ID="${{ github.event.inputs.stack_id }}"
+          # STACK_ID="${{ github.event.inputs.stack_id }}"
+          # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          
+          STACK_ID="${{ vars.STACK_ID }}"
+          UPGRADE="false"
           PLAN_JOB_ID="${{ steps.read_plan_id.outputs.plan_job_id }}"
-          UPGRADE="${{ github.event.inputs.upgrade_provider }}"
+          
 
           APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
             --stack-id "${STACK_ID}" \
