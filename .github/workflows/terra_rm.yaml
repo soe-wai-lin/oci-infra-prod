@@ -90,13 +90,13 @@ jobs:
           # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           STACK_ID="${{ vars.STACK_ID }}"
-          # UPGRADE="false"
+          UPGRADE="false"
           
 
           PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
             --stack-id "${STACK_ID}" \
             --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
-            # --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
             --max-wait-seconds 1200 \
             --query 'data.id' \
@@ -225,7 +225,7 @@ jobs:
           # UPGRADE="${{ github.event.inputs.upgrade_provider }}"
 
           STACK_ID="${{ vars.STACK_ID }}"
-          # UPGRADE="false"
+          UPGRADE="false"
           PLAN_JOB_ID="${{ steps.read_plan_id.outputs.plan_job_id }}"
           
 
@@ -234,7 +234,7 @@ jobs:
             --execution-plan-strategy FROM_PLAN_JOB_ID \
             --execution-plan-job-id "${PLAN_JOB_ID}" \
             --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
-            # --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
+            --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
             --max-wait-seconds 1200 \
             --query 'data.id' \
