@@ -20,8 +20,8 @@ on:
   push:
     branches:
       - ci
-    paths:
-      - '.github/workflows/terra_rm.yaml'
+    # paths:
+    #   - '.github/workflows/terra_rm.yaml'
 
 permissions:
   contents: read
