@@ -19,6 +19,7 @@ on:
   #       type: string
   push:
     branches:
+      - main
       - ci
     # paths:
     #   - '.github/workflows/terra_rm.yaml'
