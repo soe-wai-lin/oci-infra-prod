@@ -883,7 +883,7 @@ variable "web_worker_node_min_count" {
 
 variable "web_worker_node_max_count" {
   type    = number
-  default = 5
+  default = 3
 }
 
 variable "web_cluster_autoscaler_num_replicas" {
@@ -1146,7 +1146,7 @@ variable "cms_worker_node_min_count" {
 
 variable "cms_worker_node_max_count" {
   type    = number
-  default = 5
+  default = 3
 }
 
 variable "cms_cluster_autoscaler_num_replicas" {
@@ -1389,7 +1389,7 @@ variable "airs_worker_node_min_count" {
 
 variable "airs_worker_node_max_count" {
   type    = number
-  default = 5
+  default = 3
 }
 
 variable "airs_cluster_autoscaler_num_replicas" {
