@@ -57,5 +57,23 @@ resource "oci_identity_policy" "allow-create-oke-vnic-in-different-comp" {
   ]
 }
 
+#####################################
+#### Manage Certificate in Comp   ###
+#####################################
+
+resource "oci_identity_policy" "manage_cert_in_comp" {
+  # Attach at tenancy/root
+  compartment_id = var.tenancy_ocid
+
+  name        = "${var.vcn_display_name}-to-manage-cert-in-comp"
+  description = "to manage certificates in the compartment"
+
+  statements = [
+    "Allow any-user to manage certificate-authority-family in compartment id ${oci_identity_compartment.app_compartment.id} where ALL {request.principal.type = 'cluster'}",
+  ]
+}
+
+
+
 
 
