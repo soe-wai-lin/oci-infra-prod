@@ -773,7 +773,7 @@ variable "web_cluster_name" {
 variable "web_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.1"
+  default     = "v1.34.2"
 }
 
 variable "web_cluster_type" {
@@ -818,7 +818,7 @@ variable "web_system_node_count" {
 variable "web_system_node_shape" {
   description = "Compute shape for the system node pool."
   type        = string
-  default     = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.E5.Flex"
 }
 
 variable "web_system_memory_in_gbs" {
@@ -857,7 +857,7 @@ variable "web_worker_availability_domain" {
 variable "web_worker_node_shape" {
   description = "Compute shape for the worker node pool."
   type        = string
-  default     = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.E5.Flex"
 }
 
 variable "web_worker_memory_in_gbs" {

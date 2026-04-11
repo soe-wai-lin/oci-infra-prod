@@ -140,6 +140,11 @@ resource "oci_containerengine_node_pool" "web_system" {
   })
   defined_tags = var.defined_tags
 
+  initial_node_labels {
+    key = "name"
+    value = "abdigital-prod-pool-system"
+  }
+
   # Rolling replacement / safer maintenance behavior.
   node_eviction_node_pool_settings {
     eviction_grace_duration              = var.web_node_eviction_grace_duration
@@ -182,13 +187,6 @@ resource "oci_containerengine_node_pool" "web_system" {
     }
   }
 
-  ###  system pool stays static, and the autoscaler pod is scheduled there rather than
-  ### on the worker pool it may later scale down
-
-  initial_node_labels {
-    key   = "nodepool-role"
-    value = "system"
-  }
 
   ssh_public_key = var.web_oke_ssh_public_key
 
@@ -221,6 +219,11 @@ resource "oci_containerengine_node_pool" "web_worker" {
     "oke-nodepool-role" = "worker"
   })
   defined_tags = var.defined_tags
+
+  initial_node_labels {
+    key = "name"
+    value = "abdigital-prod-pool-app"
+  }
 
   # Rolling replacement / safer maintenance behavior.
   node_eviction_node_pool_settings {

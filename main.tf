@@ -22,9 +22,9 @@ resource "oci_core_subnet" "lb_subnet" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = false
-  # security_list_ids = [
-  #   oci_core_security_list.pub_lb_SL.id
-  # ]
+  security_list_ids = [
+    oci_core_security_list.pub_lb_SL.id
+  ]
   route_table_id = oci_core_route_table.public_rt.id
 
 }
@@ -37,7 +37,7 @@ resource "oci_core_subnet" "cms_worker_sub" {
   #Optional
   cidr_block        = var.cms_worker_sub_cidr
   display_name      = "${var.vcn_display_name}-cms-worker-sub"
-  # security_list_ids = [oci_core_security_list.cms_SL.id]
+  security_list_ids = [oci_core_security_list.cms_SL.id]
   freeform_tags     = var.freeform_tags
   dns_label         = "cmsworker"
 
@@ -56,7 +56,7 @@ resource "oci_core_subnet" "web_worker_sub" {
   #Optional
   cidr_block   = var.web_worker_sub_cidr
   display_name = "${var.vcn_display_name}-web-worker-sub"
-  # security_list_ids = [oci_core_security_list.web_SL.id]
+  security_list_ids = [oci_core_security_list.web_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -74,7 +74,7 @@ resource "oci_core_subnet" "airs_micro_oke_worker_sub" {
   #Optional
   cidr_block    = var.airs_micro_oke_worker_cidr_block
   display_name  = "${var.vcn_display_name}-airs-micro-worker-sub"
-  # security_list_ids = [oci_core_security_list.airs_SL.id]
+  security_list_ids = [oci_core_security_list.airs_worker_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -90,7 +90,7 @@ resource "oci_core_subnet" "airs_micro_oke_pod_sub" {
   #Optional
   cidr_block    = var.airs_micro_oke_pod_cidr_block
   display_name  = "${var.vcn_display_name}-airs-micro-pod-sub"
-  # security_list_ids = [oci_core_security_list.airs_SL.id]
+  security_list_ids = [oci_core_security_list.airs_worker_pod_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -161,7 +161,7 @@ resource "oci_core_subnet" "priv_lb_sub" {
   #Optional
   cidr_block    = var.priv_lb_cidr_block
   display_name  = "${var.vcn_display_name}-priv-lb-sub"
-  # security_list_ids = [oci_core_security_list.priv_lb_SL.id]
+  security_list_ids = [oci_core_security_list.priv_lb_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -178,7 +178,7 @@ resource "oci_core_subnet" "web_worker_pod_sub" {
   #Optional
   cidr_block   = var.web_worker_pod_cidr_block
   display_name = "${var.vcn_display_name}-web-pod-sub"
-  # security_list_ids = [oci_core_security_list.web_worker_pod_SL.id]
+  security_list_ids = [oci_core_security_list.web_worker_pod_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -195,7 +195,7 @@ resource "oci_core_subnet" "cms_worker_pod_sub" {
   #Optional
   cidr_block    = var.cms_worker_pod_cidr_block
   display_name  = "${var.vcn_display_name}-cms-pod-sub"
-  # security_list_ids = [oci_core_security_list.cms_worker_pod_SL.id]
+  security_list_ids = [oci_core_security_list.cms_worker_pod_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -213,7 +213,7 @@ resource "oci_core_subnet" "prod_k8s_priv_api_endpoint_sub" {
   #Optional
   cidr_block   = var.k8s_priv_api_endpoint_cidr_block
   display_name = "${var.vcn_display_name}-k8s_priv_api_endpoint_sub"
-  # security_list_ids = [oci_core_security_list.prod_k8s_priv_api_endpoint_SL.id]
+  security_list_ids = [oci_core_security_list.prod_k8s_priv_api_endpoint_SL.id]
   freeform_tags = var.freeform_tags
 
   # Public subnet behavior
@@ -233,119 +233,119 @@ resource "oci_core_security_list" "redis_SL" {
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-redis-SL"
-  ingress_security_rules {
-    protocol    = "6"
-    source      = var.db_cidr_block
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from db subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-  ingress_security_rules {
-    protocol    = "6"
-    source      = var.cms_worker_sub_cidr
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from cms subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-  ingress_security_rules {
-    protocol    = "6"
-    source      = var.cms_worker_pod_cidr_block
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from cms pod subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-   ingress_security_rules {
-    protocol    = "6"
-    source      = var.web_worker_sub_cidr
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from web subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-  ingress_security_rules {
-    protocol    = "6"
-    source      = var.web_worker_pod_cidr_block
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from web pod subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-   ingress_security_rules {
-    protocol    = "6"
-    source      = var.airs_micro_oke_worker_cidr_block
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from airs subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
-  ingress_security_rules {
-    protocol    = "6"
-    source      = var.airs_micro_oke_pod_cidr_block
-    source_type = "CIDR_BLOCK"
-    description = "allow 6379 from airs pod subnet"
-    tcp_options {
-      min = 6379
-      max = 6379
-    }
-  }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.db_cidr_block
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from db subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.cms_worker_sub_cidr
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from cms subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.cms_worker_pod_cidr_block
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from cms pod subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  #  ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.web_worker_sub_cidr
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from web subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.web_worker_pod_cidr_block
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from web pod subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  #  ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.airs_micro_oke_worker_cidr_block
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from airs subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.airs_micro_oke_pod_cidr_block
+  #   source_type = "CIDR_BLOCK"
+  #   description = "allow 6379 from airs pod subnet"
+  #   tcp_options {
+  #     min = 6379
+  #     max = 6379
+  #   }
+  # }
 
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.db_cidr_block
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to db egress"
-  }
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.cms_worker_sub_cidr
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to cms egress"
-  }
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.web_worker_sub_cidr
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to web egress"
-  }
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.airs_micro_oke_worker_cidr_block
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to airs egress"
-  }
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.web_worker_pod_cidr_block
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to web pod egress"
-  }
-  egress_security_rules {
-    protocol    = "6"
-    destination = var.cms_worker_pod_cidr_block
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to cms pod egress"
-  }
-    egress_security_rules {
-    protocol    = "6"
-    destination = var.airs_micro_oke_pod_cidr_block
-    destination_type = "CIDR_BLOCK"
-    description = "Allow to air pod egress"
-  }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.db_cidr_block
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to db egress"
+  # }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.cms_worker_sub_cidr
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to cms egress"
+  # }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.web_worker_sub_cidr
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to web egress"
+  # }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.airs_micro_oke_worker_cidr_block
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to airs egress"
+  # }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.web_worker_pod_cidr_block
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to web pod egress"
+  # }
+  # egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.cms_worker_pod_cidr_block
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to cms pod egress"
+  # }
+  #   egress_security_rules {
+  #   protocol    = "6"
+  #   destination = var.airs_micro_oke_pod_cidr_block
+  #   destination_type = "CIDR_BLOCK"
+  #   description = "Allow to air pod egress"
+  # }
 
 
   freeform_tags = var.freeform_tags
@@ -357,18 +357,18 @@ resource "oci_core_security_list" "web_SL" {
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-web-worker-SL"
-  ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.16.0/20"
-    source = var.cms_worker_sub_cidr
-    description = "allow all cms to web"
-  }
-    ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.80.0/24"
-    source = var.db_cidr_block
-    description = "allow all db to web"
-  }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.16.0/20"
+  #   source = var.cms_worker_sub_cidr
+  #   description = "allow all cms to web"
+  # }
+  #   ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.80.0/24"
+  #   source = var.db_cidr_block
+  #   description = "allow all db to web"
+  # }
 
   # ingress_security_rules {
   #   protocol    = "6"
@@ -417,11 +417,11 @@ resource "oci_core_security_list" "web_SL" {
   #   destination_type = "CIDR_BLOCK"
   #   description      = "Allow worker nodes to access pods."
   # }
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
-    destination_type = "CIDR_BLOCK"
-  }
+  # egress_security_rules {
+  #   protocol = "all"
+  #   destination = "0.0.0.0/0"
+  #   destination_type = "CIDR_BLOCK"
+  # }
   # egress_security_rules {
   #   protocol         = "1"
   #   destination      = "0.0.0.0/0"
@@ -467,13 +467,13 @@ resource "oci_core_security_list" "web_worker_pod_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-web-worker-pod-SL"
-  ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.32.0/20"
-    source = var.web_worker_sub_cidr
-    description = "Allow worker nodes to access pods."
-  }
+  display_name   = "${var.vcn_display_name}-web-pod-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "Allow worker nodes to access pods."
+  # }
 
   # ingress_security_rules {
   #   protocol    = "6"
@@ -557,18 +557,18 @@ resource "oci_core_security_list" "cms_SL" {
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-cms-worker-SL"
-  ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.32.0/20"
-    source = var.web_worker_sub_cidr
-    description = "allow all web to cms"
-  }
-  ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.80.0/24"
-    source = var.db_cidr_block
-    description = "allow all db to cms"
-  }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "allow all web to cms"
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.80.0/24"
+  #   source = var.db_cidr_block
+  #   description = "allow all db to cms"
+  # }
 
   # ingress_security_rules {
   #   protocol    = "6"
@@ -587,11 +587,99 @@ resource "oci_core_security_list" "cms_SL" {
   # }
 
 
-  egress_security_rules {
-    protocol    = "all"
-    destination = "0.0.0.0/0"
-    description = "Allow all egress"
-  }
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
+
+  freeform_tags = var.freeform_tags
+
+}
+resource "oci_core_security_list" "cms_worker_pod_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-cms-pod-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "Allow worker nodes to access pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.60.0/24"
+  #   description = "Allow Kubernetes API endpoint to communicate with pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.112.0/20"
+  #   description = "Allow pods to communicate with other pods."
+  # }
+
+
+  # ingress_security_rules {
+  #   protocol    = "1" # ICMP
+  #   source      = "0.0.0.0/0"
+  #   description = "Allow ICMP from cms to web"
+  # }
+
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "1"
+  #   description      = "Path Discovery."
+  #   icmp_options {
+  #     code = 4
+  #     type = 3
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Allow pods to communicate with OCI services."
+  # }
+  # egress_security_rules {
+  #   destination      = "0.0.0.0/0"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   tcp_options {
+  #     max = 443
+  #     min = 443
+  #   }
+  #   description = "(optional) Allow pods to communicate with internet."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.112.0/20"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "all"
+  #   description      = "Allow pods to communicate with other pods."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     max = 12250
+  #     min = 12250
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     min = 6443
+  #     max = 6443
+  #   }
+  # }
+
 
   freeform_tags = var.freeform_tags
 
@@ -787,32 +875,120 @@ resource "oci_core_security_list" "db_SL" {
   # }
 
 
-  egress_security_rules {
-    protocol    = "all"
-    destination = "0.0.0.0/0"
-    description = "Allow all egress"
-  }
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
 
   freeform_tags = var.freeform_tags
 
 }
 
-resource "oci_core_security_list" "airs_SL" {
+resource "oci_core_security_list" "airs_worker_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-airs-SL"
-  ingress_security_rules {
-    protocol    = "6"
-    # source      = "10.10.80.0/24"
-    source = var.db_cidr_block
-    description = "allow db to airs"
-  }
-  egress_security_rules {
-    protocol    = "all"
-    destination = "0.0.0.0/0"
-    description = "Allow all egress"
-  }
+  display_name   = "${var.vcn_display_name}-airs-worker-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.80.0/24"
+  #   source = var.db_cidr_block
+  #   description = "allow db to airs"
+  # }
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
+
+  freeform_tags = var.freeform_tags
+
+}
+resource "oci_core_security_list" "airs_worker_pod_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-airs-pod-SL"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "Allow worker nodes to access pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.60.0/24"
+  #   description = "Allow Kubernetes API endpoint to communicate with pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.112.0/20"
+  #   description = "Allow pods to communicate with other pods."
+  # }
+
+
+  # ingress_security_rules {
+  #   protocol    = "1" # ICMP
+  #   source      = "0.0.0.0/0"
+  #   description = "Allow ICMP from cms to web"
+  # }
+
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "1"
+  #   description      = "Path Discovery."
+  #   icmp_options {
+  #     code = 4
+  #     type = 3
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Allow pods to communicate with OCI services."
+  # }
+  # egress_security_rules {
+  #   destination      = "0.0.0.0/0"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   tcp_options {
+  #     max = 443
+  #     min = 443
+  #   }
+  #   description = "(optional) Allow pods to communicate with internet."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.112.0/20"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "all"
+  #   description      = "Allow pods to communicate with other pods."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     max = 12250
+  #     min = 12250
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     min = 6443
+  #     max = 6443
+  #   }
+  # }
+
 
   freeform_tags = var.freeform_tags
 
@@ -858,6 +1034,26 @@ resource "oci_core_security_list" "pub_lb_SL" {
   #   tcp_options {
   #     max = 443
   #     min = 443
+  #   }
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.32.0/20"
+  #   description = "allow "
+  #   tcp_options {
+  #     min = 30000
+  #     max = 32767
+  #   }
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.32.0/20"
+  #   description = "allow "
+  #   tcp_options {
+  #     max = 10256
+  #     min = 10256
   #   }
   # }
 
@@ -937,7 +1133,7 @@ resource "oci_core_network_security_group" "nsg_prod_lb" {
   display_name   = var.nsg_lb
 }
 # INGRESS: 
-resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_ingress" {
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_ingress_443" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "INGRESS"
   protocol                  = "6"
@@ -950,6 +1146,23 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_ingress" {
     destination_port_range {
       min = 443
       max = 443
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_ingress_80" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow inbound traffic to Load Balancer."
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 80
+      max = 80
     }
   }
 }
@@ -1087,12 +1300,12 @@ resource "oci_core_network_security_group" "nsg_prod_cms" {
 # Create local data for 80/443
 locals {
   lb_ingress_target = {
-    http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
-    https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
+    # http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
+    # https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
     web   = { id = oci_core_network_security_group.nsg_prod_web.id, port = 9090 }
   }
 }
-# INGRESS: 80 from anywhere
+# INGRESS: 
 resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress" {
   for_each                  = local.lb_ingress_target
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
@@ -1100,7 +1313,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress" 
   protocol                  = "6"
   source                    = each.value.id
   source_type               = "NETWORK_SECURITY_GROUP"
-  description               = "Allow From NSG PROD LB"
+  description               = "Allow 9090 From NSG PROD WEB"
 
   # Optional: Restrict to ping only (echo request = type 8)
   tcp_options {
@@ -1109,6 +1322,17 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress" 
       min = each.value.port
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_all_from_prod_LB" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = oci_core_network_security_group.nsg_prod_lb.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "Allow all From NSG PROD LB"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {}
 }
 resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_ingress_worker" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms.id
@@ -1436,32 +1660,46 @@ resource "oci_core_network_security_group" "nsg_prod_web" {
   display_name   = var.nsg_web
 }
 
-locals {
-  nsg_lb_ingress_target = {
-    lb_http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
-    lb_https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
-  }
-}
+# locals {
+#   nsg_lb_ingress_target = {
+#     lb_http  = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 80 }
+#     lb_https = { id = oci_core_network_security_group.nsg_prod_lb.id, port = 443 }
+#   }
+# }
 
-# INGRESS: 80 , 443  from PROD_LB
-resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress" {
-  for_each                  = local.nsg_lb_ingress_target
+# # INGRESS: 80 , 443  from PROD_LB
+# resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress" {
+#   for_each                  = local.nsg_lb_ingress_target
+#   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
+#   direction                 = "INGRESS"
+#   protocol                  = "6"
+#   source                    = each.value.id
+#   source_type               = "NETWORK_SECURITY_GROUP"
+#   description               = "Allow http from NSG-PROD-LB"
+
+#   # Optional: Restrict to ping only (echo request = type 8)
+#   tcp_options {
+#     destination_port_range {
+#       min = each.value.port
+#       max = each.value.port
+#     }
+#   }
+# }
+
+# INGRESS: Allow All from PROD_LB
+
+resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_all_from_prod_lb" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = each.value.id
+  source                    = oci_core_network_security_group.nsg_prod_lb.id
   source_type               = "NETWORK_SECURITY_GROUP"
-  description               = "Allow http from NSG-PROD-LB"
+  description               = "Allow all from NSG-PROD-LB"
 
   # Optional: Restrict to ping only (echo request = type 8)
-  tcp_options {
-    destination_port_range {
-      min = each.value.port
-      max = each.value.port
-    }
-  }
+  tcp_options {}
 }
-# INGRESS:
+
 resource "oci_core_network_security_group_security_rule" "nsg_prod_web_ingress_from_worker" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_web.id
   direction                 = "INGRESS"
@@ -1694,7 +1932,7 @@ locals {
     web   = { id = oci_core_network_security_group.nsg_prod_web.id, port = 8088 }
   }
 }
-# INGRESS: 80 from anywhere
+# INGRESS:
 resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress" {
   for_each                  = local.web_ingress
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
@@ -1711,6 +1949,18 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress"
       max = each.value.port
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_all_from_lb" {
+  for_each                  = local.web_ingress
+  network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = oci_core_network_security_group.nsg_prod_lb.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "Allow All from NSG PROD LB"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {}
 }
 resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_ingress_worker" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs.id

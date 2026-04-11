@@ -74,6 +74,24 @@ resource "oci_identity_policy" "manage_cert_in_comp" {
 }
 
 
+#######################################
+#### Managing NSG by OKE LB          ##
+#######################################
+resource "oci_identity_policy" "manage-nsg-by-oke" {
+  # Attach at tenancy/root
+  compartment_id = var.tenancy_ocid
+
+  name        = "${var.vcn_display_name}-manage-nsg-by-oke"
+  description = "Managing NSG by OKE LB"
+
+  statements = [
+    "ALLOW any-user to use network-security-groups in TENANCY where ALL { request.principal.type = 'cluster' }",
+  ]
+}
+
+
+
+
 
 
 
