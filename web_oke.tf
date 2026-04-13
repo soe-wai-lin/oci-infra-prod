@@ -145,6 +145,11 @@ resource "oci_containerengine_node_pool" "web_system" {
     value = "abdigital-prod-pool-system"
   }
 
+  initial_node_labels {
+    key = "nodepool-role"
+    value = "system"
+  }
+
   # Rolling replacement / safer maintenance behavior.
   node_eviction_node_pool_settings {
     eviction_grace_duration              = var.web_node_eviction_grace_duration

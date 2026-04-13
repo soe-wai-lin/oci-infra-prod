@@ -105,7 +105,7 @@ locals {
   # WORKER image selection
   # -----------------------------
   airs_worker_candidate_source_map = {
-    for s in data.oci_containerengine_node_pool_option.web_all_options.sources :
+    for s in data.oci_containerengine_node_pool_option.airs_all_options.sources :
     s.source_name => s
     if s.source_type == "IMAGE"
       && can(regex("^Oracle-Linux", s.source_name))
@@ -143,6 +143,11 @@ resource "oci_containerengine_node_pool" "airs_system" {
   initial_node_labels {
     key = "name"
     value = "abdigital-prod-pool-system"
+  }
+
+  initial_node_labels {
+    key = "nodepool-role"
+    value = "system"
   }
 
   # Rolling replacement / safer maintenance behavior.
