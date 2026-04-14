@@ -121,6 +121,10 @@ variable "nsg_bastion" {
   default = "NSG-PROD-BASTION"
 }
 
+variable "nsg_gf_host" {
+  default = "NSG-PROD-GFHOST"
+}
+
 variable "nsg_redis" {
   default = "NSG-PROD-REDIS"
 }
@@ -691,9 +695,9 @@ variable "bastion_instance_shape" {
   default     = "VM.Standard.A1.Flex"
 }
 
-variable "bastion_availability_domain" {
-  default = "aluk:AP-SINGAPORE-1-AD-1"
-}
+# variable "bastion_availability_domain" {
+#   default = "aluk:AP-SINGAPORE-1-AD-1"
+# }
 
 variable "bastion_shape_is_flex" {
   description = "Set to true when using a Flex shape for the bastion host."
@@ -717,6 +721,66 @@ variable "bastion_boot_volume_size_in_gbs" {
   description = "Boot volume size for the bastion host."
   type        = number
   default     = 50
+}
+
+##############################
+### Grafana host variables ###
+##############################
+
+variable "gfhost_ad_index" {
+  description = "Which AD index to use (0 = first AD)."
+  type        = number
+  default     = 0
+}
+
+variable "gfhost_ssh_public_keys" {
+  description = "One or more OpenSSH public keys that can log in to the Grafana host. Separate keys with newlines."
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
+}
+
+variable "gfhost_image_operating_system" {
+  default = "Oracle Linux"
+  type    = string
+}
+
+variable "gfhost_image_operating_system_version" {
+  default = "9"
+  type    = string
+}
+
+variable "gfhost_instance_shape" {
+  description = "Compute shape for the Grafana host."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+# variable "gfhost_availability_domain" {
+#   default = "aluk:AP-SINGAPORE-1-AD-1"
+# }
+
+variable "gfhost_shape_is_flex" {
+  description = "Set to true when using a Flex shape for the Grafana host."
+  type        = bool
+  default     = true
+}
+
+variable "gfhost_shape_ocpus" {
+  description = "OCPUs for Grafana Flex shape."
+  type        = number
+  default     = 2
+}
+
+variable "gfhost_shape_memory_in_gbs" {
+  description = "Memory in GB for Grafana Flex shape."
+  type        = number
+  default     = 8
+}
+
+variable "gfhost_boot_volume_size_in_gbs" {
+  description = "Boot volume size for the Grafana host."
+  type        = number
+  default     = 60
 }
 
 ##############################

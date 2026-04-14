@@ -1303,6 +1303,36 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_airs_worke
     }
   }
 }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_gfhost" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  # destination = var.airs_micro_oke_worker_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow to install yum update port 443"
+  tcp_options {
+    destination_port_range {
+      min = 443
+      max = 443
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_gfhost_3000" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  # destination = var.airs_micro_oke_worker_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow to access grafana port 3000"
+  tcp_options {
+    destination_port_range {
+      min = 3000
+      max = 3000
+    }
+  }
+}
 
 ###########################
 ###### NSG CMS Worker  ####
@@ -2556,6 +2586,67 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_bastion_egres
       min = 22
       max = 22
     }
+  }
+}
+
+####################
+### GFhsot NSG  ###
+####################
+resource "oci_core_network_security_group" "nsg_prod_gfhost" {
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = var.nsg_gf_host
+}
+
+# INGRESS: ssh from anywhere
+resource "oci_core_network_security_group_security_rule" "nsg_prod_gfhost_ingress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_gfhost.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow ssh from anywhere"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 22
+      max = 22
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_gfhost_ingress_3000" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_gfhost.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow Grafana port 3000 from anywhere"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 3000
+      max = 3000
+    }
+  }
+}
+
+
+# EGRESS: Allow all 
+resource "oci_core_network_security_group_security_rule" "nsg_prod_gfhost_egress_all" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_gfhost.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  # destination = var.k8s_priv_api_endpoint_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow allow access to everywhere"
+  tcp_options {
+    # destination_port_range {
+    #   min = 6443
+    #   max = 6443
+    # }
   }
 }
 
