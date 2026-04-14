@@ -3021,8 +3021,16 @@ resource "oci_core_public_ip" "nat_reserved_ip" {
   compartment_id = oci_identity_compartment.net_compartment.id
   lifetime       = "RESERVED"
 
+  # lifecycle {
+  #   ignore_changes = [private_ip_id]
+  # }
   lifecycle {
-    ignore_changes = [private_ip_id]
+    ignore_changes = [ 
+      private_ip_id,
+      assigned_entity_id,
+      assigned_entity_type,
+      state
+    ]
   }
 
 
@@ -3088,14 +3096,7 @@ resource "oci_core_nat_gateway" "nat" {
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-nat"
   depends_on     = [oci_core_public_ip.nat_reserved_ip]
-  lifecycle {
-    ignore_changes = [ 
-      assigned_entity_id,
-      assigned_entity_type,
-      state
-     ]
-  }
-
+  
   # Attach the reserved IP here
   public_ip_id = oci_core_public_ip.nat_reserved_ip.id
 
