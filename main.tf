@@ -3088,6 +3088,13 @@ resource "oci_core_nat_gateway" "nat" {
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-nat"
   depends_on     = [oci_core_public_ip.nat_reserved_ip]
+  lifecycle {
+    ignore_changes = [ 
+      assigned_entity_id,
+      assigned_entity_type,
+      state
+     ]
+  }
 
   # Attach the reserved IP here
   public_ip_id = oci_core_public_ip.nat_reserved_ip.id
