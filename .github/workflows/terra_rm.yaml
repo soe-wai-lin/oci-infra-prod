@@ -163,6 +163,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: plan
 
+
+    outputs:
+      oke_cluster_ocid: ${{ steps.get_rm_outputs.outputs.oke_cluster_ocid }}
+      lb_subnet_ocid: ${{ steps.get_rm_outputs.outputs.lb_subnet_ocid }}
+      lb_nsg_ocid: ${{ steps.get_rm_outputs.outputs.lb_nsg_ocid }}
+      lb_reserved_public_ip_ocid: ${{ steps.get_rm_outputs.outputs.lb_reserved_public_ip_ocid }}
+
+
     # This environment must be created in GitHub repo settings
     # and configured with Required reviewers for manual approval.
     environment:
@@ -292,7 +300,7 @@ jobs:
           OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="oke_cluster_ocid") | ."output-value"' rm_outputs.json)
           LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
           LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
-          LB_RESERVED_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
+          LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
 
           # WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
           # WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
@@ -346,7 +354,7 @@ jobs:
           echo "oke_cluster_ocid=${OKE_CLUSTER_OCID}" >> "$GITHUB_OUTPUT"
           echo "lb_subnet_ocid=${LB_SUBNET_OCID}" >> "$GITHUB_OUTPUT"
           echo "lb_nsg_ocid=${LB_NSG_OCID}" >> "$GITHUB_OUTPUT"
-          echo "lb_reserved_ip_ocid=${LB_RESERVED_IP_OCID}" >> "$GITHUB_OUTPUT"
+          echo "lb_reserved_public_ip_ocid=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_OUTPUT"
 
           # echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
           # echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
@@ -1031,10 +1039,10 @@ jobs:
     needs: apply
 
     env:
-      OKE_CLUSTER_OCID: ${{ needs.apply.outputs.get_rm_outputs.oke_cluster_ocid }}
-      LB_SUBNET_OCID: ${{ needs.apply.get_rm_outputs.lb_subnet_ocid }}
-      LB_NSG_OCID: ${{ needs.apply.get_rm_outputs.lb_nsg_ocid }}
-      LB_RESERVED_PUBLIC_IP_OCID: ${{ needs.apply.get_rm_outputs.lb_reserved_public_ip_ocid }}
+      OKE_CLUSTER_OCID: ${{ needs.apply.outputs.oke_cluster_ocid }}
+      LB_SUBNET_OCID: ${{ needs.apply.outputs.lb_subnet_ocid }}
+      LB_NSG_OCID: ${{ needs.apply.outputs.lb_nsg_ocid }}
+      LB_RESERVED_PUBLIC_IP_OCID: ${{ needs.apply.outputs.lb_reserved_public_ip_ocid }}
 
       OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
       OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
