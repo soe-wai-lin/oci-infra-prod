@@ -10,9 +10,9 @@ resource "oci_ons_subscription" "email_subscription" {
   endpoint       = each.value
   protocol       = "EMAIL"
   topic_id       = oci_ons_notification_topic.network_alert_topic.id
-  lifecycle {
-    ignore_changes = [state, etag]
-  }
+  # lifecycle {
+  #   ignore_changes = [state, etag]
+  # }
 }
 
 resource "oci_events_rule" "network_security_change_rule" {

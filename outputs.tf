@@ -259,9 +259,9 @@ output "bucket_approximate_size" {
 #   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
 # }
 
-#################
-###    OKE    ###
-#################
+################
+##    OKE    ###
+################
 # output "system_node_image_id" {
 #   value = local.system_node_image_id
 # }
@@ -269,6 +269,26 @@ output "bucket_approximate_size" {
 # output "worker_node_image_id" {
 #   value = local.worker_node_image_id
 # }
+
+output "oke_cluster_ocid" {
+  description = "OKE cluster OCID"
+  value       = oci_containerengine_cluster.web_oke.id
+}
+
+output "lb_subnet_ocid" {
+  description = "Load balancer subnet OCID"
+  value       = oci_core_subnet.lb_subnet.id
+}
+
+output "lb_nsg_ocid" {
+  description = "Load balancer NSG OCID"
+  value       = oci_core_network_security_group.nsg_prod_lb.id
+}
+
+output "lb_reserved_public_ip_ocid" {
+  description = "Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.web_cluster_lb_reserved_ip.id
+}
 
 
 

@@ -3021,18 +3021,9 @@ resource "oci_core_public_ip" "nat_reserved_ip" {
   compartment_id = oci_identity_compartment.net_compartment.id
   lifetime       = "RESERVED"
 
-  # lifecycle {
-  #   ignore_changes = [private_ip_id]
-  # }
   lifecycle {
-    ignore_changes = [ 
-      private_ip_id,
-      assigned_entity_id,
-      assigned_entity_type,
-      state
-    ]
+    ignore_changes = [private_ip_id]
   }
-
 
   display_name  = "${var.vcn_display_name}-nat-reserved-ip"
   freeform_tags = var.freeform_tags

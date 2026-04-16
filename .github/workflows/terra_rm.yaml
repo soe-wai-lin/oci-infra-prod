@@ -276,93 +276,103 @@ jobs:
           echo "Timed out waiting for apply job."
           exit 1
 
-      # - name: Read apply outputs
-      #   id: get_rm_outputs
-      #   shell: bash
-      #   env:
-      #     APPLY_JOB_ID: ${{ steps.create_apply.outputs.apply_job_id }}
-      #   run: |
-      #     set -euo pipefail
+      - name: Read apply outputs
+        id: get_rm_outputs
+        shell: bash
+        env:
+          APPLY_JOB_ID: ${{ steps.create_apply.outputs.apply_job_id }}
+        run: |
+          set -euo pipefail
 
-      #     oci resource-manager job-output-summary list-job-outputs \
-      #     --job-id "${APPLY_JOB_ID}" \
-      #     --all \
-      #     --output json > rm_outputs.json
+          oci resource-manager job-output-summary list-job-outputs \
+          --job-id "${APPLY_JOB_ID}" \
+          --all \
+          --output json > rm_outputs.json
 
-      #     WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="oke_cluster_ocid") | ."output-value"' rm_outputs.json)
+          LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
+          LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
+          LB_RESERVED_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
 
-      #     CMS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     CMS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          # WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          # WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     AIRS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     AIRS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          # CMS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          # CMS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     WEB_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     WEB_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # AIRS_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
+          # AIRS_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     CMS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     CMS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # WEB_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # WEB_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     AIRS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     AIRS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # CMS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # CMS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     NET_COMPARTMENT_ID=$(jq -r '.data.items[] | select(."output-name"=="net_compartment_id") | ."output-value"' rm_outputs.json)
+          # AIRS_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
+          # AIRS_POD_TO_REDIS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="airs_pod_to_redis_npa_test_id") | ."output-value"' rm_outputs.json)
 
-      #     # WEB_TO_CMS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_cms_npa_test_id") | ."output-value"' rm_outputs.json)
-      #     # CMS_TO_WEB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_web_npa_test_id") | ."output-value"' rm_outputs.json)
+          # NET_COMPARTMENT_ID=$(jq -r '.data.items[] | select(."output-name"=="net_compartment_id") | ."output-value"' rm_outputs.json)
+
+          # # WEB_TO_CMS_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_cms_npa_test_id") | ."output-value"' rm_outputs.json)
+          # # CMS_TO_WEB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="cms_to_web_npa_test_id") | ."output-value"' rm_outputs.json)
           
 
-      #     # if [ -z "${WEB_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
-      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
-      #     #   exit 1
-      #     # fi
+          # # if [ -z "${WEB_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
+          # #   echo "ERROR: output web_to_db_npa_test_id not found"
+          # #   exit 1
+          # # fi
 
-      #     # if [ -z "${CMS_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
-      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
-      #     #   exit 1
-      #     # fi
+          # # if [ -z "${CMS_TO_DB_NPA_TEST_ID}" ]  = "null" ]; then
+          # #   echo "ERROR: output web_to_db_npa_test_id not found"
+          # #   exit 1
+          # # fi
 
-      #     # if [ -z "${WEB_TO_CMS_NPA_TEST_ID}" ]  = "null" ]; then
-      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
-      #     #   exit 1
-      #     # fi
+          # # if [ -z "${WEB_TO_CMS_NPA_TEST_ID}" ]  = "null" ]; then
+          # #   echo "ERROR: output web_to_db_npa_test_id not found"
+          # #   exit 1
+          # # fi
 
-      #     # if [ -z "${CMS_TO_WEB_NPA_TEST_ID}" ]  = "null" ]; then
-      #     #   echo "ERROR: output web_to_db_npa_test_id not found"
-      #     #   exit 1
-      #     # fi
+          # # if [ -z "${CMS_TO_WEB_NPA_TEST_ID}" ]  = "null" ]; then
+          # #   echo "ERROR: output web_to_db_npa_test_id not found"
+          # #   exit 1
+          # # fi
 
-      #     # if [ -z "${NET_COMPARTMENT_ID}" ] = "null" ]; then
-      #     #   echo "ERROR: output net_compartment_id not found"
-      #     #   exit 1
-      #     # fi
+          # # if [ -z "${NET_COMPARTMENT_ID}" ] = "null" ]; then
+          # #   echo "ERROR: output net_compartment_id not found"
+          # #   exit 1
+          # # fi
 
-      #     echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          echo "oke_cluster_ocid=${OKE_CLUSTER_OCID}" >> "$GITHUB_OUTPUT"
+          echo "lb_subnet_ocid=${LB_SUBNET_OCID}" >> "$GITHUB_OUTPUT"
+          echo "lb_nsg_ocid=${LB_NSG_OCID}" >> "$GITHUB_OUTPUT"
+          echo "lb_reserved_ip_ocid=${LB_RESERVED_IP_OCID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "cms_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "cms_pod_to_db_npa_test_id=${CMS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "airs_to_db_npa_test_id=${AIRS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "airs_pod_to_db_npa_test_id=${AIRS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "cms_to_db_npa_test_id=${CMS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "cms_pod_to_db_npa_test_id=${CMS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "web_to_redis_npa_test_id=${WEB_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "web_pod_to_redis_npa_test_id=${WEB_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "airs_to_db_npa_test_id=${AIRS_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "airs_pod_to_db_npa_test_id=${AIRS_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "cms_to_redis_npa_test_id=${CMS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "cms_pod_to_redis_npa_test_id=${CMS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "web_to_redis_npa_test_id=${WEB_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "web_pod_to_redis_npa_test_id=${WEB_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "airs_to_redis_npa_test_id=${AIRS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
-      #     echo "airs_pod_to_redis_npa_test_id=${AIRS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "cms_to_redis_npa_test_id=${CMS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "cms_pod_to_redis_npa_test_id=${CMS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     # echo "web_to_cms_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "airs_to_redis_npa_test_id=${AIRS_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # echo "airs_pod_to_redis_npa_test_id=${AIRS_POD_TO_REDIS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     # echo "cms_to_web_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
+          # # echo "web_to_cms_npa_test_id=${WEB_TO_CMS_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
+          # # echo "cms_to_web_npa_test_id=${CMS_TO_WEB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
 
-      #     echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
+          # echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_OUTPUT"
+
+          # echo "net_compartment_id=${NET_COMPARTMENT_ID}" >> "$GITHUB_ENV"
 
       # - name: Subnet Connectivity Check
       #   # shell: bash
@@ -1015,7 +1025,115 @@ jobs:
       #     # fi
       #     # #####################################
 
-        
+  create_oke_lb_service:
+    name: Create OKE LoadBalancer Service
+    runs-on: ubuntu-latest
+    needs: apply
+
+    env:
+      OKE_CLUSTER_OCID: ${{ needs.apply.outputs.get_rm_outputs.oke_cluster_ocid }}
+      LB_SUBNET_OCID: ${{ needs.apply.get_rm_outputs.lb_subnet_ocid }}
+      LB_NSG_OCID: ${{ needs.apply.get_rm_outputs.lb_nsg_ocid }}
+      LB_RESERVED_PUBLIC_IP_OCID: ${{ needs.apply.get_rm_outputs.lb_reserved_public_ip_ocid }}
+
+      OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+      OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+      OCI_REGION: ${{ secrets.OCI_REGION }}
+      OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+      OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+      OCI_PRIVATE_KEY_PASSPHRASE: ${{ secrets.OCI_PRIVATE_KEY_PASSPHRASE }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install OCI CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.oci
+          chmod 700 ~/.oci
+
+          printf '%s\n' "${OCI_PRIVATE_KEY}" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+
+          cat > ~/.oci/config <<EOF
+          [DEFAULT]
+          user=${OCI_USER_OCID}
+          tenancy=${OCI_TENANCY_OCID}
+          region=${OCI_REGION}
+          fingerprint=${OCI_FINGERPRINT}
+          pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}
+          key_file=${HOME}/.oci/oci_api_key.pem
+          EOF
+
+          chmod 600 ~/.oci/config
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+
+      - name: Create kubeconfig for OKE
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.kube"
+
+          oci ce cluster create-kubeconfig \
+            --cluster-id "${OKE_CLUSTER_OCID}" \
+            --file "$HOME/.kube/config" \
+            --region "${OCI_REGION}" \
+            --token-version 2.0.0 \
+            --kube-endpoint PUBLIC_ENDPOINT \
+            --overwrite
+
+          export KUBECONFIG="$HOME/.kube/config"
+          kubectl get nodes
+
+      - name: Apply DevOps-managed LoadBalancer Service
+        shell: bash
+        run: |
+          set -euo pipefail
+          export KUBECONFIG="$HOME/.kube/config"
+
+          cat <<EOF > oke-lb-service.yaml
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: myapp-lb
+            namespace: platform-apps
+            annotations:
+              oci.oraclecloud.com/load-balancer-type: "lb"
+              service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
+              oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
+              oci.oraclecloud.com/reserved-ips: '["${LB_RESERVED_PUBLIC_IP_OCID}"]'
+              service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
+              service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+              service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+          spec:
+            type: LoadBalancer
+            selector:
+              app: myapp
+            ports:
+              - name: http
+                port: 80
+                targetPort: 8080
+                protocol: TCP
+          EOF
+
+          kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -f oke-lb-service.yaml
+          kubectl get svc -n platform-apps myapp-lb -o wide
+
+   
 
 
 
