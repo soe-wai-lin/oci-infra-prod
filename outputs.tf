@@ -287,7 +287,7 @@ output "lb_nsg_ocid" {
 
 output "lb_reserved_public_ip_ocid" {
   description = "Reserved public IP OCID for the OKE load balancer"
-  value       = oci_core_public_ip.web_cluster_lb_reserved_ip.id
+  value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
 }
 
 
