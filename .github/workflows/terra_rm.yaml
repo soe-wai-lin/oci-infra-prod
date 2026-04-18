@@ -297,10 +297,10 @@ jobs:
           --all \
           --output json > rm_outputs.json
 
-          OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="oke_cluster_ocid") | ."output-value"' rm_outputs.json)
-          LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
-          LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
-          LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
+          # OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="oke_cluster_ocid") | ."output-value"' rm_outputs.json)
+          # LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
+          # LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
+          # LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
 
           # WEB_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
           # WEB_POD_TO_DB_NPA_TEST_ID=$(jq -r '.data.items[] | select(."output-name"=="web_pod_to_db_npa_test_id") | ."output-value"' rm_outputs.json)
@@ -351,10 +351,10 @@ jobs:
           # #   exit 1
           # # fi
 
-          echo "oke_cluster_ocid=${OKE_CLUSTER_OCID}" >> "$GITHUB_OUTPUT"
-          echo "lb_subnet_ocid=${LB_SUBNET_OCID}" >> "$GITHUB_OUTPUT"
-          echo "lb_nsg_ocid=${LB_NSG_OCID}" >> "$GITHUB_OUTPUT"
-          echo "lb_reserved_public_ip_ocid=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_OUTPUT"
+          # echo "oke_cluster_ocid=${OKE_CLUSTER_OCID}" >> "$GITHUB_OUTPUT"
+          # echo "lb_subnet_ocid=${LB_SUBNET_OCID}" >> "$GITHUB_OUTPUT"
+          # echo "lb_nsg_ocid=${LB_NSG_OCID}" >> "$GITHUB_OUTPUT"
+          # echo "lb_reserved_public_ip_ocid=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_OUTPUT"
 
           # echo "web_to_db_npa_test_id=${WEB_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
           # echo "web_pod_to_db_npa_test_id=${WEB_POD_TO_DB_NPA_TEST_ID}" >> "$GITHUB_OUTPUT"
