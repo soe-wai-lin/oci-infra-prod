@@ -43,7 +43,8 @@ resource "oci_core_subnet" "cms_worker_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.cms-workernodes-rt.id
+  # route_table_id             = oci_core_route_table.cms-workernodes-rt.id
+  route_table_id             = oci_core_route_table.private_rt.id
 
 }
 
@@ -61,7 +62,8 @@ resource "oci_core_subnet" "web_worker_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.web-workernodes-rt.id
+  # route_table_id             = oci_core_route_table.web-workernodes-rt.id
+  route_table_id             = oci_core_route_table.private_rt.id
 
 }
 
@@ -79,7 +81,8 @@ resource "oci_core_subnet" "airs_micro_oke_worker_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.airs-workernodes-rt.id
+  # route_table_id             = oci_core_route_table.airs-workernodes-rt.id
+  route_table_id             = oci_core_route_table.private_rt.id
 }
 resource "oci_core_subnet" "airs_micro_oke_pod_sub" {
   #Required
@@ -95,7 +98,8 @@ resource "oci_core_subnet" "airs_micro_oke_pod_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.routetable_airs_pods.id
+  # route_table_id             = oci_core_route_table.routetable_airs_pods.id
+  route_table_id             = oci_core_route_table.private_rt.id
 }
 
 # resource "oci_core_subnet" "career_vm_sub" {
@@ -166,7 +170,7 @@ resource "oci_core_subnet" "priv_lb_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  # route_table_id = oci_core_route_table.private_rt.id
+  route_table_id = oci_core_route_table.private_rt.id
 }
 
 resource "oci_core_subnet" "web_worker_pod_sub" {
@@ -183,7 +187,8 @@ resource "oci_core_subnet" "web_worker_pod_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.routetable_web_pods.id
+  # route_table_id             = oci_core_route_table.routetable_web_pods.id
+  route_table_id             = oci_core_route_table.private_rt.id
 }
 
 resource "oci_core_subnet" "cms_worker_pod_sub" {
@@ -200,7 +205,8 @@ resource "oci_core_subnet" "cms_worker_pod_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id = oci_core_route_table.routetable_cms_pods.id
+  # route_table_id = oci_core_route_table.routetable_cms_pods.id
+  route_table_id             = oci_core_route_table.private_rt.id
 }
 
 
@@ -218,7 +224,8 @@ resource "oci_core_subnet" "prod_k8s_priv_api_endpoint_sub" {
 
   # Public subnet behavior
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.KubernetesAPIendpoint.id
+  # route_table_id             = oci_core_route_table.KubernetesAPIendpoint.id
+  route_table_id             = oci_core_route_table.private_rt.id
 }
 
 
@@ -3128,15 +3135,6 @@ resource "oci_core_route_table" "private_rt" {
     description       = "Private subnet default route via NAT Gateway"
   }
 
-  freeform_tags = var.freeform_tags
-}
-
-resource "oci_core_route_table" "web-workernodes-rt" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
-
-  display_name = "${var.vcn_display_name}-routetable-web-workernodes"
-
   route_rules {
     destination       = data.oci_core_services.services.services[0].cidr_block
     destination_type  = "SERVICE_CIDR_BLOCK"
@@ -3144,153 +3142,169 @@ resource "oci_core_route_table" "web-workernodes-rt" {
     description       = "Private subnet default route via NAT Gateway"
   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
-
   freeform_tags = var.freeform_tags
 }
 
-resource "oci_core_route_table" "cms-workernodes-rt" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "web-workernodes-rt" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-cms-workernodes"
+#   display_name = "${var.vcn_display_name}-routetable-web-workernodes"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
-resource "oci_core_route_table" "airs-workernodes-rt" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "cms-workernodes-rt" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-airs-workernodes"
+#   display_name = "${var.vcn_display_name}-routetable-cms-workernodes"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
-resource "oci_core_route_table" "KubernetesAPIendpoint" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "airs-workernodes-rt" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-KubernetesAPIendpoint"
+#   display_name = "${var.vcn_display_name}-routetable-airs-workernodes"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
-resource "oci_core_route_table" "routetable_web_pods" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "KubernetesAPIendpoint" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-web-pods"
+#   display_name = "${var.vcn_display_name}-KubernetesAPIendpoint"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
-resource "oci_core_route_table" "routetable_cms_pods" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "routetable_web_pods" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-cms-pods"
+#   display_name = "${var.vcn_display_name}-routetable-web-pods"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
-resource "oci_core_route_table" "routetable_airs_pods" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "routetable_cms_pods" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-airs-pods"
+#   display_name = "${var.vcn_display_name}-routetable-cms-pods"
 
-  route_rules {
-    destination       = data.oci_core_services.services.services[0].cidr_block
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.service_gateway.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.nat.id
-    description       = "Private subnet default route via NAT Gateway"
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
+
+# resource "oci_core_route_table" "routetable_airs_pods" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
+
+#   display_name = "${var.vcn_display_name}-routetable-airs-pods"
+
+#   route_rules {
+#     destination       = data.oci_core_services.services.services[0].cidr_block
+#     destination_type  = "SERVICE_CIDR_BLOCK"
+#     network_entity_id = oci_core_service_gateway.service_gateway.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
+
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_nat_gateway.nat.id
+#     description       = "Private subnet default route via NAT Gateway"
+#   }
+
+#   freeform_tags = var.freeform_tags
+# }
 
 resource "oci_core_route_table" "routetable_pub_lb" {
   compartment_id = oci_identity_compartment.net_compartment.id
