@@ -1287,6 +1287,10 @@ jobs:
           metadata:
             name: ssl-certificate-secret
           type: kubernetes.io/tls
+          EOF
+          cat secret.yaml 
+          kubectl apply -f secret.yaml && kubectl get secret
+          
    
 
 
