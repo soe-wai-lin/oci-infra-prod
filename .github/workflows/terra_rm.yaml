@@ -1270,6 +1270,10 @@ jobs:
             --kube-endpoint PRIVATE_ENDPOINT \
             --overwrite
 
+          # Update kubeconfig to use localhost (SSH tunnel endpoint)
+          sed -i 's/https:\/\/[^:]\+:6443/https:\/\/127.0.0.1:6443/g' ~/.kube/config
+          cat ~/.kube/config
+
           export KUBECONFIG="$HOME/.kube/config"
           kubectl get nodes
 
