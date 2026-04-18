@@ -1186,7 +1186,7 @@ jobs:
             --file "$HOME/.kube/config" \
             --region "${OCI_REGION}" \
             --token-version 2.0.0 \
-            --kube-endpoint PUBLIC_ENDPOINT \
+            --kube-endpoint PRIVATE_ENDPOINT \
             --overwrite
 
           export KUBECONFIG="$HOME/.kube/config"
