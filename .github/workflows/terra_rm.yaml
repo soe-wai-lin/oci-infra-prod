@@ -1287,18 +1287,18 @@ jobs:
           apiVersion: v1
           kind: Service
           metadata:
-            name: myapp-lb
-            namespace: platform-apps
+            name: web-lb
+            namespace: default
             annotations:
               oci.oraclecloud.com/load-balancer-type: "lb"
               service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
               oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
-              oci.oraclecloud.com/reserved-ips: '["${LB_RESERVED_PUBLIC_IP_OCID}"]'
               service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
               service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
           spec:
+            loadBalancerIP: '["${LB_RESERVED_PUBLIC_IP_OCID}"]'
             type: LoadBalancer
             selector:
               app: myapp
@@ -1313,9 +1313,10 @@ jobs:
               app: cake
           EOF
 
-          kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
+          # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
+          cat oke-lb-service.yaml
           kubectl apply -f oke-lb-service.yaml
-          kubectl get svc -n platform-apps myapp-lb -o wide
+          kubectl get svc web-lb -o wide
 
    
 
