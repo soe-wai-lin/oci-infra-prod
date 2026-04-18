@@ -1228,7 +1228,7 @@ jobs:
           export KUBECONFIG="$HOME/.kube/config"
           kubectl get nodes
 
-      - name: Apply DevOps-managed LoadBalancer Service
+      - name: Apply DevOps-managed Web Cluster LoadBalancer 
         shell: bash
         run: |
           set -euo pipefail
