@@ -1177,33 +1177,33 @@ jobs:
         with:
           version: latest
     
-      - name: Configure OCI CLI
-        shell: bash
-        run: |
-          set -euo pipefail
+      # - name: Configure OCI CLI
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
 
-          mkdir -p ~/.oci
+      #     mkdir -p ~/.oci
 
-          echo "$OCI_PRIVATE_KEY" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
+      #     echo "$OCI_PRIVATE_KEY" > ~/.oci/oci_api_key.pem
+      #     chmod 600 ~/.oci/oci_api_key.pem
 
-          cat > ~/.oci/config <<EOF
-          [DEFAULT]
-          user=${OCI_USER_OCID}
-          fingerprint=${OCI_FINGERPRINT}
-          tenancy=${OCI_TENANCY_OCID}
-          region=${OCI_REGION}
-          key_file=${HOME}/.oci/oci_api_key.pem
-          EOF
+      #     cat > ~/.oci/config <<EOF
+      #     [DEFAULT]
+      #     user=${OCI_USER_OCID}
+      #     fingerprint=${OCI_FINGERPRINT}
+      #     tenancy=${OCI_TENANCY_OCID}
+      #     region=${OCI_REGION}
+      #     key_file=${HOME}/.oci/oci_api_key.pem
+      #     EOF
 
-          if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE:-}" ]; then
-            echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
-          fi
+      #     if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE:-}" ]; then
+      #       echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+      #     fi
 
-          chmod 600 ~/.oci/config
+      #     chmod 600 ~/.oci/config
 
-          # Smoke test
-          oci iam region list --limit 1 >/dev/null
+      #     # Smoke test
+      #     oci iam region list --limit 1 >/dev/null
 
       - name: Get OKE private API endpoint
         shell: bash
