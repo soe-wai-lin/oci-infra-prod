@@ -1098,6 +1098,11 @@ jobs:
         with:
           name: rm_outputs
 
+      - name: List download file
+        run: | 
+          pwd
+          ls -al
+
       - name: Parse RM outputs
         shell: bash
         run: |
@@ -1122,17 +1127,17 @@ jobs:
           echo "LB_RESERVED_PUBLIC_IP_OCID=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
 
 
-      - name: Load infra outputs
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat infra-outputs.env
-          source infra-outputs.env
+      # - name: Load infra outputs
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     cat infra-outputs.env
+      #     source infra-outputs.env
 
-          echo "OKE_CLUSTER_OCID=${OKE_CLUSTER_OCID}" >> "$GITHUB_ENV"
-          echo "LB_SUBNET_OCID=${LB_SUBNET_OCID}" >> "$GITHUB_ENV"
-          echo "LB_NSG_OCID=${LB_NSG_OCID}" >> "$GITHUB_ENV"
-          echo "LB_RESERVED_PUBLIC_IP_OCID=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
+      #     echo "OKE_CLUSTER_OCID=${OKE_CLUSTER_OCID}" >> "$GITHUB_ENV"
+      #     echo "LB_SUBNET_OCID=${LB_SUBNET_OCID}" >> "$GITHUB_ENV"
+      #     echo "LB_NSG_OCID=${LB_NSG_OCID}" >> "$GITHUB_ENV"
+      #     echo "LB_RESERVED_PUBLIC_IP_OCID=${LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -1215,8 +1220,12 @@ jobs:
             ports:
               - name: http
                 port: 80
-                targetPort: 8080
-                protocol: TCP
+                targetPort: 80
+              - name: https
+                port: 443
+                targetPort: 80
+            selector:
+              app: cake
           EOF
 
           kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
