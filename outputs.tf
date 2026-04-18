@@ -271,8 +271,18 @@ output "bucket_approximate_size" {
 # }
 
 output "web_oke_cluster_ocid" {
-  description = "OKE cluster OCID"
+  description = "WEB OKE cluster OCID"
   value       = oci_containerengine_cluster.web_oke.id
+}
+
+output "cms_oke_cluster_ocid" {
+  description = "CMS OKE cluster OCID"
+  value       = oci_containerengine_cluster.cms_oke.id
+}
+
+output "airs_oke_cluster_ocid" {
+  description = "AIRS OKE cluster OCID"
+  value       = oci_containerengine_cluster.airs_oke.id
 }
 
 output "lb_subnet_ocid" {
@@ -281,22 +291,22 @@ output "lb_subnet_ocid" {
 }
 
 output "lb_nsg_ocid" {
-  description = "Load balancer NSG OCID"
+  description = "PROD Load balancer NSG OCID"
   value       = oci_core_network_security_group.nsg_prod_lb.id
 }
 
 output "web_lb_reserved_public_ip_ocid" {
-  description = "Reserved public IP OCID for the OKE load balancer"
+  description = "WEB Reserved public IP OCID for the OKE load balancer"
   value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
 }
 
 output "cms_lb_reserved_public_ip_ocid" {
-  description = "Reserved public IP OCID for the OKE load balancer"
+  description = "CMS Reserved public IP OCID for the OKE load balancer"
   value       = oci_core_public_ip.cms_cluster_lb_reserved_ip.ip_address
 }
 
 output "airs_lb_reserved_public_ip_ocid" {
-  description = "Reserved public IP OCID for the OKE load balancer"
+  description = "AIRS Reserved public IP OCID for the OKE load balancer"
   value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
 }
 
