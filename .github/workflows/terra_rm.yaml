@@ -1070,8 +1070,8 @@ jobs:
       - name: Upload RM outputs artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rm-outputs
-          path: rm-outputs.json
+          name: rm_outputs
+          path: rm_outputs.json
 
 
   create_oke_lb_service:
@@ -1096,7 +1096,7 @@ jobs:
       - name: Download RM outputs artifact
         uses: actions/download-artifact@v4
         with:
-          name: rm-outputs
+          name: rm_outputs
 
       - name: Parse RM outputs
         shell: bash
