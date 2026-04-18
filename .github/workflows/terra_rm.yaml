@@ -1162,9 +1162,6 @@ jobs:
     
       - name: Get OKE private API endpoint
         shell: bash
-        # env:
-        #   OKE_CLUSTER_OCID: ${{ env.OKE_CLUSTER_OCID }}
-        #   OCI_REGION: ${{ secrets.OCI_REGION }}
         run: |
           set -euo pipefail
 
