@@ -1248,6 +1248,10 @@ jobs:
               service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+              service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
+              oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
+              service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
+              service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
           spec:
             loadBalancerIP: "${LB_RESERVED_PUBLIC_IP_OCID}"
             type: LoadBalancer
@@ -1269,6 +1273,20 @@ jobs:
           kubectl apply -f oke-lb-service.yaml
           kubectl get svc web-lb -o wide
 
+      - name: Deploy secret
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat <<EOF > secret.yaml
+          apiVersion: v1
+          data:
+            tls.crt: ${{ secrets.TLSCRT }}
+            tls.key: ${{ secrets.TLSKEY }}
+          kind: Secret
+          metadata:
+            name: ssl-certificate-secret
+          type: kubernetes.io/tls
    
 
 
