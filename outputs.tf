@@ -270,7 +270,7 @@ output "bucket_approximate_size" {
 #   value = local.worker_node_image_id
 # }
 
-output "oke_cluster_ocid" {
+output "web_oke_cluster_ocid" {
   description = "OKE cluster OCID"
   value       = oci_containerengine_cluster.web_oke.id
 }
@@ -285,9 +285,19 @@ output "lb_nsg_ocid" {
   value       = oci_core_network_security_group.nsg_prod_lb.id
 }
 
-output "lb_reserved_public_ip_ocid" {
+output "web_lb_reserved_public_ip_ocid" {
   description = "Reserved public IP OCID for the OKE load balancer"
   value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
+}
+
+output "cms_lb_reserved_public_ip_ocid" {
+  description = "Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.cms_cluster_lb_reserved_ip.ip_address
+}
+
+output "airs_lb_reserved_public_ip_ocid" {
+  description = "Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
 }
 
 output "bastion_public_ip" {
