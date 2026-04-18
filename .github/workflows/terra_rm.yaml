@@ -1273,24 +1273,28 @@ jobs:
           kubectl apply -f oke-lb-service.yaml
           kubectl get svc web-lb -o wide
 
-      - name: Deploy secret
+      - name: Deploy TLS secret
         shell: bash
+        env:
+          TLSCRT: ${{ secrets.TLSCRT }}
+          TLSKEY: ${{ secrets.TLSKEY }}
         run: |
           set -euo pipefail
-
-          cat <<EOF > secret.yaml
+          cat > secret.yaml <<EOF
           apiVersion: v1
-          data:
-            tls.crt: ${{ secrets.TLSCRT }}
-            tls.key: ${{ secrets.TLSKEY }}
           kind: Secret
           metadata:
             name: ssl-certificate-secret
           type: kubernetes.io/tls
+          stringData:
+            tls.crt: |
+          $(printf '%s\n' "$TLSCRT" | sed 's/^/        /')
+            tls.key: |
+          $(printf '%s\n' "$TLSKEY" | sed 's/^/        /')
           EOF
-          cat secret.yaml 
-          kubectl apply -f secret.yaml && kubectl get secret
-          
+
+          kubectl apply -f secret.yaml
+          kubectl get secret ssl-certificate-secret
    
 
 
