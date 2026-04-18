@@ -1108,6 +1108,7 @@ jobs:
         run: |
           set -euo pipefail
 
+          BASTION_PUBLIC_IP=$(jq -r '.data.items[] | select(."output-name"=="bastion_public_ip") | ."output-value"' rm_outputs.json)
           OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="oke_cluster_ocid") | ."output-value"' rm_outputs.json)
           LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
           LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
@@ -1120,7 +1121,8 @@ jobs:
               exit 1
             fi
           done
-
+ 
+          echo "BASTION_PUBLIC_IP=${BASTION_PUBLIC_IP}" >> "$GITHUB_ENV"
           echo "OKE_CLUSTER_OCID=${OKE_CLUSTER_OCID}" >> "$GITHUB_ENV"
           echo "LB_SUBNET_OCID=${LB_SUBNET_OCID}" >> "$GITHUB_ENV"
           echo "LB_NSG_OCID=${LB_NSG_OCID}" >> "$GITHUB_ENV"
@@ -1174,6 +1176,85 @@ jobs:
         uses: azure/setup-kubectl@v4
         with:
           version: latest
+    
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.oci
+
+          echo "$OCI_PRIVATE_KEY" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+
+          cat > ~/.oci/config <<EOF
+          [DEFAULT]
+          user=${OCI_USER_OCID}
+          fingerprint=${OCI_FINGERPRINT}
+          tenancy=${OCI_TENANCY_OCID}
+          region=${OCI_REGION}
+          key_file=${HOME}/.oci/oci_api_key.pem
+          EOF
+
+          if [ -n "${OCI_PRIVATE_KEY_PASSPHRASE:-}" ]; then
+            echo "pass_phrase=${OCI_PRIVATE_KEY_PASSPHRASE}" >> ~/.oci/config
+          fi
+
+          chmod 600 ~/.oci/config
+
+          # Smoke test
+          oci iam region list --limit 1 >/dev/null
+
+      - name: Get OKE private API endpoint
+        shell: bash
+        env:
+          OKE_CLUSTER_OCID: ${{ env.OKE_CLUSTER_OCID }}
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+        run: |
+          set -euo pipefail
+
+          ENDPOINT=$(oci ce cluster get \
+            --cluster-id "$OKE_CLUSTER_OCID" \
+            --region "$OCI_REGION" \
+            | jq -r '.data.endpoints."private-endpoint"')
+
+          if [[ -z "$ENDPOINT" || "$ENDPOINT" == "null" ]]; then
+             echo "::error::Private endpoint not found"
+             exit 1
+          fi
+
+          # Example: https://10.0.1.6:6443
+          HOSTPORT="${ENDPOINT#https://}"
+          OKE_API_PRIVATE_IP="${HOSTPORT%%:*}"
+          OKE_API_PRIVATE_PORT="${HOSTPORT##*:}"
+
+          echo "OKE_API_PRIVATE_IP=$OKE_API_PRIVATE_IP" >> $GITHUB_ENV
+          echo "OKE_API_PRIVATE_PORT=$OKE_API_PRIVATE_PORT" >> $GITHUB_ENV
+
+          echo "OKE private API: $OKE_API_PRIVATE_IP:$OKE_API_PRIVATE_PORT"
+      
+      - name: Start SSH tunnel via bastion
+        shell: bash
+        env:
+          BASTION_SSH_PRIVATE_KEY: ${{ secrets.BASTION_SSH_PRIVATE_KEY }}
+          BASTION_USER: ${{ secrets.BASTION_USER }}
+          # BASTION_PUBLIC_IP: ${{ secrets.BASTION_PUBLIC_IP }}
+          OKE_API_PRIVATE_IP: ${{ env.OKE_API_PRIVATE_IP }}
+          OKE_API_PRIVATE_PORT: ${{ env.OKE_API_PRIVATE_PORT }}
+        run: |
+         set -euo pipefail
+
+         mkdir -p ~/.ssh
+         echo "$BASTION_SSH_PRIVATE_KEY" > ~/.ssh/bastion.pem
+         chmod 600 ~/.ssh/bastion.pem
+
+         ssh -i ~/.ssh/bastion.pem \
+           -o StrictHostKeyChecking=no \
+           -o UserKnownHostsFile=/dev/null \
+           -N \
+           -L 6443:${OKE_API_PRIVATE_IP}:${OKE_API_PRIVATE_PORT} \
+           ${BASTION_USER}@${BASTION_PUBLIC_IP} &
+
 
       - name: Create kubeconfig for OKE
         shell: bash

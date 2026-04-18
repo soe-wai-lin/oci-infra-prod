@@ -290,5 +290,11 @@ output "lb_reserved_public_ip_ocid" {
   value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
 }
 
+output "bastion_public_ip" {
+  value = oci_core_instance.bastion.public_ip
+}
+
+
+
 
 
