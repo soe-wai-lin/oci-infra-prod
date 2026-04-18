@@ -2712,14 +2712,14 @@ resource "oci_core_network_security_group" "nsg_prod_db" {
   display_name   = var.nsg_db
 }
 
-# INGRESS: 5432 from anywhere
-resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress" {
+# INGRESS: 5432 from Worker
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_cms_worker" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  source                    = "0.0.0.0/0"
+  source                    = var.cms_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
-  description               = "Allow 5432 from anywhere"
+  description               = "Allow 5432 from CMS worker"
 
   # Optional: Restrict to ping only (echo request = type 8)
   tcp_options {
@@ -2728,6 +2728,99 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress" {
       max = 5432
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_cms_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.cms_worker_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 5432 from CMS pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_web_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.web_worker_sub_cidr
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 5432 from WEB worker"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_web_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.web_worker_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 5432 from web pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_airs_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.airs_micro_oke_worker_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 5432 from AIRS worker"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_ingress_from_airs_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.airs_micro_oke_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 5432 from AIRS pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+}
+# EGRESS: Allow all 
+resource "oci_core_network_security_group_security_rule" "nsg_prod_db_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_db.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  destination_type          = "CIDR_BLOCK"
+  # destination      = oci_core_network_security_group.nsg_prod_airs.id
+  # destination_type = "NETWORK_SECURITY_GROUP"
+  description      = "Allow to all"
+
+  tcp_options { }
 }
 
 #########################
@@ -2739,15 +2832,32 @@ resource "oci_core_network_security_group" "nsg_prod_redis" {
   display_name   = var.nsg_redis
 }
 
-# INGRESS: 5432 from anywhere
-resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress" {
+# # INGRESS: 5432 from anywhere
+# resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress" {
+#   network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+#   direction                 = "INGRESS"
+#   protocol                  = "6"
+#   # source                    = "10.10.32.0/20"
+#   source = var.web_worker_sub_cidr
+#   source_type               = "CIDR_BLOCK"
+#   description               = "Allow 6379 from web_worker"
+
+#   # Optional: Restrict to ping only (echo request = type 8)
+#   tcp_options {
+#     destination_port_range {
+#       min = 6379
+#       max = 6379
+#     }
+#   }
+# }
+# INGRESS: 5432 from Worker
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_cms_worker" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
   direction                 = "INGRESS"
   protocol                  = "6"
-  # source                    = "10.10.32.0/20"
-  source = var.web_worker_sub_cidr
+  source                    = var.cms_worker_sub_cidr
   source_type               = "CIDR_BLOCK"
-  description               = "Allow 6379 from web_worker"
+  description               = "Allow 6379 from CMS worker"
 
   # Optional: Restrict to ping only (echo request = type 8)
   tcp_options {
@@ -2756,6 +2866,99 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress
       max = 6379
     }
   }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_cms_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.cms_worker_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from CMS pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_web_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.web_worker_sub_cidr
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from WEB worker"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_web_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.web_worker_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from web pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_airs_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.airs_micro_oke_worker_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from AIRS worker"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_ingress_from_airs_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.airs_micro_oke_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow 6379 from AIRS pod"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+}
+# EGRESS: Allow all 
+resource "oci_core_network_security_group_security_rule" "nsg_prod_redis_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_redis.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  destination_type          = "CIDR_BLOCK"
+  # destination      = oci_core_network_security_group.nsg_prod_airs.id
+  # destination_type = "NETWORK_SECURITY_GROUP"
+  description      = "Allow to all"
+
+  tcp_options { }
 }
 
 
@@ -3306,20 +3509,20 @@ resource "oci_core_route_table" "private_rt" {
 #   freeform_tags = var.freeform_tags
 # }
 
-resource "oci_core_route_table" "routetable_pub_lb" {
-  compartment_id = oci_identity_compartment.net_compartment.id
-  vcn_id         = oci_core_vcn.terra_vcn.id
+# resource "oci_core_route_table" "routetable_pub_lb" {
+#   compartment_id = oci_identity_compartment.net_compartment.id
+#   vcn_id         = oci_core_vcn.terra_vcn.id
 
-  display_name = "${var.vcn_display_name}-routetable-pub-lb"
+#   display_name = "${var.vcn_display_name}-routetable-pub-lb"
 
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.igw.id
-  }
+#   route_rules {
+#     destination       = "0.0.0.0/0"
+#     destination_type  = "CIDR_BLOCK"
+#     network_entity_id = oci_core_internet_gateway.igw.id
+#   }
 
-  freeform_tags = var.freeform_tags
-}
+#   freeform_tags = var.freeform_tags
+# }
 
 
 data "oci_core_services" "services" {}
