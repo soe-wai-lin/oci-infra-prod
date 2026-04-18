@@ -1298,7 +1298,7 @@ jobs:
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
           spec:
-            loadBalancerIP: '["${LB_RESERVED_PUBLIC_IP_OCID}"]'
+            loadBalancerIP: "${LB_RESERVED_PUBLIC_IP_OCID}"
             type: LoadBalancer
             selector:
               app: myapp
