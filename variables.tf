@@ -1101,7 +1101,7 @@ variable "cms_cluster_name" {
 variable "cms_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.35.0"
 }
 
 variable "cms_cluster_type" {
@@ -1343,7 +1343,7 @@ variable "airs_cluster_name" {
 variable "airs_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.35.0"
 }
 
 variable "airs_cluster_type" {
