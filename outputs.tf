@@ -275,15 +275,15 @@ output "web_oke_cluster_ocid" {
   value       = oci_containerengine_cluster.web_oke.id
 }
 
-output "cms_oke_cluster_ocid" {
-  description = "CMS OKE cluster OCID"
-  value       = oci_containerengine_cluster.cms_oke.id
-}
+# output "cms_oke_cluster_ocid" {
+#   description = "CMS OKE cluster OCID"
+#   value       = oci_containerengine_cluster.cms_oke.id
+# }
 
-output "airs_oke_cluster_ocid" {
-  description = "AIRS OKE cluster OCID"
-  value       = oci_containerengine_cluster.airs_oke.id
-}
+# output "airs_oke_cluster_ocid" {
+#   description = "AIRS OKE cluster OCID"
+#   value       = oci_containerengine_cluster.airs_oke.id
+# }
 
 output "lb_subnet_ocid" {
   description = "Load balancer subnet OCID"

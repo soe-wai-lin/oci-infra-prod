@@ -837,7 +837,7 @@ variable "web_cluster_name" {
 variable "web_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
   type        = string
-  default     = "v1.34.2"
+  default     = "v1.35.0"
 }
 
 variable "web_cluster_type" {
