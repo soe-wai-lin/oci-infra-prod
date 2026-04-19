@@ -1068,7 +1068,7 @@ jobs:
       
       
       - name: Upload RM outputs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rm_outputs
           path: rm_outputs.json
@@ -1131,7 +1131,7 @@ jobs:
 
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install OCI CLI
         run: |
@@ -1162,7 +1162,7 @@ jobs:
           chmod 600 ~/.oci/config
 
       - name: Install kubectl
-        uses: azure/setup-kubectl@v4
+        uses: Azure/setup-kubectl@v5.1.0
         with:
           version: latest
     
@@ -1353,7 +1353,7 @@ jobs:
 
 
   #     - name: Checkout repo
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v6
 
   #     - name: Install OCI CLI
   #       run: |
@@ -1384,7 +1384,7 @@ jobs:
   #         chmod 600 ~/.oci/config
 
   #     - name: Install kubectl
-  #       uses: azure/setup-kubectl@v4
+  #       uses: Azure/setup-kubectl@v5.1.0
   #       with:
   #         version: latest
     
@@ -1575,7 +1575,7 @@ jobs:
 
 
   #     - name: Checkout repo
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v6
 
   #     - name: Install OCI CLI
   #       run: |
@@ -1606,7 +1606,7 @@ jobs:
   #         chmod 600 ~/.oci/config
 
   #     - name: Install kubectl
-  #       uses: azure/setup-kubectl@v4
+  #       uses: Azure/setup-kubectl@v5.1.0
   #       with:
   #         version: latest
     
