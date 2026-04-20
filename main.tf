@@ -1630,6 +1630,36 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_apisix_wor
     }
   }
 }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_authentik_worker_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.96.0/20"
+  destination = var.authentik_oke_worker_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow traffic to cms worker nodes."
+  tcp_options {
+    destination_port_range {
+      min = 30000
+      max = 32767
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_authentik_worker_proxy_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.96.0/20"
+  destination = var.authentik_oke_worker_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes"
+  tcp_options {
+    destination_port_range {
+      min = 10256
+      max = 10256
+    }
+  }
+}
 resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_gfhost" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
