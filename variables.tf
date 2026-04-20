@@ -824,40 +824,10 @@ variable "gfhost_boot_volume_size_in_gbs" {
 # Optional pod networking (VCN-native)  #
 #########################################
 
-variable "web_cni_type" {
-  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
-  type        = string
-  default     = "OCI_VCN_IP_NATIVE"
 
-  validation {
-    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.web_cni_type)
-    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
-  }
-}
-
-
-
-variable "web_services_cidr" {
-  description = "Kubernetes services CIDR."
-  type        = string
-  default     = "10.96.0.0/16"
-}
-
-variable "web_system_max_pods_per_node" {
-  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
-  type        = number
-  default     = 31
-}
-
-
-variable "web_worker_max_pods_per_node" {
-  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
-  type        = number
-  default     = 31
-}
 
 #####################
-# Cluster settings  #
+# WEB Cluster settings  #
 #####################
 
 variable "web_cluster_name" {
@@ -884,6 +854,304 @@ variable "web_cluster_type" {
   }
 }
 
+variable "web_cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.web_cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+
+variable "web_services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "web_system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+
+variable "web_worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#####################
+# APISIX Cluster settings  #
+#####################
+
+variable "apisix_cluster_name" {
+  description = "OKE cluster name."
+  type        = string
+  default     = "prod-apisix-cluster"
+}
+
+
+variable "apisix_kubernetes_version" {
+  description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
+  type        = string
+  default     = "v1.35.0"
+}
+
+variable "apisix_cluster_type" {
+  description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
+  type        = string
+  default     = "ENHANCED_CLUSTER"
+
+  validation {
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.apisix_cluster_type)
+    error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
+  }
+}
+
+variable "apisix_cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.apisix_cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+
+variable "apisix_services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "apisix_system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+variable "apisix_worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#####################
+# APISIX System node pool  #
+#####################
+
+variable "apisix_system_node_pool_name" {
+  description = "Name of the system node pool."
+  type        = string
+  default     = "system-pool"
+}
+
+variable "apisix_system_node_count" {
+  description = "Desired number of nodes in the system node pool."
+  type        = number
+  default     = 1
+}
+
+variable "apisix_system_node_shape" {
+  description = "Compute shape for the system node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "apisix_system_memory_in_gbs" {
+  default = 32
+}
+
+variable "apisix_system_ocpus" {
+  default = 4
+}
+
+
+variable "apisix_system_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+#####################
+# APISIX Worker node pool  #
+#####################
+
+variable "apisix_worker_node_pool_name" {
+  description = "Name of the worker node pool."
+  type        = string
+  default     = "worker-pool"
+}
+
+variable "apisix_worker_node_count" {
+  description = "Desired number of nodes in the worker node pool."
+  type        = number
+  default     = 1
+}
+
+variable "apisix_worker_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "apisix_worker_node_shape" {
+  description = "Compute shape for the worker node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "apisix_worker_memory_in_gbs" {
+  default = "32"
+}
+
+variable "apisix_worker_ocpus" {
+  default = "4"
+}
+
+variable "apisix_node_eviction_grace_duration" {
+  description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+  type        = string
+  default     = "PT60M"
+}
+
+variable "apisix_node_force_action_after_grace_duration" {
+  description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+  type        = bool
+  default     = false
+}
+
+variable "apisix_node_force_delete_after_grace_duration" {
+  description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+  type        = bool
+  default     = false
+}
+
+variable "apisix_node_cycling_enabled" {
+  description = "Enable node cycling for safer rolling replacement/updates."
+  type        = bool
+  default     = false
+}
+
+variable "apisix_node_cycling_maximum_surge" {
+  description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+  type        = string
+  default     = "25%"
+}
+
+variable "apisix_node_cycling_maximum_unavailable" {
+  description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+  type        = string
+  default     = "0"
+}
+variable "apisix_oke_ssh_public_key" {
+  description = "SSH public key injected into OKE worker nodes."
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
+}
+variable "apisix_enable_cluster_autoscaler" {
+  type    = bool
+  default = true
+}
+
+variable "apisix_worker_node_min_count" {
+  type    = number
+  default = 1
+}
+
+variable "apisix_worker_node_max_count" {
+  type    = number
+  default = 25
+}
+
+variable "apisix_cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "apisix_cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "apisix_cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "apisix_cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "apisix_cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "apisix_cluster_autoscaler_scale_down_utilization_threshold" {
+  type    = string
+  default = "0.4"
+}
+
+# variable "cluster_autoscaler_max_graceful_termination_sec" {
+#   type    = string
+#   default = "120"
+# }
+
+variable "apisix_cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
+
+
+
+
+# ############################
+# # Rolling update behaviors #
+# ############################
+
+# variable "apisix_node_eviction_grace_duration" {
+#   description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+#   type        = string
+#   default     = "PT60M"
+# }
+
+# variable "apisix_node_force_action_after_grace_duration" {
+#   description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+#   type        = bool
+#   default     = false
+# }
+
+# variable "apisix_node_force_delete_after_grace_duration" {
+#   description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+#   type        = bool
+#   default     = false
+# }
+
+# variable "apisix_node_cycling_enabled" {
+#   description = "Enable node cycling for safer rolling replacement/updates."
+#   type        = bool
+#   default     = false
+# }
+
+# variable "apisix_node_cycling_maximum_surge" {
+#   description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+#   type        = string
+#   default     = "25%"
+# }
+
+# variable "apisix_node_cycling_maximum_unavailable" {
+#   description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+#   type        = string
+#   default     = "0"
+# }
 
 
 ##############################
@@ -923,7 +1191,7 @@ variable "web_system_memory_in_gbs" {
 }
 
 variable "web_system_ocpus" {
-  default = 2
+  default = 1
 }
 
 
@@ -962,7 +1230,7 @@ variable "web_worker_memory_in_gbs" {
 }
 
 variable "web_worker_ocpus" {
-  default = "2"
+  default = "1"
 }
 
 #########################################
@@ -980,7 +1248,7 @@ variable "web_worker_node_min_count" {
 
 variable "web_worker_node_max_count" {
   type    = number
-  default = 3
+  default = 150
 }
 
 variable "web_cluster_autoscaler_num_replicas" {
@@ -1187,7 +1455,7 @@ variable "cms_system_memory_in_gbs" {
 }
 
 variable "cms_system_ocpus" {
-  default = 2
+  default = 1
 }
 
 variable "cms_system_availability_domain" {
@@ -1207,7 +1475,7 @@ variable "cms_worker_node_pool_name" {
 variable "cms_worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 1
+  default     = 3
 }
 
 variable "cms_worker_availability_domain" {
@@ -1225,7 +1493,7 @@ variable "cms_worker_memory_in_gbs" {
 }
 
 variable "cms_worker_ocpus" {
-  default = "2"
+  default = "1"
 }
 
 #########################################
@@ -1238,12 +1506,12 @@ variable "cms_worker_ocpus" {
 
 variable "cms_worker_node_min_count" {
   type    = number
-  default = 1
+  default = 3
 }
 
 variable "cms_worker_node_max_count" {
   type    = number
-  default = 3
+  default = 25
 }
 
 variable "cms_cluster_autoscaler_num_replicas" {
@@ -1450,7 +1718,7 @@ variable "airs_worker_node_pool_name" {
 variable "airs_worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 1
+  default     = 3
 }
 
 variable "airs_worker_availability_domain" {
@@ -1481,12 +1749,12 @@ variable "airs_worker_ocpus" {
 
 variable "airs_worker_node_min_count" {
   type    = number
-  default = 1
+  default = 3
 }
 
 variable "airs_worker_node_max_count" {
   type    = number
-  default = 3
+  default = 25
 }
 
 variable "airs_cluster_autoscaler_num_replicas" {
@@ -1566,5 +1834,229 @@ variable "airs_node_cycling_maximum_unavailable" {
 }
 
 
+#####################
+# Authentik Cluster settings  #
+#####################
+
+variable "authentik_cluster_name" {
+  description = "OKE cluster name."
+  type        = string
+  default     = "prod-authentik-cluster"
+}
+
+
+variable "authentik_kubernetes_version" {
+  description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
+  type        = string
+  default     = "v1.35.0"
+}
+
+variable "authentik_cluster_type" {
+  description = "OKE cluster type. ENHANCED_CLUSTER is recommended for production use."
+  type        = string
+  default     = "ENHANCED_CLUSTER"
+
+  validation {
+    condition     = contains(["BASIC_CLUSTER", "ENHANCED_CLUSTER"], var.authentik_cluster_type)
+    error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
+  }
+}
+
+variable "authentik_cni_type" {
+  description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
+  type        = string
+  default     = "OCI_VCN_IP_NATIVE"
+
+  validation {
+    condition     = contains(["FLANNEL_OVERLAY", "OCI_VCN_IP_NATIVE"], var.authentik_cni_type)
+    error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
+  }
+}
+
+
+variable "authentik_services_cidr" {
+  description = "Kubernetes services CIDR."
+  type        = string
+  default     = "10.96.0.0/16"
+}
+
+variable "authentik_system_max_pods_per_node" {
+  description = "Max pods per node for the system node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+variable "authentik_worker_max_pods_per_node" {
+  description = "Max pods per node for the worker node pool when cni_type is OCI_VCN_IP_NATIVE."
+  type        = number
+  default     = 31
+}
+
+#####################
+# APISIX System node pool  #
+#####################
+
+variable "authentik_system_node_pool_name" {
+  description = "Name of the system node pool."
+  type        = string
+  default     = "system-pool"
+}
+
+variable "authentik_system_node_count" {
+  description = "Desired number of nodes in the system node pool."
+  type        = number
+  default     = 1
+}
+
+variable "authentik_system_node_shape" {
+  description = "Compute shape for the system node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "authentik_system_memory_in_gbs" {
+  default = 16
+}
+
+variable "authentik_system_ocpus" {
+  default = 2
+}
+
+
+variable "authentik_system_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+#####################
+# APISIX Worker node pool  #
+#####################
+
+variable "authentik_worker_node_pool_name" {
+  description = "Name of the worker node pool."
+  type        = string
+  default     = "worker-pool"
+}
+
+variable "authentik_worker_node_count" {
+  description = "Desired number of nodes in the worker node pool."
+  type        = number
+  default     = 3
+}
+
+variable "authentik_worker_availability_domain" {
+  default = "aluk:AP-SINGAPORE-1-AD-1"
+}
+
+variable "authentik_worker_node_shape" {
+  description = "Compute shape for the worker node pool."
+  type        = string
+  default     = "VM.Standard.E5.Flex"
+}
+
+variable "authentik_worker_memory_in_gbs" {
+  default = "16"
+}
+
+variable "authentik_worker_ocpus" {
+  default = "2"
+}
+
+variable "authentik_node_eviction_grace_duration" {
+  description = "Drain grace duration used by OKE during node actions such as cycling or replacement."
+  type        = string
+  default     = "PT60M"
+}
+
+variable "authentik_node_force_action_after_grace_duration" {
+  description = "Whether OKE should continue node actions if pods cannot be fully evicted before the grace duration."
+  type        = bool
+  default     = false
+}
+
+variable "authentik_node_force_delete_after_grace_duration" {
+  description = "Whether the underlying compute instance should be deleted if eviction cannot complete in time."
+  type        = bool
+  default     = false
+}
+
+variable "authentik_node_cycling_enabled" {
+  description = "Enable node cycling for safer rolling replacement/updates."
+  type        = bool
+  default     = false
+}
+
+variable "authentik_node_cycling_maximum_surge" {
+  description = "Maximum additional new compute instances temporarily created during cycling. Supports integer or percentage."
+  type        = string
+  default     = "25%"
+}
+
+variable "authentik_node_cycling_maximum_unavailable" {
+  description = "Maximum active nodes that can be unavailable during cycling. Supports integer or percentage."
+  type        = string
+  default     = "0"
+}
+variable "authentik_oke_ssh_public_key" {
+  description = "SSH public key injected into OKE worker nodes."
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
+}
+variable "authentik_enable_cluster_autoscaler" {
+  type    = bool
+  default = true
+}
+
+variable "authentik_worker_node_min_count" {
+  type    = number
+  default = 3
+}
+
+variable "authentik_worker_node_max_count" {
+  type    = number
+  default = 25
+}
+
+variable "authentik_cluster_autoscaler_num_replicas" {
+  type    = number
+  default = 2
+}
+
+variable "authentik_cluster_autoscaler_max_node_provision_time" {
+  type    = string
+  default = "25m"
+}
+
+# Usually instance principal is the simplest for OKE CA add-on.
+variable "authentik_cluster_autoscaler_auth_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "authentik_cluster_autoscaler_scale_down_delay_after_add" {
+  type    = string
+  default = "10m"
+  description = "How long after scale up that scale down evaluation resumes."
+}
+
+variable "authentik_cluster_autoscaler_scale_down_unneeded_time" {
+  type    = string
+  default = "10m"
+}
+
+variable "authentik_cluster_autoscaler_scale_down_utilization_threshold" {
+  type    = string
+  default = "0.4"
+}
+
+# variable "cluster_autoscaler_max_graceful_termination_sec" {
+#   type    = string
+#   default = "120"
+# }
+
+variable "authentik_cordonNodeBeforeTerminating" {
+  type = bool
+  default = true
+  description = "cordon nodes before terminating during downscale process"
+}
 
 

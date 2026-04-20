@@ -270,10 +270,10 @@ output "bucket_approximate_size" {
 #   value = local.worker_node_image_id
 # }
 
-# output "web_oke_cluster_ocid" {
-#   description = "WEB OKE cluster OCID"
-#   value       = oci_containerengine_cluster.web_oke.id
-# }
+output "web_oke_cluster_ocid" {
+  description = "WEB OKE cluster OCID"
+  value       = oci_containerengine_cluster.web_oke.id
+}
 
 # output "cms_oke_cluster_ocid" {
 #   description = "CMS OKE cluster OCID"
@@ -285,20 +285,20 @@ output "bucket_approximate_size" {
 #   value       = oci_containerengine_cluster.airs_oke.id
 # }
 
-# output "lb_subnet_ocid" {
-#   description = "Load balancer subnet OCID"
-#   value       = oci_core_subnet.lb_subnet.id
-# }
+output "lb_subnet_ocid" {
+  description = "Load balancer subnet OCID"
+  value       = oci_core_subnet.lb_subnet.id
+}
 
-# output "lb_nsg_ocid" {
-#   description = "PROD Load balancer NSG OCID"
-#   value       = oci_core_network_security_group.nsg_prod_lb.id
-# }
+output "lb_nsg_ocid" {
+  description = "PROD Load balancer NSG OCID"
+  value       = oci_core_network_security_group.nsg_prod_lb.id
+}
 
-# output "web_lb_reserved_public_ip_ocid" {
-#   description = "WEB Reserved public IP OCID for the OKE load balancer"
-#   value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
-# }
+output "web_lb_reserved_public_ip_ocid" {
+  description = "WEB Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
+}
 
 # output "cms_lb_reserved_public_ip_ocid" {
 #   description = "CMS Reserved public IP OCID for the OKE load balancer"
@@ -310,9 +310,14 @@ output "bucket_approximate_size" {
 #   value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
 # }
 
-# output "bastion_public_ip" {
-#   value = oci_core_instance.bastion.public_ip
-# }
+output "apisix_lb_reserved_public_ip_ocid" {
+  description = "AIRS Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.apisix_cluster_lb_reserved_ip.ip_address
+}
+
+output "bastion_public_ip" {
+  value = oci_core_instance.bastion.public_ip
+}
 
 
 
