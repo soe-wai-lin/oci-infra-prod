@@ -61,6 +61,22 @@ variable "airs_micro_oke_pod_cidr_block" {
   default = "10.10.144.0/20"
 }
 
+variable "apisix_oke_worker_cidr_block" {
+  default = "10.10.160.0/20"
+}
+
+variable "apisix_oke_pod_cidr_block" {
+  default = "10.10.176.0/20"
+}
+
+variable "authentik_oke_worker_cidr_block" {
+  default = "10.10.192.0/20"
+}
+
+variable "authentik_oke_pod_cidr_block" {
+  default = "10.10.208.0/20"
+}
+
 variable "carrer_vm_cidr_block" {
   default = "10.10.70.0/24"
 }
@@ -89,60 +105,77 @@ variable "k8s_priv_api_endpoint_cidr_block" {
   default = "10.10.60.0/24"
 }
 
+
 variable "nsg_lb" {
-  default = "NSG-PROD-LB"
+  default = "nsg-prod-lb"
 }
 
 variable "nsg_cms" {
-  default = "NSG-PROD-CMS-WORKER"
+  default = "nsg-prod-cms-worker"
 }
 
 variable "nsg_web" {
-  default = "NSG-PROD-WEB-WORKER"
+  default = "nsg-prod-web-worker"
 }
 
 variable "nsg_airs" {
-  default = "NSG-PROD-AIRS-WORKER"
+  default = "nsg-prod-airs-worker"
 }
 
 variable "nsg_careers" {
-  default = "NSG-PROD-CARRERS"
+  default = "nsg-prod-careers"
 }
 
 variable "nsg_api_gw" {
-  default = "NSG-PROD-API-GW"
+  default = "nsg-prod-api-gw"
 }
 
 variable "nsg_db" {
-  default = "NSG-PROD-DB"
+  default = "nsg-prod-db"
 }
 
 variable "nsg_bastion" {
-  default = "NSG-PROD-BASTION"
+  default = "nsg-prod-bastion"
 }
 
 variable "nsg_gf_host" {
-  default = "NSG-PROD-GFHOST"
+  default = "nsg-prod-gfhost"
 }
 
 variable "nsg_redis" {
-  default = "NSG-PROD-REDIS"
+  default = "nsg-prod-redis"
 }
 
 variable "nsg_k8s_api_endpoint" {
-  default = "NSG-PROD-K8S_API_ENDPOINTS"
+  default = "nsg-prod-k8s-api-endpoint"
 }
 
 variable "nsg_web_pod" {
-  default = "NSG-PROD-WEB-POD"
+  default = "nsg-prod-web-pod"
 }
 
 variable "nsg_cms_pod" {
-  default = "NSG-PROD-CMS-POD"
+  default = "nsg-prod-cms-pod"
 }
 
 variable "nsg_airs_pod" {
-  default = "NSG-PROD-AIRS-POD"
+  default = "nsg-prod-airs-pod"
+}
+
+variable "nsg_apisix_pod" {
+  default = "nsg-prod-apisix-pod"
+}
+
+variable "nsg_apisix" {
+  default = "nsg-prod-apisix-worker"
+}
+
+variable "nsg_authentik_pod" {
+  default = "nsg-prod-authentik-pod"
+}
+
+variable "nsg_authentik" {
+  default = "nsg-prod-authentik-worker"
 }
 
 variable "alert_email" {

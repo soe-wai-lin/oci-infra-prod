@@ -102,6 +102,76 @@ resource "oci_core_subnet" "airs_micro_oke_pod_sub" {
   route_table_id             = oci_core_route_table.private_rt.id
 }
 
+resource "oci_core_subnet" "apisix_oke_worker_sub" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  dns_label = "apisixworker"
+
+  #Optional
+  cidr_block    = var.apisix_oke_worker_cidr_block
+  display_name  = "${var.vcn_display_name}-apisix-worker-sub"
+  security_list_ids = [oci_core_security_list.apisix_worker_SL.id]
+  freeform_tags = var.freeform_tags
+
+  # Public subnet behavior
+  prohibit_public_ip_on_vnic = true
+  # route_table_id             = oci_core_route_table.airs-workernodes-rt.id
+  route_table_id             = oci_core_route_table.private_rt.id
+}
+resource "oci_core_subnet" "apisix_oke_pod_sub" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  dns_label = "apisixpod"
+
+  #Optional
+  cidr_block    = var.apisix_oke_pod_cidr_block
+  display_name  = "${var.vcn_display_name}-apisix-pod-sub"
+  security_list_ids = [oci_core_security_list.apisix_worker_pod_SL.id]
+  freeform_tags = var.freeform_tags
+
+  # Public subnet behavior
+  prohibit_public_ip_on_vnic = true
+  # route_table_id             = oci_core_route_table.routetable_airs_pods.id
+  route_table_id             = oci_core_route_table.private_rt.id
+}
+
+resource "oci_core_subnet" "authentik_oke_worker_sub" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  dns_label = "authentikworker"
+
+  #Optional
+  cidr_block    = var.authentik_oke_worker_cidr_block
+  display_name  = "${var.vcn_display_name}-authentik-worker-sub"
+  security_list_ids = [oci_core_security_list.authentik_worker_SL.id]
+  freeform_tags = var.freeform_tags
+
+  # Public subnet behavior
+  prohibit_public_ip_on_vnic = true
+  # route_table_id             = oci_core_route_table.airs-workernodes-rt.id
+  route_table_id             = oci_core_route_table.private_rt.id
+}
+resource "oci_core_subnet" "authentik_oke_pod_sub" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  dns_label = "authentikpod"
+
+  #Optional
+  cidr_block    = var.authentik_oke_pod_cidr_block
+  display_name  = "${var.vcn_display_name}-authentik-pod-sub"
+  security_list_ids = [oci_core_security_list.authentik_worker_pod_SL.id]
+  freeform_tags = var.freeform_tags
+
+  # Public subnet behavior
+  prohibit_public_ip_on_vnic = true
+  # route_table_id             = oci_core_route_table.routetable_airs_pods.id
+  route_table_id             = oci_core_route_table.private_rt.id
+}
+
 # resource "oci_core_subnet" "career_vm_sub" {
 #   #Required
 #   compartment_id = oci_identity_compartment.net_compartment.id
@@ -239,7 +309,7 @@ resource "oci_core_security_list" "redis_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-redis-SL"
+  display_name   = "${var.vcn_display_name}-redis-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = var.db_cidr_block
@@ -363,7 +433,7 @@ resource "oci_core_security_list" "web_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-web-worker-SL"
+  display_name   = "${var.vcn_display_name}-web-worker-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.16.0/20"
@@ -474,7 +544,7 @@ resource "oci_core_security_list" "web_worker_pod_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-web-pod-SL"
+  display_name   = "${var.vcn_display_name}-web-pod-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.32.0/20"
@@ -563,7 +633,7 @@ resource "oci_core_security_list" "cms_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-cms-worker-SL"
+  display_name   = "${var.vcn_display_name}-cms-worker-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.32.0/20"
@@ -607,7 +677,7 @@ resource "oci_core_security_list" "cms_worker_pod_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-cms-pod-SL"
+  display_name   = "${var.vcn_display_name}-cms-pod-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.32.0/20"
@@ -697,7 +767,7 @@ resource "oci_core_security_list" "prod_k8s_priv_api_endpoint_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-k8s_priv_api_endpoint_SL"
+  display_name   = "${var.vcn_display_name}-k8s-priv-api-endpoint-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = "10.10.32.0/20"
@@ -811,7 +881,7 @@ resource "oci_core_security_list" "db_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-db-SL"
+  display_name   = "${var.vcn_display_name}-db-sl"
 
   ingress_security_rules {
     protocol    = "6"
@@ -896,7 +966,7 @@ resource "oci_core_security_list" "airs_worker_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-airs-worker-SL"
+  display_name   = "${var.vcn_display_name}-airs-worker-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.80.0/24"
@@ -916,7 +986,225 @@ resource "oci_core_security_list" "airs_worker_pod_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-airs-pod-SL"
+  display_name   = "${var.vcn_display_name}-airs-pod-sl"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "Allow worker nodes to access pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.60.0/24"
+  #   description = "Allow Kubernetes API endpoint to communicate with pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.112.0/20"
+  #   description = "Allow pods to communicate with other pods."
+  # }
+
+
+  # ingress_security_rules {
+  #   protocol    = "1" # ICMP
+  #   source      = "0.0.0.0/0"
+  #   description = "Allow ICMP from cms to web"
+  # }
+
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "1"
+  #   description      = "Path Discovery."
+  #   icmp_options {
+  #     code = 4
+  #     type = 3
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Allow pods to communicate with OCI services."
+  # }
+  # egress_security_rules {
+  #   destination      = "0.0.0.0/0"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   tcp_options {
+  #     max = 443
+  #     min = 443
+  #   }
+  #   description = "(optional) Allow pods to communicate with internet."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.112.0/20"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "all"
+  #   description      = "Allow pods to communicate with other pods."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     max = 12250
+  #     min = 12250
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     min = 6443
+  #     max = 6443
+  #   }
+  # }
+
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "apisix_worker_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-apisix-worker-sl"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.80.0/24"
+  #   source = var.db_cidr_block
+  #   description = "allow db to airs"
+  # }
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
+
+  freeform_tags = var.freeform_tags
+
+}
+resource "oci_core_security_list" "apisix_worker_pod_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-apisix-pod-sl"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.32.0/20"
+  #   source = var.web_worker_sub_cidr
+  #   description = "Allow worker nodes to access pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.60.0/24"
+  #   description = "Allow Kubernetes API endpoint to communicate with pods."
+  # }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "10.10.112.0/20"
+  #   description = "Allow pods to communicate with other pods."
+  # }
+
+
+  # ingress_security_rules {
+  #   protocol    = "1" # ICMP
+  #   source      = "0.0.0.0/0"
+  #   description = "Allow ICMP from cms to web"
+  # }
+
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "1"
+  #   description      = "Path Discovery."
+  #   icmp_options {
+  #     code = 4
+  #     type = 3
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = data.oci_core_services.services.services[0].cidr_block
+  #   destination_type = "SERVICE_CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Allow pods to communicate with OCI services."
+  # }
+  # egress_security_rules {
+  #   destination      = "0.0.0.0/0"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   tcp_options {
+  #     max = 443
+  #     min = 443
+  #   }
+  #   description = "(optional) Allow pods to communicate with internet."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.112.0/20"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "all"
+  #   description      = "Allow pods to communicate with other pods."
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     max = 12250
+  #     min = 12250
+  #   }
+  # }
+  # egress_security_rules {
+  #   destination      = "10.10.60.0/24"
+  #   destination_type = "CIDR_BLOCK"
+  #   protocol         = "6"
+  #   description      = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  #   tcp_options {
+  #     min = 6443
+  #     max = 6443
+  #   }
+  # }
+
+
+  freeform_tags = var.freeform_tags
+
+}
+
+resource "oci_core_security_list" "authentik_worker_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-authentik-worker-sl"
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   # source      = "10.10.80.0/24"
+  #   source = var.db_cidr_block
+  #   description = "allow db to airs"
+  # }
+  # egress_security_rules {
+  #   protocol    = "all"
+  #   destination = "0.0.0.0/0"
+  #   description = "Allow all egress"
+  # }
+
+  freeform_tags = var.freeform_tags
+
+}
+resource "oci_core_security_list" "authentik_worker_pod_SL" {
+  #Required
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = "${var.vcn_display_name}-authentik-pod-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   # source      = "10.10.32.0/20"
@@ -1006,7 +1294,7 @@ resource "oci_core_security_list" "pub_lb_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-pub-lb-SL"
+  display_name   = "${var.vcn_display_name}-pub-lb-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = "0.0.0.0/0"
@@ -1092,7 +1380,7 @@ resource "oci_core_security_list" "priv_lb_SL" {
   #Required
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
-  display_name   = "${var.vcn_display_name}-priv-lb-SL"
+  display_name   = "${var.vcn_display_name}-priv-lb-sl"
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = "0.0.0.0/0"
@@ -2325,6 +2613,363 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
     }
   }
 }
+
+############################
+###### NSG APISIX WORKER  ####
+############################
+
+resource "oci_core_network_security_group" "nsg_prod_apisix" {
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = var.nsg_apisix
+}
+
+locals {
+  web_ingress_apisix = {
+    # apigw = { id = oci_core_network_security_group.nsg_prod_api_gw.id, port = 8080 }
+    web   = { id = oci_core_network_security_group.nsg_prod_web.id, port = 8088 }
+  }
+}
+# INGRESS:
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress" {
+  for_each                  = local.web_ingress_apisix
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = each.value.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "Allow service port from ${each.key}"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {
+    destination_port_range {
+      min = each.value.port
+      max = each.value.port
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_all_from_lb" {
+  for_each                  = local.web_ingress
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = oci_core_network_security_group.nsg_prod_lb.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "Allow All from NSG PROD LB"
+
+  # Optional: Restrict to ping only (echo request = type 8)
+  tcp_options {}
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "all"
+  # source                    = "10.10.96.0/20"
+  source = var.apisix_oke_worker_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allows communication from (or to) worker nodes."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "all"
+  # source                    = "10.10.144.0/20"
+  source = var.apisix_oke_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow pods on one worker node to communicate with pods on other worker nodes (when using VCN-native pod networking)."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_icmp" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "1"
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "Path Discovery."
+  icmp_options {
+    type = 3
+    code = 4
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_api_ep_all" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow Kubernetes API endpoint to communicate with worker nodes."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_api_ep_10250" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Kubernetes API endpoint to worker node communication (when using VCN-native pod networking)."
+  tcp_options {
+    destination_port_range {
+      min = 10250
+      max = 10250
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_ssh" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  description               = "(optional) Allow inbound SSH traffic from Bastion to worker nodes."
+  tcp_options {
+    destination_port_range {
+      min = 22
+      max = 22
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_lb" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  # source                    = "10.10.0.0/24"
+  source = var.lb_subnet_cidr
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow OCI load balancer or network load balancer to communicate with kube-proxy on worker nodes."
+  tcp_options {
+    destination_port_range {
+      min = 10256
+      max = 10256
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_ingress_icmp_from_bastion" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "INGRESS"
+  protocol                  = "1" # ICMP
+  source                    = oci_core_network_security_group.nsg_prod_bastion.id
+  source_type               = "NETWORK_SECURITY_GROUP"
+  stateless                 = false
+  description               = "Allow Ping from Bastion NSG"
+}
+
+# EGRESS
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "all"
+  # destination               = "10.10.80.0/24"
+  destination = var.db_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow to db_subnet"
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_worker" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "all"
+  # destination               = "10.10.96.0/20"
+  destination = var.apisix_oke_worker_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allows communication from (or to) worker nodes."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_pod" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "all"
+  # destination               = "10.10.144.0/20"
+  destination = var.apisix_oke_pod_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow worker nodes to communicate with pods on other worker nodes (when using VCN-native pod networking)."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_icmp" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "1"
+  destination               = "0.0.0.0/0"
+  destination_type          = "CIDR_BLOCK"
+  description               = "Path Discovery."
+  icmp_options {
+    type = 3
+    code = 4
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_api_ep_6443" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Kubernetes worker to Kubernetes API endpoint communication."
+  tcp_options {
+    destination_port_range {
+      min = 6443
+      max = 6443
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_api_worker_allow_to_internet" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  destination_type          = "CIDR_BLOCK"
+  description               = "(optional) Allow worker nodes to communicate with internet."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_egress_api_ep_12250" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Kubernetes worker to Kubernetes API endpoint communication."
+  tcp_options {
+    destination_port_range {
+      min = 12250
+      max = 12250
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_engress_osn" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless                 = false
+  tcp_options {}
+  destination      = data.oci_core_services.services.services[0].cidr_block
+  destination_type = "SERVICE_CIDR_BLOCK"
+  description      = "Allow nodes to communicate with OKE."
+}
+
+####################
+### APISIX POD NSG ####
+####################
+resource "oci_core_network_security_group" "nsg_prod_apisix_pod" {
+  compartment_id = oci_identity_compartment.net_compartment.id
+  vcn_id         = oci_core_vcn.terra_vcn.id
+  display_name   = var.nsg_apisix_pod
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_k8s_api_ep_ingress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "INGRESS"
+  protocol                  = "all"
+  # source                    = "10.10.60.0/24"
+  source = var.k8s_priv_api_endpoint_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Kubernetes API endpoint to pod communication (when using VCN-native pod networking)."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_woker_ingress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "INGRESS"
+  protocol                  = "all"
+  # source                    = "10.10.96.0/20"
+  source = var.apisix_oke_worker_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow pods on one worker node to communicate with pods on other worker nodes."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_ingress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "INGRESS"
+  protocol                  = "all"
+  # source                    = "10.10.144.0/20"
+  source = var.apisix_oke_pod_cidr_block
+  source_type               = "CIDR_BLOCK"
+  description               = "Allow pods to communicate with each other."
+}
+
+# Egress
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "all"
+  # destination               = "10.10.144.0/20"
+  destination = var.apisix_oke_pod_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Allow pods to communicate with each other."
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress_osn" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  tcp_options {}
+  stateless        = false
+  destination      = data.oci_core_services.services.services[0].cidr_block
+  destination_type = "SERVICE_CIDR_BLOCK"
+  description      = "Allow worker nodes to communicate with OCI services."
+}
+# resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egress_osn_tcp" {
+#   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
+#   direction                 = "EGRESS"
+#   protocol                  = "1"
+#   icmp_options {
+#     type = 3
+#     code = 4
+#   }
+#   stateless = false
+#   destination      = data.oci_core_services.services.services[0].cidr_block
+#   destination_type = "SERVICE_CIDR_BLOCK"
+#   description      = "Path Discovery."
+# }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress_icmp" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "1" # ICMP
+  destination               = data.oci_core_services.services.services[0].cidr_block
+  destination_type          = "SERVICE_CIDR_BLOCK"
+  stateless                 = false
+  description               = "Path MTU Discovery from worker nodes (ICMP type 3 code 4)."
+
+  icmp_options {
+    type = 3
+    code = 4
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress10250" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  tcp_options {
+    destination_port_range {
+      min = 12250
+      max = 12250
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress_6443" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  # destination               = "10.10.60.0/24"
+  destination = var.k8s_priv_api_endpoint_cidr_block
+  destination_type          = "CIDR_BLOCK"
+  description               = "Pod to Kubernetes API endpoint communication (when using VCN-native pod networking)."
+  tcp_options {
+    destination_port_range {
+      min = 6443
+      max = 6443
+    }
+  }
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress_443" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = "0.0.0.0/0"
+  destination_type          = "CIDR_BLOCK"
+  description               = "(optional) Allow pods to communicate with internet."
+  tcp_options {
+    destination_port_range {
+      min = 443
+      max = 443
+    }
+  }
+}
+
 
 ####################
 ### WEB POD NSG ####
