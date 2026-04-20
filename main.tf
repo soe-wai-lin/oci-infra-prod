@@ -1634,7 +1634,6 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_lb_authentik_
   network_security_group_id = oci_core_network_security_group.nsg_prod_lb.id
   direction                 = "EGRESS"
   protocol                  = "6"
-  # destination               = "10.10.96.0/20"
   destination = var.authentik_oke_worker_cidr_block
   destination_type          = "CIDR_BLOCK"
   description               = "Allow traffic to cms worker nodes."
