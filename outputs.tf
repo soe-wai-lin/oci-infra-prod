@@ -275,6 +275,11 @@ output "web_oke_cluster_ocid" {
   value       = oci_containerengine_cluster.web_oke.id
 }
 
+output "apisix_oke_cluster_ocid" {
+  description = "APISIX OKE cluster OCID"
+  value       = oci_containerengine_cluster.apisix_oke.id
+}
+
 # output "cms_oke_cluster_ocid" {
 #   description = "CMS OKE cluster OCID"
 #   value       = oci_containerengine_cluster.cms_oke.id
