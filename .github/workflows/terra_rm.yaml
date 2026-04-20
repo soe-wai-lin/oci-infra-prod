@@ -1253,11 +1253,11 @@ jobs:
               service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
               service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
-              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
-              service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
-              oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
-              service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
-              service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
+              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
+              # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
+              # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
+              # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
+              # service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
           spec:
             loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
             type: LoadBalancer
@@ -1299,8 +1299,8 @@ jobs:
           $(printf '%s\n' "$TLSKEY" | sed 's/^/        /')
           EOF
 
-          kubectl apply -f secret.yaml
-          kubectl get secret ssl-certificate-secret
+          # kubectl apply -f secret.yaml
+          # kubectl get secret ssl-certificate-secret
 
   create_apisix_oke_lb_service_and_tls:
     name: Create apisix OKE LoadBalancer Service
@@ -1484,7 +1484,7 @@ jobs:
               service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
               service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
-              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
               # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
               # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
               # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
@@ -1530,8 +1530,8 @@ jobs:
           $(printf '%s\n' "$TLSKEY" | sed 's/^/        /')
           EOF
 
-          kubectl apply -f secret.yaml
-          kubectl get secret ssl-certificate-secret
+          # kubectl apply -f secret.yaml
+          # kubectl get secret ssl-certificate-secret
 
   # create_cms_oke_lb_service_and_tls:
   #   name: Create CMS OKE LoadBalancer Service
@@ -1706,7 +1706,7 @@ jobs:
   #             service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
   #             service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
   #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
-  #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+  #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
   #             service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
   #             oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
   #             service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
@@ -1928,7 +1928,7 @@ jobs:
   #             service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
   #             service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
   #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
-  #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+  #             service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
   #             service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
   #             oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
   #             service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
