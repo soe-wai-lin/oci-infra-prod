@@ -83,7 +83,7 @@
 #   # -----------------------------
 #   # Pick OKE Oracle Linux images matching the requested k8s version.
 #   # Exclude Arm and GPU images.
-#   system_candidate_source_map = {
+#   authentik_system_candidate_source_map = {
 #     for s in data.oci_containerengine_node_pool_option.authentik_all_options.sources :
 #     s.source_name => s
 #     if s.source_type == "IMAGE"
@@ -93,11 +93,11 @@
 #       && !can(regex("gpu", lower(s.source_name)))
 #   }
 
-#   system_candidate_source_names = reverse(sort(keys(local.system_candidate_source_map)))
+#   authentik_system_candidate_source_names = reverse(sort(keys(local.authentik_system_candidate_source_map)))
 
 #   authentik_system_node_image_id = (
 #     length(local.system_candidate_source_names) > 0
-#     ? local.system_candidate_source_map[local.system_candidate_source_names[0]].image_id
+#     ? local.authentik_system_candidate_source_map[local.authentik_system_candidate_source_names[0]].image_id
 #     : null
 #   )
 
