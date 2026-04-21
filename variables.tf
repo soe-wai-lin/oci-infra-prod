@@ -825,7 +825,6 @@ variable "gfhost_boot_volume_size_in_gbs" {
 #########################################
 
 
-
 #####################
 # WEB Cluster settings  #
 #####################
