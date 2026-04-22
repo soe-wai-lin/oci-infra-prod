@@ -449,7 +449,7 @@ resource "oci_core_security_list" "web_SL" {
 
   # ingress_security_rules {
   #   protocol    = "6"
-  #   source      = "10.10.0.0/24"
+  #   source      = var.lb_subnet_cidr
   #   description = "Allow load balancer to communicate with kube-proxy on worker nodes"
   #   tcp_options {
   #     max = 10256
@@ -459,7 +459,7 @@ resource "oci_core_security_list" "web_SL" {
 
   # ingress_security_rules {
   #   protocol    = "6"
-  #   source      = "10.10.60.0/24"
+  #   source      = var.k8s_priv_api_endpoint_cidr_block
   #   description = "Allow Kubernetes API endpoint to communicate with worker nodes."
   #   tcp_options {
   #     max = 10250
@@ -469,7 +469,7 @@ resource "oci_core_security_list" "web_SL" {
 
   # ingress_security_rules {
   #   protocol    = "6"
-  #   source      = "10.10.0.0/24"
+  #   source      = var.lb_subnet_cidr
   #   description = "Load balancer to worker nodes node ports."
   #   tcp_options {
   #     max = 32767
@@ -1082,6 +1082,11 @@ resource "oci_core_security_list" "apisix_worker_SL" {
   #   source = var.db_cidr_block
   #   description = "allow db to airs"
   # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source = var.k8s_priv_api_endpoint_cidr_block
+  #   description = "allow db to airs"
+  # }
   # egress_security_rules {
   #   protocol    = "all"
   #   destination = "0.0.0.0/0"
@@ -1314,13 +1319,53 @@ resource "oci_core_security_list" "pub_lb_SL" {
   #     min = 80
   #   }
   # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  #   tcp_options {
+  #     max = 8080
+  #     min = 8080
+  #   }
+  # }
 
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = "0.0.0.0/0"
   #   description = "allow "
+  #   tcp_options {
+  #     max = 8443
+  #     min = 8443
+  #   }
   # }
 
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  #   tcp_options {
+  #     max = 9080
+  #     min = 9080
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  #   tcp_options {
+  #     max = 9180
+  #     min = 9180
+  #   }
+  # }
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = "0.0.0.0/0"
+  #   description = "allow "
+  #   tcp_options {
+  #     max = 9443
+  #     min = 9443
+  #   }
+  # }
 
   # ingress_security_rules {
   #   protocol    = "6"
@@ -1381,10 +1426,66 @@ resource "oci_core_security_list" "pub_lb_SL" {
       max = 32767
     }
   }
-
   egress_security_rules {
     protocol    = "6"
     destination = var.web_worker_sub_cidr
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
+
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.cms_worker_sub_cidr
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.cms_worker_sub_cidr
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
+
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.airs_micro_oke_worker_cidr_block
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.airs_micro_oke_worker_cidr_block
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
+
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.authentik_oke_worker_cidr_block
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.authentik_oke_worker_cidr_block
     description = "Allow load balancer to communicate with kube-proxy on worker nodes."
     tcp_options {
       min = 10256
