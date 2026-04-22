@@ -1276,8 +1276,8 @@ jobs:
 
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
           cat oke-lb-service.yaml
-          kubectl apply -f oke-lb-service.yaml
-          kubectl get svc web-lb -o wide
+          # kubectl apply -f oke-lb-service.yaml
+          # kubectl get svc web-lb -o wide
 
       - name: Deploy TLS secret
         shell: bash
@@ -1507,8 +1507,8 @@ jobs:
 
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
           cat oke-lb-service.yaml
-          kubectl apply -f oke-lb-service.yaml
-          kubectl get svc apisix-lb -o wide
+          # kubectl apply -f oke-lb-service.yaml
+          # kubectl get svc apisix-lb -o wide
 
       - name: Deploy TLS secret
         shell: bash
