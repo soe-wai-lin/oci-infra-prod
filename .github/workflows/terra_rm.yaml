@@ -1244,34 +1244,40 @@ jobs:
           apiVersion: v1
           kind: Service
           metadata:
-            name: web-lb
-            namespace: default
+            name: gateway-private-lb
+            namespace: envoy-gateway-system
+            labels:
+              app.kubernetes.io/component: networking
             annotations:
               oci.oraclecloud.com/load-balancer-type: "lb"
+              service.beta.kubernetes.io/oci-load-balancer-internal: "true"
               service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
               oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
               service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
               service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
+
               # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
               # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
               # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
               # service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
           spec:
-            loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
+            # loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
+            loadBalancerIP: 10.10.0.121
             type: LoadBalancer
             selector:
-              app: myapp
+              gateway.envoyproxy.io/owning-gateway-name: gateway
+              gateway.envoyproxy.io/owning-gateway-namespace: airborneo-backend-test-dependencies
             ports:
               - name: http
                 port: 80
-                targetPort: 80
+                targetPort: 8080
+                protocol: TCP
               - name: https
-                port: 443
-                targetPort: 80
-            selector:
-              app: cake
+                port: 8443
+                targetPort: 8443
+                protocol: TCP
           EOF
 
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
