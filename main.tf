@@ -1352,25 +1352,45 @@ resource "oci_core_security_list" "pub_lb_SL" {
   #   }
   # }
 
-  # egress_security_rules {
-  #   protocol    = "6"
-  #   destination = "10.10.32.0/20"
-  #   description = "Load balancer to worker nodes node ports."
-  #   tcp_options {
-  #     min = 30000
-  #     max = 32767
-  #   }
-  # }
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.apisix_oke_worker_cidr_block
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
 
-  # egress_security_rules {
-  #   protocol    = "6"
-  #   destination = "10.10.32.0/20"
-  #   description = "Allow load balancer to communicate with kube-proxy on worker nodes."
-  #   tcp_options {
-  #     min = 10256
-  #     max = 10256
-  #   }
-  # }
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.apisix_oke_worker_cidr_block
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
+
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.web_worker_sub_cidr
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+  }
+
+  egress_security_rules {
+    protocol    = "6"
+    destination = var.web_worker_sub_cidr
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes."
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+  }
 
   freeform_tags = var.freeform_tags
 
