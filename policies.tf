@@ -7,7 +7,7 @@ resource "oci_identity_policy" "reserved-lb-ip-different-comp-policy" {
   # Attach at tenancy/root
   compartment_id = var.tenancy_ocid
 
-  name        = "reserved-lb-ip-different-comp-policy"
+  name        = "${var.vcn_display_name}-reserved-lb-ip-different-comp-policy"
   description = "policies for reserved public IPv4 address for different compartment"
 
   statements = [

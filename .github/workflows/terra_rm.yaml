@@ -1241,6 +1241,13 @@ jobs:
           export KUBECONFIG="$HOME/.kube/config"
 
           cat <<EOF > oke-lb-service.yaml
+          ---
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: envoy-gateway-system
+          
+          ---
           apiVersion: v1
           kind: Service
           metadata:
@@ -1477,12 +1484,19 @@ jobs:
           set -euo pipefail
           export KUBECONFIG="$HOME/.kube/config"
 
-          cat <<EOF > oke-lb-service.yaml
+          cat <<EOF > apisix-service.yaml
+          ---
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: airborneo-backend-gateway
+          
+          ---
           apiVersion: v1
           kind: Service
           metadata:
-            name: apisix-lb
-            namespace: default
+            name: apisix
+            namespace: airborneo-backend-gateway
             annotations:
               oci.oraclecloud.com/load-balancer-type: "lb"
               service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
@@ -1499,21 +1513,25 @@ jobs:
             loadBalancerIP: "${APISIX_LB_RESERVED_PUBLIC_IP_OCID}"
             type: LoadBalancer
             selector:
-              app: myapp
+              app: apisix
             ports:
               - name: http
-                port: 80
-                targetPort: 80
+                port: 9080
+                targetPort: 9080
+                protocol: TCP
               - name: https
-                port: 443
-                targetPort: 80
-            selector:
-              app: cake
+                port: 9443
+                targetPort: 9443
+                protocol: TCP
+              - name: admin
+                port: 9180
+                targetPort: 9180
+                protocol: TCP
           EOF
 
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
-          cat oke-lb-service.yaml
-          # kubectl apply -f oke-lb-service.yaml
+          cat apisix-service.yaml
+          # kubectl apply -f apisix-service.yaml
           # kubectl get svc apisix-lb -o wide
 
       - name: Deploy TLS secret
