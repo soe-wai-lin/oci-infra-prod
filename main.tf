@@ -3079,7 +3079,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_eg
   protocol                  = "all"
   destination = oci_core_network_security_group.nsg_prod_lb.id
   destination_type          = "NETWORK_SECURITY_GROUP"
-  description               = "Allow pods to communicate with each other."
+  description               = "Allow pods to communicate LB."
 }
 resource "oci_core_network_security_group_security_rule" "nsg_prod_apisix_pod_egress_osn" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_apisix_pod.id
