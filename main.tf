@@ -1076,22 +1076,7 @@ resource "oci_core_security_list" "apisix_worker_SL" {
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-apisix-worker-sl"
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   # source      = "10.10.80.0/24"
-  #   source = var.db_cidr_block
-  #   description = "allow db to airs"
-  # }
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source = var.k8s_priv_api_endpoint_cidr_block
-  #   description = "allow db to airs"
-  # }
-  # egress_security_rules {
-  #   protocol    = "all"
-  #   destination = "0.0.0.0/0"
-  #   description = "Allow all egress"
-  # }
+ 
   ingress_security_rules {
     protocol    = "6"
     source      = var.lb_subnet_cidr
@@ -1102,16 +1087,6 @@ resource "oci_core_security_list" "apisix_worker_SL" {
     }
   }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = var.k8s_priv_api_endpoint_cidr_block
-  #   description = "Allow Kubernetes API endpoint to communicate with worker nodes."
-  #   tcp_options {
-  #     max = 10250
-  #     min = 10250
-  #   }
-  # }
-
   ingress_security_rules {
     protocol    = "6"
     source      = var.lb_subnet_cidr
@@ -1120,7 +1095,7 @@ resource "oci_core_security_list" "apisix_worker_SL" {
       max = 32767
       min = 30000
     }
-
+  }
   freeform_tags = var.freeform_tags
 
 }
