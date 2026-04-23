@@ -447,15 +447,15 @@ resource "oci_core_security_list" "web_SL" {
   #   description = "allow all db to web"
   # }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = var.lb_subnet_cidr
-  #   description = "Allow load balancer to communicate with kube-proxy on worker nodes"
-  #   tcp_options {
-  #     max = 10256
-  #     min = 10256
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.lb_subnet_cidr
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes"
+    tcp_options {
+      max = 10256
+      min = 10256
+    }
+  }
 
   # ingress_security_rules {
   #   protocol    = "6"
@@ -467,15 +467,15 @@ resource "oci_core_security_list" "web_SL" {
   #   }
   # }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = var.lb_subnet_cidr
-  #   description = "Load balancer to worker nodes node ports."
-  #   tcp_options {
-  #     max = 32767
-  #     min = 30000
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.lb_subnet_cidr
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      max = 32767
+      min = 30000
+    }
+  }
 
   # ingress_security_rules {
   #   protocol    = "1" # ICMP
@@ -1092,6 +1092,34 @@ resource "oci_core_security_list" "apisix_worker_SL" {
   #   destination = "0.0.0.0/0"
   #   description = "Allow all egress"
   # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.lb_subnet_cidr
+    description = "Allow load balancer to communicate with kube-proxy on worker nodes"
+    tcp_options {
+      max = 10256
+      min = 10256
+    }
+  }
+
+  # ingress_security_rules {
+  #   protocol    = "6"
+  #   source      = var.k8s_priv_api_endpoint_cidr_block
+  #   description = "Allow Kubernetes API endpoint to communicate with worker nodes."
+  #   tcp_options {
+  #     max = 10250
+  #     min = 10250
+  #   }
+  # }
+
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.lb_subnet_cidr
+    description = "Load balancer to worker nodes node ports."
+    tcp_options {
+      max = 32767
+      min = 30000
+    }
 
   freeform_tags = var.freeform_tags
 
@@ -1310,72 +1338,72 @@ resource "oci_core_security_list" "pub_lb_SL" {
   #   }
   # }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 80
-  #     min = 80
-  #   }
-  # }
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 8080
-  #     min = 8080
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 8080
+      min = 8080
+    }
+  }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 8443
-  #     min = 8443
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 8443
+      min = 8443
+    }
+  }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 9080
-  #     min = 9080
-  #   }
-  # }
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 9180
-  #     min = 9180
-  #   }
-  # }
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 9443
-  #     min = 9443
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 9080
+      min = 9080
+    }
+  }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 9180
+      min = 9180
+    }
+  }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 9443
+      min = 9443
+    }
+  }
 
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = "0.0.0.0/0"
-  #   description = "allow "
-  #   tcp_options {
-  #     max = 443
-  #     min = 443
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = "0.0.0.0/0"
+    description = "allow "
+    tcp_options {
+      max = 443
+      min = 443
+    }
+  }
 
   # ingress_security_rules {
   #   protocol    = "6"
