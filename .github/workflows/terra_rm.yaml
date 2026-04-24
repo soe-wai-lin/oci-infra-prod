@@ -1294,7 +1294,7 @@ jobs:
          kind: Gateway
          metadata:
            name: gateway
-         namespace: airborneo-backend-test-dependencies
+           namespace: airborneo-backend-test-dependencies
          spec:
            gatewayClassName: envoy
            listeners:
