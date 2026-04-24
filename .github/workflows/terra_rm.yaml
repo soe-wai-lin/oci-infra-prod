@@ -1314,9 +1314,9 @@ jobs:
               #      - kind: Secret
               #        group: ""
               #        name: ssl-certificate-secret
-              allowedRoutes:
-                namespaces:
-                  from: Same
+               allowedRoutes:
+                 namespaces:
+                   from: Same
          EOF
 
          cat envoy-gateway-resources.yaml
