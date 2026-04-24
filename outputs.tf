@@ -270,15 +270,15 @@ output "bucket_approximate_size" {
 #   value = local.worker_node_image_id
 # }
 
-output "web_oke_cluster_ocid" {
-  description = "WEB OKE cluster OCID"
-  value       = oci_containerengine_cluster.web_oke.id
-}
+# output "web_oke_cluster_ocid" {
+#   description = "WEB OKE cluster OCID"
+#   value       = oci_containerengine_cluster.web_oke.id
+# }
 
-output "apisix_oke_cluster_ocid" {
-  description = "APISIX OKE cluster OCID"
-  value       = oci_containerengine_cluster.apisix_oke.id
-}
+# output "apisix_oke_cluster_ocid" {
+#   description = "APISIX OKE cluster OCID"
+#   value       = oci_containerengine_cluster.apisix_oke.id
+# }
 
 # output "cms_oke_cluster_ocid" {
 #   description = "CMS OKE cluster OCID"
@@ -320,9 +320,9 @@ output "apisix_lb_reserved_public_ip_ocid" {
   value       = oci_core_public_ip.apisix_cluster_lb_reserved_ip.ip_address
 }
 
-output "bastion_public_ip" {
-  value = oci_core_instance.bastion.public_ip
-}
+# output "bastion_public_ip" {
+#   value = oci_core_instance.bastion.public_ip
+# }
 
 
 

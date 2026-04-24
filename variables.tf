@@ -13,8 +13,8 @@ variable "target_region" {
 
 
 variable "compartment_id" {
-  default     = "ocid1.compartment.oc1..aaaaaaaafmd3eynylajhayrhegk6typot73nexdgkj7iksc3374pcv3zb45q"
-  description = "mgmt compartment"
+  default     = "ocid1.compartment.oc1..aaaaaaaaxsfw6a7qguifzmlwhiwjrlt2leaqkxrhlorbljl4xxrahpcptodq"
+  description = "prod compartment"
 }
 
 variable "vcn_display_name" {
@@ -200,19 +200,19 @@ variable "ssh_public_key" {
 
 
 variable "net_comp" {
-  default = "prod-net-comp"
+  default = "network"
 }
 
 variable "app_comp" {
-  default = "prod-app-comp"
+  default = "app"
 }
 
 variable "data_comp" {
-  default = "prod-data-comp"
+  default = "data"
 }
 
 variable "mgmt_comp" {
-  default = "prod-mgmt-comp"
+  default = "mgmt"
 }
 
 variable "net_compartment_description" {
