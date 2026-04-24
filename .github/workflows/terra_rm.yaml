@@ -1285,7 +1285,7 @@ jobs:
          apiVersion: gateway.envoyproxy.io/v1alpha1
          kind: EnvoyProxy
          metadata:
-           name: oci-internal-nls
+           name: oci-internal-nlb
            namespace: envoy-gateway-system
          spec:
            provider:
