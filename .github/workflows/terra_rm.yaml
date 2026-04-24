@@ -1306,11 +1306,19 @@ jobs:
             kubernetes:
               envoyService:
                 annotations:
-                  oci.oraclecloud.com/load-balancer-type: "lb" 
+                  ## for ALB Only ##
+                  # oci.oraclecloud.com/load-balancer-type: "lb" 
+                  # oci-network-load-balancer.oraclecloud.com/internal: "true"
+                  # oci-network-load-balancer.oraclecloud.com/subnet: "${LB_SUBNET_OCID}"
+                  # oci-network-load-balancer.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
+                  # # oci.oraclecloud.com/security-rule-management-mode: "NSG"
+
+                  ## for NLB Only ##
+                  oci.oraclecloud.com/load-balancer-type: "nlb"
                   oci-network-load-balancer.oraclecloud.com/internal: "true"
                   oci-network-load-balancer.oraclecloud.com/subnet: "${LB_SUBNET_OCID}"
                   oci-network-load-balancer.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
-                  # oci.oraclecloud.com/security-rule-management-mode: "NSG"
+                  oci.oraclecloud.com/security-rule-management-mode: "NSG"
          ---
          apiVersion: gateway.networking.k8s.io/v1
          kind: GatewayClass
