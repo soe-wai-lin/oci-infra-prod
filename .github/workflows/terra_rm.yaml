@@ -1260,12 +1260,18 @@ jobs:
           # Install Gateway API CRDs (standard channel only)
           kubectl apply --server-side -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml"
 
+          # Skip Helm install if release already exists
+          if helm status envoy-gateway -n envoy-gateway-system >/dev/null 2>&1; then
+            echo "envoy-gateway Helm release already exists in envoy-gateway-system, skipping Helm install."
+          else
+            echo "envoy-gateway Helm release not found, installing..."
           # Install / upgrade Envoy Gateway
-          helm upgrade --install envoy-gateway oci://docker.io/envoyproxy/gateway-helm \
+           helm upgrade --install envoy-gateway oci://docker.io/envoyproxy/gateway-helm \
             --version "${ENVOY_GATEWAY_VERSION}" \
             -n envoy-gateway-system \
             --create-namespace \
             --skip-crds
+          fi
          
           kubectl wait --timeout=5m -n envoy-gateway-system deployment/envoy-gateway --for=condition=Available
           kubectl get pods -n envoy-gateway-system
@@ -1291,8 +1297,8 @@ jobs:
            provider:
             type: Kubernetes
             kubernetes:
-              envoyServices:
-                annoatations:
+              envoyService:
+                annotations:
                   oci.oraclecloud.com/load-balancer-type: "nlb" 
                   oci-network-load-balancer.oraclecloud.com/internal: "true"
                   oci-network-load-balancer.oraclecloud.com/subnet: "${LB_SUBNET_OCID}"
