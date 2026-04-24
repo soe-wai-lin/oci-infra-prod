@@ -1317,7 +1317,7 @@ jobs:
              allowedRoutes:
                namespaces:
                  from: Same
-           EOF
+         EOF
 
          cat envoy-gateway-resources.yaml
          kubectl apply -f envoy-gateway-resources.yaml
@@ -1381,7 +1381,7 @@ jobs:
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
           cat oke-lb-service.yaml
           kubectl apply -f oke-lb-service.yaml
-          kubectl get svc web-lb -o wide
+          kubectl get svc gateway-private-lb -o wide
 
       - name: Deploy TLS secret
         shell: bash
