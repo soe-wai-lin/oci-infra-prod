@@ -1298,26 +1298,26 @@ jobs:
          spec:
            gatewayClassName: envoy
            listeners:
-          - name: http
-            protocol: HTTP
-            port: 80
-            allowedRoutes:
-              namespaces:
-                from: Same
-          - name: https
-            protocol: HTTPS
-            port: 8443
-            #  tls:
-            #    mode: Terminate
-            #    certificateRefs:
-            #     # Replace with your real TLS secret if you are using HTTPS termination
-            #      - kind: Secret
-            #        group: ""
-            #        name: ssl-certificate-secret
-           allowedRoutes:
-              namespaces:
-                from: Same
-         EOF
+           - name: http
+             protocol: HTTP
+             port: 80
+             allowedRoutes:
+               namespaces:
+                 from: Same
+           - name: https
+             protocol: HTTPS
+             port: 8443
+             #  tls:
+             #    mode: Terminate
+             #    certificateRefs:
+             #     # Replace with your real TLS secret if you are using HTTPS termination
+             #      - kind: Secret
+             #        group: ""
+             #        name: ssl-certificate-secret
+             allowedRoutes:
+               namespaces:
+                 from: Same
+           EOF
 
          cat envoy-gateway-resources.yaml
          kubectl apply -f envoy-gateway-resources.yaml
