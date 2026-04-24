@@ -1254,8 +1254,8 @@ jobs:
 
           ENVOY_GATEWAY_VERSION="${ENVOY_GATEWAY_VERSION:-v0.0.0-latest}"
 
-          ##Install envoy-gateway-system namespace
-          kubectl create ns envoy-gateway-system
+          # ##Install envoy-gateway-system namespace
+          # kubectl create ns envoy-gateway-system
 
           # Install Gateway API CRDs (standard channel only)
           kubectl apply --server-side -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml"
