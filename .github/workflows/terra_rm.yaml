@@ -1266,8 +1266,8 @@ jobs:
             --set 'crds.gatewayAPI.enabled=false' \
             --set 'crds.envoyGateway.enabled=true' \
             | kubectl apply --server-side -f -
-              
-          # Skip Helm install if release already exists
+
+          # Skip Helm  install if release already exists
           if helm status envoy-gateway -n envoy-gateway-system >/dev/null 2>&1; then
             echo "envoy-gateway Helm release already exists in envoy-gateway-system, skipping Helm install."
           else
