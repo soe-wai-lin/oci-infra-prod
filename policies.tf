@@ -1,9 +1,9 @@
 
 ############################################################################
-## policies for reserved public IPv4 address for different compartment   ###
+## policies for ALB reserved public IPv4 address for different compartment   ###
 ############################################################################
 
-resource "oci_identity_policy" "reserved-lb-ip-different-comp-policy" {
+resource "oci_identity_policy" "reserved-alb-ip-different-comp-policy" {
   # Attach at tenancy/root
   compartment_id = var.tenancy_ocid
 
@@ -16,6 +16,26 @@ resource "oci_identity_policy" "reserved-lb-ip-different-comp-policy" {
     # Permissions in prod-app-comp (OKE cluster + node pools)
     "ALLOW any-user to read public-ips in tenancy where request.principal.type = 'cluster'",
     "ALLOW any-user to manage floating-ips in tenancy where request.principal.type = 'cluster'"
+  ]
+}
+
+############################################################################
+## policies for NLB reserved public IPv4 address for different compartment   ###
+############################################################################
+
+resource "oci_identity_policy" "reserved-lb-ip-different-comp-policy" {
+  # Attach at tenancy/root
+  compartment_id = var.tenancy_ocid
+
+  name        = "${var.vcn_display_name}-reserved-nlb-ip-different-comp-policy"
+  
+  # name        = "reserved-lb-ip-different-comp-policy"
+  description = "policies for NLB reserved public IPv4 address for different compartment"
+
+  statements = [
+    # Permissions in prod-app-comp (OKE cluster + node pools)
+    "ALLOW any-user to read public-ips in tenancy where ALL { request.principal.type = 'cluster', request.principal.compartment.id = '${oci_identity_compartment.app_compartment.id}'}",
+    "ALLOW any-user to manage floating-ips in tenancy where ALL { request.principal.type = 'cluster', request.principal.compartment.id = '${oci_identity_compartment.app_compartment.id}'}"
   ]
 }
 
