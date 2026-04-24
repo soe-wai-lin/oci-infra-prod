@@ -4,8 +4,8 @@ resource "oci_ons_notification_topic" "network_alert_topic" {
 }
 
 resource "oci_ons_subscription" "email_subscription" {
-  depends_on = [ oci_ons_notification_topic.network_alert_topic ]
-  for_each = toset(var.alert_email)
+  depends_on     = [oci_ons_notification_topic.network_alert_topic]
+  for_each       = toset(var.alert_email)
   compartment_id = oci_identity_compartment.net_compartment.id
   endpoint       = each.value
   protocol       = "EMAIL"
@@ -22,7 +22,7 @@ resource "oci_events_rule" "network_security_change_rule" {
   is_enabled     = true
 
   condition = jsonencode({
-    "eventType": [
+    "eventType" : [
       "com.oraclecloud.virtualnetwork.addnetworksecuritygroupsecurityrules",
       "com.oraclecloud.virtualnetwork.updatenetworksecuritygroupsecurityrules",
 
@@ -39,7 +39,7 @@ resource "oci_events_rule" "network_security_change_rule" {
       "com.oraclecloud.virtualnetwork.updateroutetable",
       "com.oraclecloud.virtualnetwork.deleteroutetable",
       "com.oraclecloud.virtualnetwork.createroutetable",
-  
+
       "com.oraclecloud.virtualnetwork.changesecuritylistcompartment",
       "com.oraclecloud.virtualnetwork.updatesecuritylist",
       "com.oraclecloud.virtualnetwork.deletesecuritylist",
@@ -59,7 +59,7 @@ resource "oci_events_rule" "network_security_change_rule" {
       "com.oraclecloud.virtualnetwork.createpublicip",
       "com.oraclecloud.virtualnetwork.deletepublicip",
       "com.oraclecloud.virtualnetwork.updatepublicip",
- 
+
       "com.oraclecloud.servicegateway.attachserviceid",
       "com.oraclecloud.servicegateway.changeservicegatewaycompartment",
       "com.oraclecloud.servicegateway.createservicegateway",
@@ -91,7 +91,7 @@ resource "oci_events_rule" "network_security_change_rule" {
       "com.oraclecloud.virtualnetwork.changedhcpoptionscompartment",
       "com.oraclecloud.virtualnetwork.createdhcpoptions",
 
-      
+
     ]
   })
 

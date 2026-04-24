@@ -415,8 +415,8 @@
 #   #   key   = "maxGracefulTerminationSec"
 #   #   value = var.cluster_autoscaler_max_graceful_termination_sec
 #   # }
- 
-  
+
+
 #   # # Keep these protective defaults unless you have a very specific reason to relax them
 #   # configurations {
 #   #   key   = "skipNodesWithSystemPods"

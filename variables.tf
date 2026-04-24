@@ -291,7 +291,7 @@ variable "admin_username" {
 variable "admin_password" {
   type        = string
   description = "PostgreSQL admin password"
-  default = "153709Swl$%"
+  default     = "153709Swl$%"
   # sensitive   = true  
 }
 
@@ -440,7 +440,7 @@ variable "pg_db_availability_domain" {
 variable "bucket_name" {
   description = "Name of the Object Storage bucket."
   type        = string
-  default = "prod_bucket"
+  default     = "prod_bucket"
 }
 
 variable "access_type" {
@@ -1083,8 +1083,8 @@ variable "apisix_cluster_autoscaler_auth_type" {
 }
 
 variable "apisix_cluster_autoscaler_scale_down_delay_after_add" {
-  type    = string
-  default = "10m"
+  type        = string
+  default     = "10m"
   description = "How long after scale up that scale down evaluation resumes."
 }
 
@@ -1104,8 +1104,8 @@ variable "apisix_cluster_autoscaler_scale_down_utilization_threshold" {
 # }
 
 variable "apisix_cordonNodeBeforeTerminating" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "cordon nodes before terminating during downscale process"
 }
 
@@ -1267,8 +1267,8 @@ variable "web_cluster_autoscaler_auth_type" {
 }
 
 variable "web_cluster_autoscaler_scale_down_delay_after_add" {
-  type    = string
-  default = "10m"
+  type        = string
+  default     = "10m"
   description = "How long after scale up that scale down evaluation resumes."
 }
 
@@ -1288,8 +1288,8 @@ variable "web_cluster_autoscaler_scale_down_utilization_threshold" {
 # }
 
 variable "web_cordonNodeBeforeTerminating" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "cordon nodes before terminating during downscale process"
 }
 
@@ -1530,8 +1530,8 @@ variable "cms_cluster_autoscaler_auth_type" {
 }
 
 variable "cms_cluster_autoscaler_scale_down_delay_after_add" {
-  type    = string
-  default = "10m"
+  type        = string
+  default     = "10m"
   description = "How long after scale up that scale down evaluation resumes."
 }
 
@@ -1541,8 +1541,8 @@ variable "cms_cluster_autoscaler_scale_down_unneeded_time" {
 }
 
 variable "cms_cordonNodeBeforeTerminating" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "cordon nodes before terminating during downscale process"
 }
 
@@ -1773,8 +1773,8 @@ variable "airs_cluster_autoscaler_auth_type" {
 }
 
 variable "airs_cluster_autoscaler_scale_down_delay_after_add" {
-  type    = string
-  default = "10m"
+  type        = string
+  default     = "10m"
   description = "How long after scale up that scale down evaluation resumes."
 }
 
@@ -1784,8 +1784,8 @@ variable "airs_cluster_autoscaler_scale_down_unneeded_time" {
 }
 
 variable "airs_cordonNodeBeforeTerminating" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "cordon nodes before terminating during downscale process"
 }
 
@@ -2032,8 +2032,8 @@ variable "authentik_cluster_autoscaler_auth_type" {
 }
 
 variable "authentik_cluster_autoscaler_scale_down_delay_after_add" {
-  type    = string
-  default = "10m"
+  type        = string
+  default     = "10m"
   description = "How long after scale up that scale down evaluation resumes."
 }
 
@@ -2053,8 +2053,8 @@ variable "authentik_cluster_autoscaler_scale_down_utilization_threshold" {
 # }
 
 variable "authentik_cordonNodeBeforeTerminating" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "cordon nodes before terminating during downscale process"
 }
 
