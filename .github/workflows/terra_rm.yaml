@@ -1252,7 +1252,7 @@ jobs:
           # ENVOY_GATEWAY_VERSION="v1.x.y"
           # If omitted below, update the command to match the chart version you want to use.
 
-          ENVOY_GATEWAY_VERSION="${v1.7.2}"
+          ENVOY_GATEWAY_VERSION="v1.7.2"
 
           # ##Install envoy-gateway-system namespace
           # kubectl create ns envoy-gateway-system
