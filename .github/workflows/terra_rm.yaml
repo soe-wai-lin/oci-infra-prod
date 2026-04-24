@@ -1234,6 +1234,97 @@ jobs:
           export KUBECONFIG="$HOME/.kube/config"
           kubectl get nodes
 
+    
+      - name: Install Gateway API CRDs and Envoy Gateway
+        shell: bash
+        run: |
+          set -euo pipefail
+          export KUBECONFIG="$HOME/.kube/config"
+          
+
+          # Pin a stable Gateway API bundle version
+          GATEWAY_API_VERSION="v1.5.0"
+
+
+          # NOTE:
+          # For production, pin ENVOY_GATEWAY_VERSION to a tested chart release in your environment.
+          # Example:
+          # ENVOY_GATEWAY_VERSION="v1.x.y"
+          # If omitted below, update the command to match the chart version you want to use.
+
+          ENVOY_GATEWAY_VERSION="${ENVOY_GATEWAY_VERSION:-v0.0.0-latest}"
+
+          ##Install envoy-gateway-system namespace
+          kubectl create ns envoy-gateway-system
+
+          # Install Gateway API CRDs (standard channel only)
+          kubectl apply --server-side -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml"
+
+          # Install / upgrade Envoy Gateway
+          helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm \
+            --version "${ENVOY_GATEWAY_VERSION}" \
+            -n envoy-gateway-system \
+            --create-namespace \
+            --skip-crds
+         
+          kubectl wait --timeout=5m -n envoy-gateway-system deployment/envoy-gateway --for=condition=Available
+          kubectl get pods -n envoy-gateway-system
+          kubectl get svc -n envoy-gateway-system
+
+      
+      - name: Create GatewayClass and Gateway
+        shell: bash
+        run: |
+         set -euo pipefail
+         export KUBECONFIG="$HOME/.kube/config"
+
+         kubectl create namespace airborneo-backend-test-dependencies --dry-run=client -o yaml | kubectl apply -f -
+
+         cat <<EOF > envoy-gateway-resources.yaml
+         ---
+         apiVersion: gateway.networking.k8s.io/v1
+         kind: GatewayClass
+         metadata:
+           name: envoy
+         spec:
+           controllerName: gateway.envoyproxy.io/gatewayclass-controller
+
+         ---         
+         apiVersion: gateway.networking.k8s.io/v1
+         kind: Gateway
+         metadata:
+           name: gateway
+         namespace: airborneo-backend-test-dependencies
+         spec:
+           gatewayClassName: envoy
+           listeners:
+             - name: http
+               protocol: HTTP
+               port: 80
+               allowedRoutes:
+                 namespaces:
+                   from: Same
+             - name: https
+               protocol: HTTPS
+               port: 8443
+               tls:
+                 mode: Terminate
+                 certificateRefs:
+                  # Replace with your real TLS secret if you are using HTTPS termination
+                   - kind: Secret
+                     group: ""
+                     name: ssl-certificate-secret
+              allowedRoutes:
+                namespaces:
+                  from: Same
+         EOF
+
+         cat envoy-gateway-resources.yaml
+         kubectl apply -f envoy-gateway-resources.yaml
+         kubectl get gatewayclass
+         kubectl get gateway -n airborneo-backend-test-dependencies
+         kubectl describe gateway gateway -n airborneo-backend-test-dependencies
+
       - name: Apply DevOps-managed Web Cluster LoadBalancer 
         shell: bash
         run: |
@@ -1289,8 +1380,8 @@ jobs:
 
           # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
           cat oke-lb-service.yaml
-          # kubectl apply -f oke-lb-service.yaml
-          # kubectl get svc web-lb -o wide
+          kubectl apply -f oke-lb-service.yaml
+          kubectl get svc web-lb -o wide
 
       - name: Deploy TLS secret
         shell: bash
