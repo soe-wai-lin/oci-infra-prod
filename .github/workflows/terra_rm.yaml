@@ -1252,7 +1252,7 @@ jobs:
           # ENVOY_GATEWAY_VERSION="v1.x.y"
           # If omitted below, update the command to match the chart version you want to use.
 
-          ENVOY_GATEWAY_VERSION="${ENVOY_GATEWAY_VERSION:-v0.0.0-latest}"
+          ENVOY_GATEWAY_VERSION="${v1.7.2}"
 
           # ##Install envoy-gateway-system namespace
           # kubectl create ns envoy-gateway-system
@@ -1307,13 +1307,13 @@ jobs:
              - name: https
                protocol: HTTPS
                port: 8443
-               tls:
-                 mode: Terminate
-                 certificateRefs:
-                  # Replace with your real TLS secret if you are using HTTPS termination
-                   - kind: Secret
-                     group: ""
-                     name: ssl-certificate-secret
+              #  tls:
+              #    mode: Terminate
+              #    certificateRefs:
+              #     # Replace with your real TLS secret if you are using HTTPS termination
+              #      - kind: Secret
+              #        group: ""
+              #        name: ssl-certificate-secret
               allowedRoutes:
                 namespaces:
                   from: Same
