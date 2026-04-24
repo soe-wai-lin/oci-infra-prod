@@ -1282,13 +1282,35 @@ jobs:
 
          cat <<EOF > envoy-gateway-resources.yaml
          ---
+         apiVersion: gateway.envoyproxy.io/v1alpha1
+         kind: EnvoyProxy
+         metadata:
+           name: oci-internal-nls
+           namespace: envoy-gateway-system
+         spec:
+           provider:
+            type: Kubernetes
+            kubernetes:
+              envoyServices:
+                annoatations:
+                  oci.oraclecloud.com/load-balancer-type: "nlb" 
+                  oci-network-load-balancer.oraclecloud.com/internal: "true"
+                  oci-network-load-balancer.oraclecloud.com/subnet: "${LB_SUBNET_OCID}"
+                  oci-network-load-balancer.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
+                  oci.oraclecloud.com/security-rule-management-mode: "NSG"
+         ---
          apiVersion: gateway.networking.k8s.io/v1
          kind: GatewayClass
          metadata:
            name: envoy
          spec:
            controllerName: gateway.envoyproxy.io/gatewayclass-controller
-
+           ### reference EnvoyProxy ##
+           parametersRef:
+             group: gateway.envoyproxy.io
+             kind: EnvoyProxy
+             name: oci-internal-nlb
+             namespace: envoy-gateway-system
          ---         
          apiVersion: gateway.networking.k8s.io/v1
          kind: Gateway
@@ -1325,68 +1347,68 @@ jobs:
          kubectl get gateway -n airborneo-backend-test-dependencies
          kubectl describe gateway gateway -n airborneo-backend-test-dependencies
 
-      - name: Apply DevOps-managed Web Cluster LoadBalancer 
-        shell: bash
-        run: |
-          set -euo pipefail
-          export KUBECONFIG="$HOME/.kube/config"
+      # - name: Apply DevOps-managed Web Cluster LoadBalancer 
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+      #     export KUBECONFIG="$HOME/.kube/config"
 
-          cat <<EOF > oke-lb-service.yaml
-          ---
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: envoy-gateway-system
+      #     cat <<EOF > oke-lb-service.yaml
+      #     ---
+      #     apiVersion: v1
+      #     kind: Namespace
+      #     metadata:
+      #       name: envoy-gateway-system
           
-          ---
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: gateway-private-lb
-            namespace: envoy-gateway-system
-            labels:
-              app.kubernetes.io/component: networking
-            annotations:
-              oci.oraclecloud.com/load-balancer-type: "lb"
-              service.beta.kubernetes.io/oci-load-balancer-internal: "true"
-              service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
-              oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
-              service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
-              service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
-              service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
-              service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
+      #     ---
+      #     apiVersion: v1
+      #     kind: Service
+      #     metadata:
+      #       name: gateway-private-lb
+      #       namespace: envoy-gateway-system
+      #       labels:
+      #         app.kubernetes.io/component: networking
+      #       annotations:
+      #         oci.oraclecloud.com/load-balancer-type: "lb"
+      #         service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+      #         service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
+      #         oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
+      #         service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
+      #         service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+      #         service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+      #         service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
 
-              # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
-              # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
-              # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
-              # service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
-          spec:
-            # loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
-            loadBalancerIP: 10.10.0.121
-            type: LoadBalancer
-            selector:
-              gateway.envoyproxy.io/owning-gateway-name: gateway
-              gateway.envoyproxy.io/owning-gateway-namespace: airborneo-backend-test-dependencies
-            ports:
-              - name: http
-                port: 80
-                targetPort: 8080
-                protocol: TCP
-              - name: https
-                port: 8443
-                targetPort: 8443
-                protocol: TCP
-          EOF
+      #         # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
+      #         # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
+      #         # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
+      #         # service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
+      #     spec:
+      #       # loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
+      #       # loadBalancerIP: 10.10.0.121
+      #       type: LoadBalancer
+      #       selector:
+      #         gateway.envoyproxy.io/owning-gateway-name: gateway
+      #         gateway.envoyproxy.io/owning-gateway-namespace: airborneo-backend-test-dependencies
+      #       ports:
+      #         - name: http
+      #           port: 80
+      #           targetPort: 8080
+      #           protocol: TCP
+      #         - name: https
+      #           port: 8443
+      #           targetPort: 8443
+      #           protocol: TCP
+      #     EOF
 
-          # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
-          cat oke-lb-service.yaml
-          kubectl apply -f oke-lb-service.yaml
-          kubectl get svc gateway-private-lb -o wide
+      #     # kubectl create namespace platform-apps --dry-run=client -o yaml | kubectl apply -f -
+      #     cat oke-lb-service.yaml
+      #     kubectl apply -f oke-lb-service.yaml
+      #     kubectl get svc gateway-private-lb -o wide
 
       - name: Deploy TLS secret
         shell: bash
         env:
-          TLSCRT: ${{ secrets.TLSCRT }}
+          TLSCRT: ${{ secrets.TLSCRT }} 
           TLSKEY: ${{ secrets.TLSKEY }}
         run: |
           set -euo pipefail
