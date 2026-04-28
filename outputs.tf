@@ -122,40 +122,40 @@ output "vcn_name" {
 ##  Bucket      ##
 ##################
 
-output "namespace" {
-  description = "Object Storage namespace used for the bucket."
-  value       = data.oci_objectstorage_namespace.ns.namespace
-}
+# output "namespace" {
+#   description = "Object Storage namespace used for the bucket."
+#   value       = data.oci_objectstorage_namespace.ns.namespace
+# }
 
-output "bucket_name" {
-  description = "Bucket name."
-  value       = oci_objectstorage_bucket.bucket.name
-}
+# output "bucket_name" {
+#   description = "Bucket name."
+#   value       = oci_objectstorage_bucket.bucket.name
+# }
 
-output "bucket_id" {
-  description = "Bucket identifier returned by OCI."
-  value       = data.oci_objectstorage_bucket.bucket.bucket_id
-}
+# output "bucket_id" {
+#   description = "Bucket identifier returned by OCI."
+#   value       = data.oci_objectstorage_bucket.bucket.bucket_id
+# }
 
-output "bucket_access_type" {
-  description = "Configured public access type."
-  value       = data.oci_objectstorage_bucket.bucket.access_type
-}
+# output "bucket_access_type" {
+#   description = "Configured public access type."
+#   value       = data.oci_objectstorage_bucket.bucket.access_type
+# }
 
-output "bucket_storage_tier" {
-  description = "Configured storage tier."
-  value       = data.oci_objectstorage_bucket.bucket.storage_tier
-}
+# output "bucket_storage_tier" {
+#   description = "Configured storage tier."
+#   value       = data.oci_objectstorage_bucket.bucket.storage_tier
+# }
 
-output "bucket_versioning" {
-  description = "Bucket versioning status."
-  value       = data.oci_objectstorage_bucket.bucket.versioning
-}
+# output "bucket_versioning" {
+#   description = "Bucket versioning status."
+#   value       = data.oci_objectstorage_bucket.bucket.versioning
+# }
 
-output "bucket_approximate_size" {
-  description = "Approximate total size in bytes of all objects in the bucket."
-  value       = data.oci_objectstorage_bucket.bucket.approximate_size
-}
+# output "bucket_approximate_size" {
+#   description = "Approximate total size in bytes of all objects in the bucket."
+#   value       = data.oci_objectstorage_bucket.bucket.approximate_size
+# }
 
 ##############
 ### Vault  ###
@@ -305,24 +305,24 @@ output "web_lb_reserved_public_ip_ocid" {
   value       = oci_core_public_ip.web_cluster_lb_reserved_ip.ip_address
 }
 
-# output "cms_lb_reserved_public_ip_ocid" {
-#   description = "CMS Reserved public IP OCID for the OKE load balancer"
-#   value       = oci_core_public_ip.cms_cluster_lb_reserved_ip.ip_address
-# }
-
-# output "airs_lb_reserved_public_ip_ocid" {
-#   description = "AIRS Reserved public IP OCID for the OKE load balancer"
-#   value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
-# }
-
-output "apisix_lb_reserved_public_ip_ocid" {
-  description = "AIRS Reserved public IP OCID for the OKE load balancer"
-  value       = oci_core_public_ip.apisix_cluster_lb_reserved_ip.ip_address
+output "cms_lb_reserved_public_ip_ocid" {
+  description = "CMS Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.cms_cluster_lb_reserved_ip.ip_address
 }
 
-# output "bastion_public_ip" {
-#   value = oci_core_instance.bastion.public_ip
+output "airs_lb_reserved_public_ip_ocid" {
+  description = "AIRS Reserved public IP OCID for the OKE load balancer"
+  value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
+}
+
+# output "apisix_lb_reserved_public_ip_ocid" {
+#   description = "AIRS Reserved public IP OCID for the OKE load balancer"
+#   value       = oci_core_public_ip.apisix_cluster_lb_reserved_ip.ip_address
 # }
+
+output "bastion_public_ip" {
+  value = oci_core_instance.bastion.public_ip
+}
 
 
 
