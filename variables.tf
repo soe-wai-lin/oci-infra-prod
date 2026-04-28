@@ -1347,10 +1347,6 @@ variable "defined_tags" {
 ### CMS OKE cluster variables  ###
 ##############################
 
-#########################################
-# Optional pod networking (VCN-native)  #
-#########################################
-
 variable "cms_cni_type" {
   description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
   type        = string
@@ -1361,8 +1357,6 @@ variable "cms_cni_type" {
     error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
   }
 }
-
-
 
 variable "cms_services_cidr" {
   description = "Kubernetes services CIDR."
@@ -1410,12 +1404,6 @@ variable "cms_cluster_type" {
     error_message = "cluster_type must be BASIC_CLUSTER or ENHANCED_CLUSTER."
   }
 }
-
-
-
-##################################
-# CMS SSH / node instance extras #
-##################################
 
 variable "cms_oke_ssh_public_key" {
   description = "SSH public key injected into OKE worker nodes."
@@ -1470,7 +1458,7 @@ variable "cms_worker_node_pool_name" {
 variable "cms_worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 3
+  default     = 1
 }
 
 variable "cms_worker_availability_domain" {
@@ -1501,7 +1489,7 @@ variable "cms_worker_ocpus" {
 
 variable "cms_worker_node_min_count" {
   type    = number
-  default = 3
+  default = 1
 }
 
 variable "cms_worker_node_max_count" {
@@ -1541,9 +1529,6 @@ variable "cms_cordonNodeBeforeTerminating" {
   default     = true
   description = "cordon nodes before terminating during downscale process"
 }
-
-
-
 
 ################################
 # CMS Rolling update behaviors #
@@ -1589,10 +1574,6 @@ variable "cms_node_cycling_maximum_unavailable" {
 ### AIRS OKE cluster variables  ###
 ##############################
 
-#########################################
-# Optional pod networking (VCN-native)  #
-#########################################
-
 variable "airs_cni_type" {
   description = "Pod networking mode. Use FLANNEL_OVERLAY for simpler networking, or OCI_VCN_IP_NATIVE if you already have pod subnets and want routable pod IPs."
   type        = string
@@ -1603,8 +1584,6 @@ variable "airs_cni_type" {
     error_message = "cni_type must be FLANNEL_OVERLAY or OCI_VCN_IP_NATIVE."
   }
 }
-
-
 
 variable "airs_services_cidr" {
   description = "Kubernetes services CIDR."
@@ -1625,16 +1604,11 @@ variable "airs_worker_max_pods_per_node" {
   default     = 31
 }
 
-#########################
-# AIRS Cluster settings  #
-#########################
-
 variable "airs_cluster_name" {
   description = "AIRS OKE cluster name."
   type        = string
   default     = "prod-airs-cluster"
 }
-
 
 variable "airs_kubernetes_version" {
   description = "OKE Kubernetes version for the control plane and node pools. Pin this explicitly for production."
@@ -1653,8 +1627,6 @@ variable "airs_cluster_type" {
   }
 }
 
-
-
 ##################################
 # AIRS SSH / node instance extras #
 ##################################
@@ -1664,10 +1636,6 @@ variable "airs_oke_ssh_public_key" {
   type        = string
   default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjNRHetQJYNR93uEaiNe9j+DXfT3ssapYp/npJ74AqDxbTzt2aky8ofRMU1OFgrZQglCywL0T1qY1x2oYFVp3BLJUOKMaWP28jQlX2L9KDqD8kziKgq0ydVW7RkevApAGeVflD6jv2LF34+S9zlgjRezq+UzE1zAaFPWdZRaHOfbMhb86uxBpFU+I2SmRni9qYpzQAMcoTmGA0crVN2mhdP/9ZxRr+BllVCXeiSnmoXHlaNujUY6qGzzjew29W7bNi3OLjtiCVy6O+H6+HQP4Xhn83CYVZZTdHjpm28fu1yz2XmnhmEs8XG9fsU8vR/hv3u0psmB1rIS2EAhA0+VmukNSkP2yVIBcwhYgS5jsZEoTeKUXF+eld+mV88vpRFfEJ3Koog/Vvc47mfJ5l6F0yiPIDGWS2Sv/MhzRVxIaDpWHjgOxQEysq6sQ7hwUrO1uDkLvUXFx7Ru97Eaz6RMhPLd1yHBbq4inRTXLEfCYaPdGbReU9CvAXlruycfw556E= wailin_s@a6b3bc12eb0b"
 }
-
-#########################
-# AIRS System node pool  #
-#########################
 
 variable "airs_system_node_pool_name" {
   description = "Name of the system node pool."
@@ -1734,14 +1702,6 @@ variable "airs_worker_ocpus" {
   default = "2"
 }
 
-#########################################
-# AIRS OKE Worker Autoscaler variables  ##
-#########################################
-# variable "cms_enable_cluster_autoscaler" {
-#   type    = bool
-#   default = true
-# }
-
 variable "airs_worker_node_min_count" {
   type    = number
   default = 3
@@ -1785,11 +1745,8 @@ variable "airs_cordonNodeBeforeTerminating" {
   description = "cordon nodes before terminating during downscale process"
 }
 
-
-
-
 ################################
-# CMS Rolling update behaviors #
+# AIRS Rolling update behaviors #
 ################################
 
 variable "airs_node_eviction_grace_duration" {
