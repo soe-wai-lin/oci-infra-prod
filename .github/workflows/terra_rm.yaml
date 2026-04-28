@@ -1276,7 +1276,7 @@ jobs:
 
           cat web-oke-lb-service.yaml
           kubectl apply -f web-oke-lb-service.yaml
-          kubectl get svc web-lb -o wide
+          kubectl get -n airborneo-web-prod svc airborneo-web-service -o wide
 
       - name: Deploy TLS secret
         shell: bash
@@ -1300,7 +1300,7 @@ jobs:
           EOF
 
           kubectl apply -f secret.yaml
-          kubectl get secret ssl-certificate-secret
+          kubectl -n airborneo-web-prod get secret airborneo-web-tls
       
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -1565,7 +1565,7 @@ jobs:
 
           cat cms-oke-lb-service.yaml
           kubectl apply -f cms-oke-lb-service.yaml
-          kubectl get svc airborneo-cms-service -o wide
+          kubectl -n airborneo-cms-prod get svc airborneo-cms-service -o wide
 
       - name: Deploy TLS secret
         shell: bash
@@ -1589,7 +1589,7 @@ jobs:
           EOF
 
           kubectl apply -f secret.yaml
-          kubectl get secret airborneo-cms-tls
+          kubectl -n airborneo-cms-prod get secret airborneo-cms-tls
 
       - name: Install Helm
         uses: azure/setup-helm@v4

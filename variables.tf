@@ -642,7 +642,7 @@ variable "redis_destination_ip" {
 variable "db_destination_port" {
   description = "Destination port for TCP/UDP analysis."
   type        = number
-  default     = 5430
+  default     = 5432
 }
 
 variable "redis_destination_port" {

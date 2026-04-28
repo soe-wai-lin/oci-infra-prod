@@ -208,16 +208,16 @@ resource "oci_core_security_list" "redis_SL" {
   compartment_id = oci_identity_compartment.net_compartment.id
   vcn_id         = oci_core_vcn.terra_vcn.id
   display_name   = "${var.vcn_display_name}-redis-sl"
-  # ingress_security_rules {
-  #   protocol    = "6"
-  #   source      = var.db_cidr_block
-  #   source_type = "CIDR_BLOCK"
-  #   description = "allow 6379 from db subnet"
-  #   tcp_options {
-  #     min = 6379
-  #     max = 6379
-  #   }
-  # }
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.db_cidr_block
+    source_type = "CIDR_BLOCK"
+    description = "allow 6379 from db subnet"
+    tcp_options {
+      min = 6379
+      max = 6379
+    }
+  }
   # ingress_security_rules {
   #   protocol    = "6"
   #   source      = var.cms_worker_sub_cidr
