@@ -1290,11 +1290,10 @@ jobs:
         run: |
           export KUBECONFIG="$HOME/.kube/config"
 
-          kubectl create namespace monitoring  ## creating monitoring namespace 
+          # kubectl create namespace monitoring  ## creating monitoring namespace 
 
           helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
             --namespace monitoring \
-            --create-namespace \
             --set prometheus.service.type=ClusterIP
 
       - name: Apply DevOps-managed Prometheus Internal LoadBalancer 
