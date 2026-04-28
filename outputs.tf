@@ -67,95 +67,95 @@ output "vcn_name" {
 # }
 
 
-# ####################
-# ### Redis        ###
-# ####################
+####################
+### Redis        ###
+####################
 
-# output "redis_cluster_id" {
-#   description = "OCID of the Redis cluster."
-#   value       = oci_redis_redis_cluster.redis.id
-# }
+output "redis_cluster_id" {
+  description = "OCID of the Redis cluster."
+  value       = oci_redis_redis_cluster.redis.id
+}
 
-# output "redis_cluster_display_name" {
-#   description = "Display name of the Redis cluster."
-#   value       = data.oci_redis_redis_cluster.redis.display_name
-# }
+output "redis_cluster_display_name" {
+  description = "Display name of the Redis cluster."
+  value       = data.oci_redis_redis_cluster.redis.display_name
+}
 
-# output "redis_cluster_mode" {
-#   description = "Redis cluster mode."
-#   value       = data.oci_redis_redis_cluster.redis.cluster_mode
-# }
+output "redis_cluster_mode" {
+  description = "Redis cluster mode."
+  value       = data.oci_redis_redis_cluster.redis.cluster_mode
+}
 
-# output "redis_primary_fqdn" {
-#   description = "Primary node FQDN."
-#   value       = try(data.oci_redis_redis_cluster.redis.primary_fqdn, null)
-# }
+output "redis_primary_fqdn" {
+  description = "Primary node FQDN."
+  value       = try(data.oci_redis_redis_cluster.redis.primary_fqdn, null)
+}
 
-# output "redis_primary_ip" {
-#   description = "Primary node private IP."
-#   value       = try(data.oci_redis_redis_cluster.redis.primary_endpoint_ip_address, null)
-# }
+output "redis_primary_ip" {
+  description = "Primary node private IP."
+  value       = try(data.oci_redis_redis_cluster.redis.primary_endpoint_ip_address, null)
+}
 
-# output "redis_discovery_fqdn" {
-#   description = "Discovery FQDN for sharded clusters."
-#   value       = try(data.oci_redis_redis_cluster.redis.discovery_fqdn, null)
-# }
+output "redis_discovery_fqdn" {
+  description = "Discovery FQDN for sharded clusters."
+  value       = try(data.oci_redis_redis_cluster.redis.discovery_fqdn, null)
+}
 
-# output "redis_discovery_ip" {
-#   description = "Discovery IP for sharded clusters."
-#   value       = try(data.oci_redis_redis_cluster.redis.discovery_endpoint_ip_address, null)
-# }
+output "redis_discovery_ip" {
+  description = "Discovery IP for sharded clusters."
+  value       = try(data.oci_redis_redis_cluster.redis.discovery_endpoint_ip_address, null)
+}
 
-# output "redis_node_endpoints" {
-#   description = "List of per-node private endpoints."
-#   value = [
-#     for node in try(data.oci_redis_redis_cluster.redis.node_collection[0].items, []) : {
-#       display_name                = try(node.display_name, null)
-#       private_endpoint_fqdn       = try(node.private_endpoint_fqdn, null)
-#       private_endpoint_ip_address = try(node.private_endpoint_ip_address, null)
-#     }
-#   ]
-# }
+output "redis_node_endpoints" {
+  description = "List of per-node private endpoints."
+  value = [
+    for node in try(data.oci_redis_redis_cluster.redis.node_collection[0].items, []) : {
+      display_name                = try(node.display_name, null)
+      private_endpoint_fqdn       = try(node.private_endpoint_fqdn, null)
+      private_endpoint_ip_address = try(node.private_endpoint_ip_address, null)
+    }
+  ]
+}
 
 
-##################
-##  Bucket      ##
-##################
+#################
+#  Bucket      ##
+#################
 
-# output "namespace" {
-#   description = "Object Storage namespace used for the bucket."
-#   value       = data.oci_objectstorage_namespace.ns.namespace
-# }
+output "namespace" {
+  description = "Object Storage namespace used for the bucket."
+  value       = data.oci_objectstorage_namespace.ns.namespace
+}
 
-# output "bucket_name" {
-#   description = "Bucket name."
-#   value       = oci_objectstorage_bucket.bucket.name
-# }
+output "bucket_name" {
+  description = "Bucket name."
+  value       = oci_objectstorage_bucket.bucket.name
+}
 
-# output "bucket_id" {
-#   description = "Bucket identifier returned by OCI."
-#   value       = data.oci_objectstorage_bucket.bucket.bucket_id
-# }
+output "bucket_id" {
+  description = "Bucket identifier returned by OCI."
+  value       = data.oci_objectstorage_bucket.bucket.bucket_id
+}
 
-# output "bucket_access_type" {
-#   description = "Configured public access type."
-#   value       = data.oci_objectstorage_bucket.bucket.access_type
-# }
+output "bucket_access_type" {
+  description = "Configured public access type."
+  value       = data.oci_objectstorage_bucket.bucket.access_type
+}
 
-# output "bucket_storage_tier" {
-#   description = "Configured storage tier."
-#   value       = data.oci_objectstorage_bucket.bucket.storage_tier
-# }
+output "bucket_storage_tier" {
+  description = "Configured storage tier."
+  value       = data.oci_objectstorage_bucket.bucket.storage_tier
+}
 
-# output "bucket_versioning" {
-#   description = "Bucket versioning status."
-#   value       = data.oci_objectstorage_bucket.bucket.versioning
-# }
+output "bucket_versioning" {
+  description = "Bucket versioning status."
+  value       = data.oci_objectstorage_bucket.bucket.versioning
+}
 
-# output "bucket_approximate_size" {
-#   description = "Approximate total size in bytes of all objects in the bucket."
-#   value       = data.oci_objectstorage_bucket.bucket.approximate_size
-# }
+output "bucket_approximate_size" {
+  description = "Approximate total size in bytes of all objects in the bucket."
+  value       = data.oci_objectstorage_bucket.bucket.approximate_size
+}
 
 ##############
 ### Vault  ###
@@ -198,66 +198,66 @@ output "vcn_name" {
 #   }, null)
 # }
 
-# ##################################
-# ###### Network Path Analyzer   ###
-# ##################################
+##################################
+###### Network Path Analyzer   ###
+##################################
 
 
-# output "web_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
+output "web_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.web_to_db_subnet_connectivity.id
+}
+
+output "cms_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_to_db_subnet_connectivity.id
+}
+
+output "airs_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.airs_to_db_subnet_connectivity.id
+}
+
+output "web_pod_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.web_pod_to_db_subnet_connectivity.id
+}
+
+output "cms_pod_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_db_subnet_connectivity.id
+}
+
+output "airs_pod_to_db_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_db_subnet_connectivity.id
+}
+
+# output "web_to_cms_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.web_to_cms_subnet_connectivity.id
 # }
 
-# output "cms_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.cms_to_db_subnet_connectivity.id
+# output "cms_to_web_npa_test_id" {
+#   value = oci_vn_monitoring_path_analyzer_test.cms_to_web_subnet_connectivity.id
 # }
 
-# output "airs_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.airs_to_db_subnet_connectivity.id
-# }
+output "web_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.web_to_redis_subnet_connectivity.id
+}
 
-# output "web_pod_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.web_pod_to_db_subnet_connectivity.id
-# }
+output "web_pod_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.web_pod_to_redis_subnet_connectivity.id
+}
 
-# output "cms_pod_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_db_subnet_connectivity.id
-# }
+output "cms_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_to_redis_subnet_connectivity.id
+}
 
-# output "airs_pod_to_db_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_db_subnet_connectivity.id
-# }
+output "cms_pod_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_redis_subnet_connectivity.id
+}
 
-# # output "web_to_cms_npa_test_id" {
-# #   value = oci_vn_monitoring_path_analyzer_test.web_to_cms_subnet_connectivity.id
-# # }
+output "airs_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.airs_to_redis_subnet_connectivity.id
+}
 
-# # output "cms_to_web_npa_test_id" {
-# #   value = oci_vn_monitoring_path_analyzer_test.cms_to_web_subnet_connectivity.id
-# # }
-
-# output "web_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.web_to_redis_subnet_connectivity.id
-# }
-
-# output "web_pod_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.web_pod_to_redis_subnet_connectivity.id
-# }
-
-# output "cms_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.cms_to_redis_subnet_connectivity.id
-# }
-
-# output "cms_pod_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.cms_pod_to_redis_subnet_connectivity.id
-# }
-
-# output "airs_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.airs_to_redis_subnet_connectivity.id
-# }
-
-# output "airs_pod_to_redis_npa_test_id" {
-#   value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
-# }
+output "airs_pod_to_redis_npa_test_id" {
+  value = oci_vn_monitoring_path_analyzer_test.airs_pod_to_redis_subnet_connectivity.id
+}
 
 ################
 ##    OKE    ###
@@ -275,20 +275,16 @@ output "web_oke_cluster_ocid" {
   value       = oci_containerengine_cluster.web_oke.id
 }
 
-# output "apisix_oke_cluster_ocid" {
-#   description = "APISIX OKE cluster OCID"
-#   value       = oci_containerengine_cluster.apisix_oke.id
-# }
 
-# output "cms_oke_cluster_ocid" {
-#   description = "CMS OKE cluster OCID"
-#   value       = oci_containerengine_cluster.cms_oke.id
-# }
+output "cms_oke_cluster_ocid" {
+  description = "CMS OKE cluster OCID"
+  value       = oci_containerengine_cluster.cms_oke.id
+}
 
-# output "airs_oke_cluster_ocid" {
-#   description = "AIRS OKE cluster OCID"
-#   value       = oci_containerengine_cluster.airs_oke.id
-# }
+output "airs_oke_cluster_ocid" {
+  description = "AIRS OKE cluster OCID"
+  value       = oci_containerengine_cluster.airs_oke.id
+}
 
 output "lb_subnet_ocid" {
   description = "Load balancer subnet OCID"
@@ -315,10 +311,6 @@ output "airs_lb_reserved_public_ip_ocid" {
   value       = oci_core_public_ip.airs_cluster_lb_reserved_ip.ip_address
 }
 
-# output "apisix_lb_reserved_public_ip_ocid" {
-#   description = "AIRS Reserved public IP OCID for the OKE load balancer"
-#   value       = oci_core_public_ip.apisix_cluster_lb_reserved_ip.ip_address
-# }
 
 output "bastion_public_ip" {
   value = oci_core_instance.bastion.public_ip
