@@ -1240,13 +1240,7 @@ jobs:
           set -euo pipefail
           export KUBECONFIG="$HOME/.kube/config"
 
-          cat <<EOF > web-oke-lb-service.yaml
-          ---
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: envoy-gateway-system
-          
+          cat <<EOF > web-oke-lb-service.yaml         
           ---
           apiVersion: v1
           kind: Service
@@ -1267,25 +1261,41 @@ jobs:
               # service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
               # oci.oraclecloud.com/oci-load-balancer-listener-ssl-config: '{"CipherSuiteName":"oci-tls-12-ssl-cipher-suite-v3", "Protocols":["TLSv1.2"]}'
               # service.beta.kubernetes.io/oci-load-balancer-tls-secret: ssl-certificate-secret
-              # service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
+              service.beta.kubernetes.io/oci-load-balancer-backend-protocol: "HTTP"
           spec:
             loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
-            # loadBalancerIP: 10.10.0.121
             type: LoadBalancer
             ports:
               - name: http
                 port: 80
                 targetPort: 80
-                protocol: TCP
               - name: https
                 port: 443
                 targetPort: 443
-                protocol: TCP
           EOF
 
           cat web-oke-lb-service.yaml
           kubectl apply -f web-oke-lb-service.yaml
           kubectl get svc web-lb -o wide
+      
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Add Prometheus Helm Repo
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+      - name: Install Prometheus Stack
+        run: |
+          export KUBECONFIG="$HOME/.kube/config"
+
+          kubectl create namespace monitoring  ## creating monitoring namespace 
+
+          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+            --namespace monitoring \
+            --create-namespace \
+            --set prometheus.service.type=ClusterIP
 
       - name: Apply DevOps-managed Prometheus Internal LoadBalancer 
         shell: bash
@@ -1294,12 +1304,6 @@ jobs:
           export KUBECONFIG="$HOME/.kube/config"
 
           cat <<EOF > prometheus-lb-service.yaml
-          ---
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: monitoring
-          
           ---
           apiVersion: v1
           kind: Service
@@ -1316,45 +1320,18 @@ jobs:
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
               service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "1000"
           spec:
-            # loadBalancerIP: "${WEB_LB_RESERVED_PUBLIC_IP_OCID}"
-            loadBalancerIP: 10.10.0.120
             type: LoadBalancer
+            selector:
+              app.kubernetes.io/name: prometheus
             ports:
               - name: http
                 port: 9090
                 targetPort: 9090
                 protocol: TCP
-              # - name: https
-              #   port: 443
-              #   targetPort: 443
-              #   protocol: TCP
           EOF
           cat prometheus-lb-service.yaml
           kubectl apply -f prometheus-lb-service.yaml
           kubectl get svc prometheus-lb -o wide
-
-      - name: Deploy TLS secret
-        shell: bash
-        env:
-          TLSCRT: ${{ secrets.TLSCRT }} 
-          TLSKEY: ${{ secrets.TLSKEY }}
-        run: |
-          set -euo pipefail
-          cat > secret.yaml <<EOF
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: ssl-certificate-secret
-          type: kubernetes.io/tls
-          stringData:
-            tls.crt: |
-          $(printf '%s\n' "$TLSCRT" | sed 's/^/        /')
-            tls.key: |
-          $(printf '%s\n' "$TLSKEY" | sed 's/^/        /')
-          EOF
-
-          # kubectl apply -f secret.yaml
-          # kubectl get secret ssl-certificate-secret
 
   # create_apisix_oke_lb_service_and_tls:
   #   name: Create apisix OKE LoadBalancer Service
