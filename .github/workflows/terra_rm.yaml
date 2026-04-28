@@ -1246,11 +1246,9 @@ jobs:
           kind: Service
           metadata:
             name: web-lb
-            labels:
-              app.kubernetes.io/component: networking
+            namespace: default
             annotations:
               oci.oraclecloud.com/load-balancer-type: "lb"
-              # service.beta.kubernetes.io/oci-load-balancer-internal: "true"
               service.beta.kubernetes.io/oci-load-balancer-subnet1: "${LB_SUBNET_OCID}"
               oci.oraclecloud.com/oci-network-security-groups: "${LB_NSG_OCID}"
               service.beta.kubernetes.io/oci-load-balancer-security-list-management-mode: "None"
@@ -1271,7 +1269,9 @@ jobs:
                 targetPort: 80
               - name: https
                 port: 443
-                targetPort: 443
+                targetPort: 80
+            selector:
+              app: cake
           EOF
 
           cat web-oke-lb-service.yaml
@@ -1291,6 +1291,12 @@ jobs:
           export KUBECONFIG="$HOME/.kube/config"
 
           # kubectl create namespace monitoring  ## creating monitoring namespace 
+
+          # Skip prometheus install if release already exists
+          if helm status kube-prometheus-stack -n monitoring > /dev/null 2>&1; then
+            echo "kube-prometheus-stack Helm release already exists in monitoring, skipping Helm install."
+          else
+            echo "kube-prometheus-stack Helm release not found, installing..."
 
           helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
             --namespace monitoring \
@@ -1330,7 +1336,7 @@ jobs:
           EOF
           cat prometheus-lb-service.yaml
           kubectl apply -f prometheus-lb-service.yaml
-          kubectl get svc prometheus-lb -o wide
+          kubectl -n monitoring get svc prometheus-lb -o wide
 
   # create_apisix_oke_lb_service_and_tls:
   #   name: Create apisix OKE LoadBalancer Service
