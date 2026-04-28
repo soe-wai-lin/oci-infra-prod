@@ -270,10 +270,10 @@ output "vcn_name" {
 #   value = local.worker_node_image_id
 # }
 
-# output "web_oke_cluster_ocid" {
-#   description = "WEB OKE cluster OCID"
-#   value       = oci_containerengine_cluster.web_oke.id
-# }
+output "web_oke_cluster_ocid" {
+  description = "WEB OKE cluster OCID"
+  value       = oci_containerengine_cluster.web_oke.id
+}
 
 # output "apisix_oke_cluster_ocid" {
 #   description = "APISIX OKE cluster OCID"
