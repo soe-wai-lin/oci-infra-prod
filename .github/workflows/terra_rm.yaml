@@ -1105,13 +1105,13 @@ jobs:
 
           BASTION_PUBLIC_IP=$(jq -r '.data.items[] | select(."output-name"=="bastion_public_ip") | ."output-value"' rm_outputs.json)
           WEB_OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="web_oke_cluster_ocid") | ."output-value"' rm_outputs.json)
-          CMS_OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="cms_oke_cluster_ocid") | ."output-value"' rm_outputs.json)
-          AIRS_OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="airs_oke_cluster_ocid") | ."output-value"' rm_outputs.json)
+          # CMS_OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="cms_oke_cluster_ocid") | ."output-value"' rm_outputs.json)
+          # AIRS_OKE_CLUSTER_OCID=$(jq -r '.data.items[] | select(."output-name"=="airs_oke_cluster_ocid") | ."output-value"' rm_outputs.json)
           LB_SUBNET_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_subnet_ocid") | ."output-value"' rm_outputs.json)
           LB_NSG_OCID=$(jq -r '.data.items[] | select(."output-name"=="lb_nsg_ocid") | ."output-value"' rm_outputs.json)
           WEB_LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="web_lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
-          CMS_LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="cms_lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
-          AIRS_LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="airs_lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
+          # CMS_LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="cms_lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
+          # AIRS_LB_RESERVED_PUBLIC_IP_OCID=$(jq -r '.data.items[] | select(."output-name"=="airs_lb_reserved_public_ip_ocid") | ."output-value"' rm_outputs.json)
 
           for v in WEB_OKE_CLUSTER_OCID LB_SUBNET_OCID LB_NSG_OCID WEB_LB_RESERVED_PUBLIC_IP_OCID; do
             val="${!v:-}"
@@ -1126,8 +1126,8 @@ jobs:
           echo "LB_SUBNET_OCID=${LB_SUBNET_OCID}" >> "$GITHUB_ENV"
           echo "LB_NSG_OCID=${LB_NSG_OCID}" >> "$GITHUB_ENV"
           echo "WEB_LB_RESERVED_PUBLIC_IP_OCID=${WEB_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
-          echo "CMS_LB_RESERVED_PUBLIC_IP_OCID=${CMS_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
-          echo "AIRS_LB_RESERVED_PUBLIC_IP_OCID=${AIRS_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
+          # echo "CMS_LB_RESERVED_PUBLIC_IP_OCID=${CMS_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
+          # echo "AIRS_LB_RESERVED_PUBLIC_IP_OCID=${AIRS_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
 
 
       - name: Checkout repo
@@ -1277,6 +1277,29 @@ jobs:
           cat web-oke-lb-service.yaml
           kubectl apply -f web-oke-lb-service.yaml
           kubectl get svc web-lb -o wide
+          
+      - name: Deploy TLS secret
+        shell: bash
+        env:
+          TLSCRT: ${{ secrets.TLSCRT }}
+          TLSKEY: ${{ secrets.TLSKEY }}
+        run: |
+          set -euo pipefail
+          cat > secret.yaml <<EOF
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: ssl-certificate-secret
+          type: kubernetes.io/tls
+          stringData:
+            tls.crt: |
+          $(printf '%s\n' "$TLSCRT" | sed 's/^/        /')
+            tls.key: |
+          $(printf '%s\n' "$TLSKEY" | sed 's/^/        /')
+          EOF
+
+          kubectl apply -f secret.yaml
+          kubectl get secret ssl-certificate-secret
       
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -1297,10 +1320,10 @@ jobs:
             echo "kube-prometheus-stack Helm release already exists in monitoring, skipping Helm install."
           else
             echo "kube-prometheus-stack Helm release not found, installing..."
-
-          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
-            --namespace monitoring \
-            --set prometheus.service.type=ClusterIP
+            helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+              --namespace monitoring \
+              --set prometheus.service.type=ClusterIP
+          fi
 
       - name: Apply DevOps-managed Prometheus Internal LoadBalancer 
         shell: bash
@@ -1387,7 +1410,6 @@ jobs:
           echo "LB_SUBNET_OCID=${LB_SUBNET_OCID}" >> "$GITHUB_ENV"
           echo "LB_NSG_OCID=${LB_NSG_OCID}" >> "$GITHUB_ENV"
           echo "CMS_LB_RESERVED_PUBLIC_IP_OCID=${CMS_LB_RESERVED_PUBLIC_IP_OCID}" >> "$GITHUB_ENV"
-
 
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -1499,7 +1521,7 @@ jobs:
           set -euo pipefail
           export KUBECONFIG="$HOME/.kube/config"
 
-          cat <<EOF > oke-lb-service.yaml
+          cat <<EOF > cms-oke-lb-service.yaml
           apiVersion: v1
           kind: Service
           metadata:
@@ -1580,9 +1602,10 @@ jobs:
           else
             echo "kube-prometheus-stack Helm release not found, installing..."
 
-          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
-            --namespace monitoring \
-            --set prometheus.service.type=ClusterIP
+            helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+              --namespace monitoring \
+              --set prometheus.service.type=ClusterIP
+          fi
 
       - name: Apply DevOps-managed Prometheus Internal LoadBalancer 
         shell: bash
