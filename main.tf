@@ -2356,7 +2356,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
   description      = "Allow pod to Redis"
 }
 resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egress_to_db" {
-  network_security_group_id = oci_core_network_security_group.nsg_airs_cms_pod.id
+  network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "EGRESS"
   protocol                  = "6"
   stateless = false
