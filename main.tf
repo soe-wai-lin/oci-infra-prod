@@ -1688,19 +1688,36 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egres
   destination_type = "SERVICE_CIDR_BLOCK"
   description      = "Allow worker nodes to communicate with OCI services."
 }
-# resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egress_osn_tcp" {
-#   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
-#   direction                 = "EGRESS"
-#   protocol                  = "1"
-#   icmp_options {
-#     type = 3
-#     code = 4
-#   }
-#   stateless = false
-#   destination      = data.oci_core_services.services.services[0].cidr_block
-#   destination_type = "SERVICE_CIDR_BLOCK"
-#   description      = "Path Discovery."
-# }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egress_to_redis" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+  description      = "Allow pod to Redis"
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egress_to_db" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+  description      = "Allow pod to DB"
+}
 resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egress_icmp" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_cms_pod.id
   direction                 = "EGRESS"
@@ -2323,6 +2340,36 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
 #   destination_type = "SERVICE_CIDR_BLOCK"
 #   description      = "Path Discovery."
 # }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egress_to_redis" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+  description      = "Allow pod to Redis"
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egress_to_db" {
+  network_security_group_id = oci_core_network_security_group.nsg_airs_cms_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+  description      = "Allow pod to DB"
+}
 resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egress_icmp" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_airs_pod.id
   direction                 = "EGRESS"
@@ -2451,6 +2498,36 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egres
 #   destination_type = "SERVICE_CIDR_BLOCK"
 #   description      = "Path Discovery."
 # }
+resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egress_to_redis" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 6379
+      max = 6379
+    }
+  }
+  description      = "Allow pod to Redis"
+}
+resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egress_to_db" {
+  network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  stateless = false
+  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 5432
+      max = 5432
+    }
+  }
+  description      = "Allow pod to DB"
+}
 resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egress_icmp" {
   network_security_group_id = oci_core_network_security_group.nsg_prod_web_pod.id
   direction                 = "EGRESS"

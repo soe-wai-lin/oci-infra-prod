@@ -392,13 +392,13 @@ variable "cluster_mode" {
 variable "node_count" {
   description = "For NONSHARDED this is total nodes; for SHARDED this is nodes per shard."
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "node_memory_in_gbs" {
   description = "Memory allocated per node in GB."
   type        = number
-  default     = 2
+  default     = 10
 }
 
 variable "shard_count" {
@@ -426,7 +426,7 @@ variable "bucket_name" {
 variable "access_type" {
   description = "Bucket public access type: NoPublicAccess, ObjectRead, or ObjectReadWithoutList."
   type        = string
-  default     = "NoPublicAccess"
+  default     = "ObjectRead"
 
   validation {
     condition     = contains(["NoPublicAccess", "ObjectRead", "ObjectReadWithoutList"], var.access_type)
@@ -454,7 +454,7 @@ variable "auto_tiering" {
 variable "versioning" {
   description = "Enable object versioning on the bucket: Enabled or Disabled."
   type        = string
-  default     = "Enabled"
+  default     = "Disabled"
 
   validation {
     condition     = contains(["Enabled", "Disabled"], var.versioning)
