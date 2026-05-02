@@ -963,7 +963,7 @@ variable "web_worker_node_max_count" {
 
 variable "web_cluster_autoscaler_num_replicas" {
   type    = number
-  default = 2
+  default = 3
 }
 
 variable "web_cluster_autoscaler_max_node_provision_time" {

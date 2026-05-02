@@ -1708,7 +1708,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_cms_pod_egres
   direction                 = "EGRESS"
   protocol                  = "6"
   stateless = false
-  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination      = oci_core_network_security_group.nsg_prod_db.id
   destination_type = "NETWORK_SECURITY_GROUP"
   tcp_options {
     destination_port_range {
@@ -2360,7 +2360,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_airs_pod_egre
   direction                 = "EGRESS"
   protocol                  = "6"
   stateless = false
-  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination      = oci_core_network_security_group.nsg_prod_db.id
   destination_type = "NETWORK_SECURITY_GROUP"
   tcp_options {
     destination_port_range {
@@ -2518,7 +2518,7 @@ resource "oci_core_network_security_group_security_rule" "nsg_prod_web_pod_egres
   direction                 = "EGRESS"
   protocol                  = "6"
   stateless = false
-  destination      = oci_core_network_security_group.nsg_prod_redis.id
+  destination      = oci_core_network_security_group.nsg_prod_db.id
   destination_type = "NETWORK_SECURITY_GROUP"
   tcp_options {
     destination_port_range {
