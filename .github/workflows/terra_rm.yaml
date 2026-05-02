@@ -94,6 +94,7 @@ jobs:
 
           PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
             --stack-id "${STACK_ID}" \
+            --region ap-singapore-1 \
             --display-name "gha-plan-${GITHUB_RUN_NUMBER}" \
             --job-operation-details-is-provider-upgrade-required "${UPGRADE}" \
             --wait-for-state ACCEPTED \
@@ -118,6 +119,7 @@ jobs:
           for i in {1..120}; do
             STATUS=$(oci resource-manager job get \
               --job-id "${PLAN_JOB_ID}" \
+              --region ap-singapore-1 \
               --query 'data."lifecycle-state"' \
               --raw-output)
 
@@ -238,6 +240,7 @@ jobs:
 
           APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
             --stack-id "${STACK_ID}" \
+            --region ap-singapore-1 \
             --execution-plan-strategy FROM_PLAN_JOB_ID \
             --execution-plan-job-id "${PLAN_JOB_ID}" \
             --display-name "gha-apply-${GITHUB_RUN_NUMBER}" \
@@ -261,6 +264,7 @@ jobs:
           for i in {1..180}; do
             STATUS=$(oci resource-manager job get \
               --job-id "${APPLY_JOB_ID}" \
+              --region ap-singapore-1 \
               --query 'data."lifecycle-state"' \
               --raw-output)
 
@@ -271,7 +275,7 @@ jobs:
               exit 0
             elif [ "${STATUS}" = "FAILED" ] || [ "${STATUS}" = "CANCELED" ]; then
               echo "Apply job failed or was canceled."
-              oci resource-manager job get --job-id "${APPLY_JOB_ID}"
+              oci resource-manager job get --job-id --region ap-singapore-1 "${APPLY_JOB_ID}"
               exit 1
             fi
 
@@ -290,6 +294,7 @@ jobs:
           set -euo pipefail
 
           oci resource-manager job-output-summary list-job-outputs \
+          --region ap-singapore-1 \
           --job-id "${APPLY_JOB_ID}" \
           --all \
           --output json > rm_outputs.json

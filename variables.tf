@@ -897,11 +897,11 @@ variable "web_system_node_shape" {
 }
 
 variable "web_system_memory_in_gbs" {
-  default = 16
+  default = 16  # (reference from old architecture)
 }
 
 variable "web_system_ocpus" {
-  default = 2
+  default = 2  # (reference from old architecture)
 }
 
 
@@ -936,11 +936,11 @@ variable "web_worker_node_shape" {
 }
 
 variable "web_worker_memory_in_gbs" {
-  default = "16"
+  default = "16"  # (reference from old architecture)
 }
 
 variable "web_worker_ocpus" {
-  default = "1"
+  default = "2"  # (reference from old architecture )
 }
 
 #########################################
@@ -953,12 +953,12 @@ variable "web_enable_cluster_autoscaler" {
 
 variable "web_worker_node_min_count" {
   type    = number
-  default = 3
+  default = 3  # (reference from old architecture)
 }
 
 variable "web_worker_node_max_count" {
   type    = number
-  default = 150
+  default = 150  # (reference from old architecture)
 }
 
 variable "web_cluster_autoscaler_num_replicas" {
@@ -1207,7 +1207,7 @@ variable "cms_worker_node_min_count" {
 
 variable "cms_worker_node_max_count" {
   type    = number
-  default = 50
+  default = 25  # (reference from old architecture)
 }
 
 variable "cms_cluster_autoscaler_num_replicas" {
@@ -1369,11 +1369,13 @@ variable "airs_system_node_shape" {
 }
 
 variable "airs_system_memory_in_gbs" {
-  default = 16
+  # default = 16  # (reference from Quan Proposed architecture)
+  default = 8   # (reference from old architecture)
 }
 
 variable "airs_system_ocpus" {
-  default = 2
+  # default = 2    # (reference from Quan Proposed architecture)
+  default = 1    # (reference from old architecture)
 }
 
 
@@ -1394,7 +1396,8 @@ variable "airs_worker_node_pool_name" {
 variable "airs_worker_node_count" {
   description = "Desired number of nodes in the worker node pool."
   type        = number
-  default     = 3
+  # default     = 3   # (reference from Quan Proposed architecture)
+  default = 1     # (reference from old architecture)
 }
 
 variable "airs_worker_availability_domain" {
@@ -1408,21 +1411,27 @@ variable "airs_worker_node_shape" {
 }
 
 variable "airs_worker_memory_in_gbs" {
-  default = "16"
+  # default = "16"  # (reference from Quan Proposed architecture)
+  default = "8"     # (reference from old architecture)
+  type = number
 }
 
 variable "airs_worker_ocpus" {
-  default = "2"
+  # default = "2"   # (reference from Quan Proposed architecture)
+  default = "1"
+  type = number     # (reference from old architecture)
 }
 
 variable "airs_worker_node_min_count" {
   type    = number
-  default = 3
+  # default = 3   # (reference from Quan Proposed architecture)
+  default = 1   # (reference from old architecture)
 }
 
 variable "airs_worker_node_max_count" {
   type    = number
-  default = 25
+  # default = 25   # (reference from Quan Proposed architecture)
+  default = 25  
 }
 
 variable "airs_cluster_autoscaler_num_replicas" {
